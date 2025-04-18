@@ -2,6 +2,7 @@
 using Abp.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InTN.Authorization.Users;
 
@@ -30,4 +31,5 @@ public class User : AbpUser<User>
 
         return user;
     }
+     
 }
