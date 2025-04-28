@@ -7,8 +7,8 @@ using InTN.Customers.Dto;
 using InTN.Entities;
 using InTN.IdentityCodes.Dto;
 using InTN.OrderAttachments.Dto;
+using InTN.OrderLogs.Dto;
 using InTN.Orders.Dto;
-using InTN.Processes.Dto;
 
 namespace InTN;
 

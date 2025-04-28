@@ -1,6 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 
-namespace InTN.Processes.Dto
+namespace InTN.OrderLogs.Dto
 {
     public class OrderLogDto : EntityDto<int>
     {
