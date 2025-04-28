@@ -1,0 +1,41 @@
+﻿ 
+
+
+<div class="abp-advanced-search">
+    <!-- Nút mở rộng/thu gọn -->
+    <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#OrderFilterCollapse">
+        <i class="fas fa-filter"></i> Bộ lọc nâng cao
+    </button>
+    
+    <a href="javascript:;" data-toggle="modal" data-target="#CustomerCreateModal" class="btn bg-blue float-sm-right">
+        <i class="fa fa-plus-square"></i>
+        @L("Create")
+    </a>
+
+    <div class="collapse" id="OrderFilterCollapse">
+        <form id="CustomerSearchForm" class="form-horizontal">
+            <div class="form-row">
+
+            </div>
+
+            <div class="form-row mt-3">
+                <!-- Thời gian giao dịch -->
+
+                <div class="col-md-6">
+                    <label for="TransactionDate">Từ khóa</label>
+                    <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("Search")" />
+                </div>
+            </div>
+
+            <!-- Căn phải nút tìm kiếm -->
+            <div class="form-row mt-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2 btn-search">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -9,5 +9,6 @@ public class PageNames
     public const string Roles = "Roles";
 
     public const string Orders = "Orders";
+    public const string Customers = "Customers";
 
 }

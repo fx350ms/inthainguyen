@@ -22,7 +22,8 @@
         abp.ui.setBusy(_$form);
         _orderService.update(order).done(function () {
             _$modal.modal('hide');
-            PlaySound('success'); abp.notify.info(l('SavedSuccessfully'));
+          
+            abp.notify.info(l('SavedSuccessfully'));
             abp.event.trigger('order.edited', order);
         }).always(function () {
             abp.ui.clearBusy(_$form);

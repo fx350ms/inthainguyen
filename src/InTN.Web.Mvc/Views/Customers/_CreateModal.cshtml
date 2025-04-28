@@ -1,0 +1,64 @@
+﻿@using InTN.Web.Models.Common.Modals
+@using InTN.Customers.Dto
+
+@model CustomerDto
+@{
+    Layout = null;
+}
+<div class="modal fade" id="CustomerCreateModal" tabindex="-1" role="dialog" aria-labelledby="CustomerCreateModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("CreateNewCustomer")))
+            <form name="CustomerCreateForm" role="form" class="form-horizontal">
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" role="tab" href="#create-Customer-details">@L("ParentDetails")</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-4">
+                        <div role="tabpanel" class="tab-pane container active" id="create-Customer-details">
+                            <div class="form-group row required">
+                                <label class="col-md-3 col-form-label">@L("Name")</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="Name" asp-for="Name" required>
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                             
+                            <!-- Email -->
+                            <div class="form-group row required">
+                                <label class="col-md-3 col-form-label">@L("Email")</label>
+                                <div class="col-md-9">
+                                    <input type="email" class="form-control" name="Email" asp-for="Email" required>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <!-- Phone Number -->
+                            <div class="form-group row required">
+                                <label class="col-md-3 col-form-label">@L("PhoneNumber")</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="PhoneNumber" asp-for="PhoneNumber" required>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Address -->
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">@L("Address")</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="Address" asp-for="Address">
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        
+                    </div>
+                </div>
+                @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+            </form>
+        </div>
+    </div>
+</div>

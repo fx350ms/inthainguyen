@@ -6,7 +6,11 @@
     <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#OrderFilterCollapse">
         <i class="fas fa-filter"></i> Bộ lọc nâng cao
     </button>
- 
+
+    <a href="@Url.Action("Create", "Orders")" class="btn bg-blue float-sm-right" style="margin-right:10px">
+        <i class="fa fa-plus-square"></i>
+        @L("Create")
+    </a>
 
     <div class="collapse" id="OrderFilterCollapse">
         <form id="OrderSearchForm" class="form-horizontal">

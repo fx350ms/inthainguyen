@@ -23,7 +23,6 @@
 
         _orderService.edit(order).done(function () {
             _$form[0].reset();
-            PlaySound('success');
              abp.notify.info(l('SavedSuccessfully'));
              window.location.href = '/Orders';
 

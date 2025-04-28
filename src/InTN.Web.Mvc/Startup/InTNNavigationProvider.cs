@@ -56,6 +56,15 @@ public class InTNNavigationProvider : NavigationProvider
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Roles)
                 )
             )
+              .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Roles,
+                    L("Customers"),
+                    url: "Customers",
+                    icon: "fas fa-users",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Roles)
+                )
+            )
             ;
     }
 

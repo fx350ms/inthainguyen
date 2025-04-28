@@ -60,7 +60,10 @@
         "node_modules/push.js/bin/push.js",
 
         "wwwroot/js/abp.dataTable.js",
-        "wwwroot/js/main.js",
+       
+
+
+        "wwwroot/js/main.js"
 
       ]
     },

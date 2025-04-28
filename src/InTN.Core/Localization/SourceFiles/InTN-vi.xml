@@ -590,6 +590,6 @@
 		<text name="AssignCustomers" value="Gán khách hàng" />
 		<text name="Account" value="Tài khoản" />
 		<text name="CNWarehouseDate" value="Ngày nhập kho" />
-
+		<text name="Orders" value="Đơn hàng" />
 	</texts>
 </localizationDictionary>

@@ -10,5 +10,10 @@ namespace InTN.Web.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
     }
 }

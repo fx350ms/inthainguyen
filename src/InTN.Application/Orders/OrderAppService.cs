@@ -4,6 +4,7 @@ using Abp.Domain.Repositories;
 
 using InTN.Orders.Dto;
 using InTN.Entities;
+using System.Threading.Tasks;
 
 namespace InTN.Orders
 {
@@ -12,6 +13,11 @@ namespace InTN.Orders
         public OrderAppService(IRepository<Order> repository)
             : base(repository)
         {
+        }
+
+        public async Task<OrderDto> CreateOrderWithAttachmentAsync(OrderDto input)
+        {
+            return  await base.CreateAsync(input);
         }
     }
 }

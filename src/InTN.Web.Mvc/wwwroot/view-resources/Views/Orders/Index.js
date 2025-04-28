@@ -17,7 +17,6 @@
         9: { text: 'Huỷ', color: 'darkgray' },
         10: { text: 'Hoàn thành đơn', color: 'teal' }
     };
-    debugger;
     var _$ordersTable = _$table.DataTable({
         paging: true,
         serverSide: true,
@@ -118,6 +117,7 @@
             locale: { cancelLabel: 'Clear' }
         }
     ).val('');
+
     $('#input-date-range').on('apply.daterangepicker', function (ev, picker) {
         $('#start-date').val(picker.startDate.format('DD-MM-YYYY'));
         $('#end-date').val(picker.endDate.format('DD-MM-YYYY'));
@@ -215,6 +215,20 @@
             return false;
         }
     });
-     
+
+    $('select[name="CustomerId"').select2({
+        ajax: {
+            delay: 250, // wait 250 milliseconds before triggering the request
+            url: abp.appPath + 'api/services/app/Customer/getAllList',
+            dataType: 'json',
+            processResults: function (data) {
+                return {
+                    results: data.result
+                };
+            }
+
+        }
+
+    }).addClass('form-control');
 
 })(jQuery);

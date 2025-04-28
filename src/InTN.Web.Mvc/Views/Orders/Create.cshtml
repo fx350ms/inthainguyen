@@ -1,0 +1,122 @@
+﻿ @using InTN
+@using InTN.Web.Models.Common.Modals
+
+@{
+
+}
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Create.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Create.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+           @*      <h1>@L("CreateMyOrder"): <strong class="text-primary">@Model.Dto.OrderNumber</strong> </h1> *@
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        @* @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("CreateNewCustomerAddress"))) *@
+                        <form name="CustomerAddressCreateForm" role="form" class="form-horizontal">
+                            <div class="modal-body">
+                               @*  <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" role="tab" href="#create-Customer-details">@L("ParentDetails")</a>
+                                    </li>
+                                </ul> *@
+                                <div class="tab-content mt-4 ">
+
+                                    <div role="tabpanel" class="tab-pane container active form-content">
+                                        <input type="hidden" name="CustomerId" />
+                                        <input type="hidden" name="FullAddress" />
+
+                                        <input type="checkbox" name="IsCasualCustomer" />
+
+                                        <!-- Full Name -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-3 col-form-label">@L("CustomerName")</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="CustomerName" required maxlength="255">
+                                            </div>
+                                        </div>
+
+                                        <!-- Phone Number -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-3 col-form-label">@L("CustomerPhone")</label>
+                                            <div class="col-md-9">
+                                                <input type="text" class="form-control" name="CustomerPhone" required maxlength="15">
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Address -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-3 col-form-label">@L("CustomerAddress")</label>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control" id="Address" name="CustomerAddress" rows="3" required maxlength="500"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <!-- Is Default -->
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">@L("IsDefault")</label>
+                                            <div class="col-md-9">
+                                                <input type="hidden" name="IsDefault" value="false"> <!-- Giá trị mặc định -->
+                                                <input type="checkbox" class="form-check-input" name="IsDefault" value="true">
+                                            </div>
+                                        </div>
+
+                                        <!-- Is Receipt Address -->
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">@L("IsReceiptAddress")</label>
+                                            <div class="col-md-9">
+                                                <input type="hidden" name="IsReceiptAddress" value="false"> <!-- Giá trị mặc định -->
+                                                <input type="checkbox" class="form-check-input" name="IsReceiptAddress" value="true">
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
+                                <button type="submit" class="btn btn-primary save-address-button">@L("Save")</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
