@@ -1,0 +1,18 @@
+﻿using Abp.Application.Services.Dto;
+using Abp.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace InTN.Customers.Dto
+{
+    public class CustomerDto : EntityDto<int>
+    {
+        public string Name { get; set; } = string.Empty; // Tên khách hàng
+        public string Email { get; set; } = string.Empty; // Email khách hàng
+        public string PhoneNumber { get; set; } = string.Empty; // Số điện thoại
+        public string Address { get; set; } = string.Empty; // Địa chỉ
+    }
+}
