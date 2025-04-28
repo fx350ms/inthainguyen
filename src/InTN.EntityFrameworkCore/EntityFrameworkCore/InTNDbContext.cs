@@ -15,6 +15,12 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<ProcessStep> ProcessSteps { get; set; }
     public DbSet<ProcessHistory> ProcessHistories { get; set; }
 
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<IdentityCode> IdentityCodes { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<OrderAttachment> OrderAttachments { get; set; }
+    public DbSet<OrderLog> OrderLogs { get; set; }
+    
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)
     {
