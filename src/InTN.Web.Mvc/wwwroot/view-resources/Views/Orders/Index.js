@@ -102,16 +102,16 @@
             },
             {
                 targets: 7,
-                width: 20,
+                width: 120,
                 data: 'status',
                 className: 'text-center',
                 render: (data, type, row, meta) => {
 
                     // Lấy mô tả và màu sắc của orderStatus từ đối tượng ánh xạ
-                    const status = orderStatusDescriptions[row.orderStatus];
+                    const status = orderStatusDescriptions[row.status];
 
                     // Trả về mô tả với màu sắc được áp dụng
-                    return `<span class="badge" style="background-color: ${status ? status.color : 'white'};">${status ? status.text : 'Chưa xác định'}</span>`;
+                    return `<p style="color: ${status ? status.color : 'black'};">${status ? status.text : 'Chưa xác định'}</p>`;
 
                 }
             },
@@ -124,7 +124,7 @@
                 className: 'text-right',
                 defaultContent: '',
                 render: (data, type, row, meta) => {
-                    const isEditable = row.orderStatus === 1; // Only allow edit/delete if status is 1
+                    const isEditable = row.status === 1; // Only allow edit/delete if status is 1
 
                     return [
                         ` <div class="btn-group"> `,
@@ -145,11 +145,10 @@
                             `       <i class="fas fa-trash"></i> ${l('Delete')}` +
                             '   </button>' :
                             '',
-                        row.orderStatus >= 2 ?
-                            `   <a type="button" class="dropdown-item bg-info view-package-list" data-order-id="${row.id}"   title="${l('ViewPackageList')}" data-toggle="tooltip">` +
-                            `       <i class="fas fa-box"></i> ${l('ViewPackageList')}` +
-                            '   </a>' :
-                            '',
+                        row.status === 1 ?
+                            `   <a type="button" class="dropdown-item bg-success" data-order-id="${row.id}" href="/Orders/CreateQuotation/${row.id}" title="${l('CreateQuotation')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-file-invoice"></i> ${l('CreateQuotation')}` +
+                            '   </a>' : '',
                         `    </div>`,
                         `   </div>`
                     ].join('');

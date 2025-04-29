@@ -19,6 +19,7 @@ namespace InTN.Entities
         public string CustomerPhone { get; set; } = string.Empty; // Số điện thoại khách hàng   
         public string CustomerEmail { get; set; } = string.Empty; // Email khách hàng
 
+        public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
 
     }
 }

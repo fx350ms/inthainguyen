@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace InTN;
- 
+
 public enum OrderStatus
 {
     [Description("Tiếp nhận yêu cầu")]
@@ -36,4 +36,17 @@ public enum OrderStatus
 
     [Description("Hoàn thành nghiệm thu")]
     Completed = 11 // Hoàn thành nghiệm thu  
+}
+
+
+public enum OrderAttachmentType
+{
+    [Description("Khác")]
+    OtherDocument = 1, // Chứng từ khác  
+
+    [Description("Hóa đơn/Báo giá")]
+    Invoice = 2, // Hóa đơn  
+
+    [Description("Mẫu thiết kế")]
+    DesignSample = 3, // Mẫu thiết kế
 }

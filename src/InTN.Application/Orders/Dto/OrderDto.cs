@@ -1,4 +1,4 @@
-using Abp.Application.Services.Dto;
+﻿using Abp.Application.Services.Dto;
 using System;
 
 namespace InTN.Orders.Dto
@@ -14,5 +14,6 @@ namespace InTN.Orders.Dto
         public string CustomerAddress { get; set; } = string.Empty;
         public string CustomerPhone { get; set; } = string.Empty;
         public string CustomerEmail { get; set; } = string.Empty;
+        public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
     }
 }
