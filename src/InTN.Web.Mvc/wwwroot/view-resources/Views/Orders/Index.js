@@ -6,16 +6,17 @@
         _$form = _$modal.find('form'),
         _$table = $('#OrdersTable');
     const orderStatusDescriptions = {
-        1: { text: 'Đã ký gửi', color: 'blue' },
-        2: { text: 'Hàng về kho TQ', color: 'purple' },
-        3: { text: 'Đang vận chuyển quốc tế', color: 'orange' },
-        4: { text: 'Đã đến kho VN', color: 'green' },
-        5: { text: 'Đang giao đến khách', color: 'cyan' },
-        6: { text: 'Đã giao', color: 'gray' },
-        7: { text: 'Khiếu nại', color: 'red' },
-        8: { text: 'Hoàn tiền', color: 'pink' },
-        9: { text: 'Huỷ', color: 'darkgray' },
-        10: { text: 'Hoàn thành đơn', color: 'teal' }
+        1: { text: 'Tiếp nhận yêu cầu', color: 'blue' },
+        2: { text: 'Đã báo giá', color: 'purple' },
+        3: { text: 'Đã xác nhận đơn', color: 'green' },
+        4: { text: 'Đang thiết kế', color: 'orange' },
+        5: { text: 'Đang chờ duyệt mẫu', color: 'cyan' },
+        6: { text: 'Đã duyệt mẫu', color: 'teal' },
+        7: { text: 'Đang in', color: 'yellow' },
+        8: { text: 'Đang gia công', color: 'pink' },
+        9: { text: 'Đã kiểm tra QC', color: 'lime' },
+        10: { text: 'Đang giao hàng', color: 'brown' },
+        11: { text: 'Hoàn thành nghiệm thu', color: 'gray' }
     };
     var _$ordersTable = _$table.DataTable({
         paging: true,
@@ -55,34 +56,82 @@
             },
             {
                 targets: 2,
-                width: 20,
+              
                 className: 'text-center',
                 render: function (data, type, row, meta) {
-                    return '';
+                    return row.orderCode;
+                }
+            },
+            {
+                targets: 3,
+               
+                data: 'customerName',
+                className: 'text-center',
+                render: function (data, type, row, meta) {
+                    if (row.customerId == null) {
+                        return '<strong>' + row.customerName + '</strong> <span class="badge badge-info">Khách vãng lai</span>';
+                    } else {
+                        return '<strong>' + row.customerName + '</strong> <span class="badge badge-success">Khách quen</span>';
+                    }
+
+
+                }
+            },
+            {
+                targets: 4,
+                
+                data: 'customerPhone',
+                className: 'text-center',
+
+            },
+            {
+                targets: 5,
+             
+                className: 'text-center',
+                data: 'orderDate',
+                render: (data, type, row, meta) => {
+                    return formatDateToDDMMYYYYHHmm(data);
+                }
+            },
+            {
+                targets: 6,
+             
+                data: 'note',
+                className: 'text-center',
+
+            },
+            {
+                targets: 7,
+                width: 20,
+                data: 'status',
+                className: 'text-center',
+                render: (data, type, row, meta) => {
+
+                    // Lấy mô tả và màu sắc của orderStatus từ đối tượng ánh xạ
+                    const status = orderStatusDescriptions[row.orderStatus];
+
+                    // Trả về mô tả với màu sắc được áp dụng
+                    return `<span class="badge" style="background-color: ${status ? status.color : 'white'};">${status ? status.text : 'Chưa xác định'}</span>`;
+
                 }
             },
 
-             
             {
-                targets: 3,
+                targets: 8,
                 data: null,
                 sortable: false,
                 width: 20,
-                className : 'text-right',
+                className: 'text-right',
                 defaultContent: '',
                 render: (data, type, row, meta) => {
                     const isEditable = row.orderStatus === 1; // Only allow edit/delete if status is 1
-                    const canCreatePackage = row.orderStatus === 1 || row.orderStatus === 2; // Allow creating package if status is 1 or 2
-                    const canCreateDeliveryRequest = row.orderStatus === 4; // Allow creating delivery request if status is 4
-                    const canMakePayment = row.paymentStatus === 1; // Allow making payment if payment status is 'Chờ thanh toán'
-
 
                     return [
                         ` <div class="btn-group"> `,
                         `   <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">`,
                         ` </button>`,
                         ` <div class="dropdown-menu" style="">`,
-                      
+
                         `   <a type="button" class="dropdown-item  bg-primary" data-order-id="${row.id}" href="/Orders/Detail/${row.id}" title="${l('Detail')}" data-toggle="tooltip">`,
                         `       <i class="fas fa-eye"></i> ${l('View')}`,
                         '   </a>',
@@ -105,8 +154,6 @@
                         `   </div>`
                     ].join('');
 
-
-                   
                 }
             }
         ]
@@ -138,7 +185,7 @@
             _$form[0].reset();
             abp.notify.info(l('SavedSuccessfully'));
             PlayAudio('success', function () {
-               
+
             });
             _$ordersTable.ajax.reload();
         }).always(function () {
@@ -188,7 +235,7 @@
             }
         });
     });
- 
+
 
     //$(document).on('click', 'a[data-target="#OrdersCreateModal"]', (e) => {
     //    $('.nav-tabs a[href="#order-details"]').tab('show')
@@ -216,10 +263,10 @@
         }
     });
 
-    $('select[name="CustomerId"').select2({
+    $('.filter-customer-id').select2({
         ajax: {
             delay: 250, // wait 250 milliseconds before triggering the request
-            url: abp.appPath + 'api/services/app/Customer/getAllList',
+            url: abp.appPath + 'api/services/app/Customer/getCustomerListForSelect',
             dataType: 'json',
             processResults: function (data) {
                 return {

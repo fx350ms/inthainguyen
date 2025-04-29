@@ -1,6 +1,7 @@
-﻿ @using InTN
+﻿@using InTN
 @using InTN.Web.Models.Common.Modals
 
+@model InTN.Orders.Dto.CreateOrderDto
 @{
 
 }
@@ -15,6 +16,7 @@
     </environment>
 
 }
+
 @section styles {
     <style>
         .select2-selection--single {
@@ -31,7 +33,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-           @*      <h1>@L("CreateMyOrder"): <strong class="text-primary">@Model.Dto.OrderNumber</strong> </h1> *@
+                @*      <h1>@L("CreateMyOrder"): <strong class="text-primary">@Model.Dto.OrderNumber</strong> </h1> *@
+                <h1>@L("Pages_CreateOrder"): <strong class="text-primary">@Model.OrderCode</strong></h1>
             </div>
             <div class="col-sm-6">
             </div>
@@ -43,76 +46,87 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body" id="modal-create-order">
 
                         @* @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("CreateNewCustomerAddress"))) *@
-                        <form name="CustomerAddressCreateForm" role="form" class="form-horizontal">
+                        <form name="form-create-order" role="form" class="form-horizontal">
                             <div class="modal-body">
-                               @*  <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" data-toggle="tab" role="tab" href="#create-Customer-details">@L("ParentDetails")</a>
-                                    </li>
-                                </ul> *@
+
                                 <div class="tab-content mt-4 ">
 
                                     <div role="tabpanel" class="tab-pane container active form-content">
-                                        <input type="hidden" name="CustomerId" />
-                                        <input type="hidden" name="FullAddress" />
+                                        
+                                        <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
 
-                                        <input type="checkbox" name="IsCasualCustomer" />
+                                        <!-- IsCasualCustomer -->
+                                        <div class="form-group row ">
+                                            <label class="col-md-2 col-form-label">@L("CustomerType")</label>
+                                            <div class="col-md-4">
+                                                <select class="form-control select-customer">
+                                                    <option value="1"> @L("CasualCustomer") </option>
+                                                    <option value="2"> @L("LoyalCustomer") </option>
+                                                </select>
+                                            </div>
+                                            <label class="col-md-2 col-form-label select-customer-group">@L("Customer")</label>
+                                            <div class="col-md-4 select-customer-group">
+                                                <select class="select2 select2-hidden-accessible select-customer-id" name="CustomerId" style="width: 100%;">
+                                                </select>
+                                            </div>
+                                        </div>
 
                                         <!-- Full Name -->
                                         <div class="form-group row required">
-                                            <label class="col-md-3 col-form-label">@L("CustomerName")</label>
-                                            <div class="col-md-9">
+                                            <label class="col-md-2 col-form-label">@L("CustomerName")</label>
+                                            <div class="col-md-4">
                                                 <input type="text" class="form-control" name="CustomerName" required maxlength="255">
                                             </div>
-                                        </div>
-
-                                        <!-- Phone Number -->
-                                        <div class="form-group row required">
-                                            <label class="col-md-3 col-form-label">@L("CustomerPhone")</label>
-                                            <div class="col-md-9">
-                                                <input type="text" class="form-control" name="CustomerPhone" required maxlength="15">
+                                            <label class="col-md-2 col-form-label">@L("Phone")</label>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control" name="CustomerPhone" required >
                                             </div>
                                         </div>
 
+
+
+                                        <!-- Email -->
+                                        <div class="form-group row ">
+                                            <label class="col-md-2 col-form-label">@L("Email")</label>
+                                            <div class="col-md-10">
+                                                <input type="text" class="form-control" name="CustomerEmail"  >
+                                            </div>
+                                        </div>
 
                                         <!-- Address -->
-                                        <div class="form-group row required">
-                                            <label class="col-md-3 col-form-label">@L("CustomerAddress")</label>
-                                            <div class="col-md-9">
-                                                <textarea class="form-control" id="Address" name="CustomerAddress" rows="3" required maxlength="500"></textarea>
+                                        <div class="form-group row ">
+                                            <label class="col-md-2 col-form-label">@L("CustomerAddress")</label>
+                                            <div class="col-md-10">
+                                                <textarea class="form-control" id="Address" name="CustomerAddress" rows="3"  maxlength="500"></textarea>
                                             </div>
                                         </div>
 
-                                        <!-- Is Default -->
-                                        <div class="form-group row">
-                                            <label class="col-md-3 col-form-label">@L("IsDefault")</label>
-                                            <div class="col-md-9">
-                                                <input type="hidden" name="IsDefault" value="false"> <!-- Giá trị mặc định -->
-                                                <input type="checkbox" class="form-check-input" name="IsDefault" value="true">
+                                        <!-- Address -->
+                                        <div class="form-group row ">
+                                            <label class="col-md-2 col-form-label">@L("Note")</label>
+                                            <div class="col-md-10">
+                                                <textarea class="form-control" id="Note" name="Note" rows="3" ></textarea>
                                             </div>
                                         </div>
 
-                                        <!-- Is Receipt Address -->
-                                        <div class="form-group row">
-                                            <label class="col-md-3 col-form-label">@L("IsReceiptAddress")</label>
-                                            <div class="col-md-9">
-                                                <input type="hidden" name="IsReceiptAddress" value="false"> <!-- Giá trị mặc định -->
-                                                <input type="checkbox" class="form-check-input" name="IsReceiptAddress" value="true">
+                                        <!-- File -->
+                                        <div class="form-group row ">
+                                            <label class="col-md-2 col-form-label">@L("FileUrl")</label>
+                                            <div class="col-md-10">
+                                                <textarea class="form-control" id="FileUrl" name="FileUrl" rows="3" ></textarea>
                                             </div>
                                         </div>
-
                                     </div>
 
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
-                                <button type="submit" class="btn btn-primary save-address-button">@L("Save")</button>
+                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
                             </div>
-
                         </form>
                     </div>
                 </div>

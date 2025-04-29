@@ -6,6 +6,9 @@ using InTN.Customers.Dto;
 using InTN.Entities;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using InTN.Commons;
+using System;
+using System.Linq;
 
 namespace InTN.Customers
 {
@@ -19,11 +22,42 @@ namespace InTN.Customers
         }
 
 
+        public override Task<CustomerDto> GetAsync(EntityDto<int> input)
+        {
+            return base.GetAsync(input);
+        }
+
         public async Task<List<CustomerDto>> GetAllListAsync()
         {
             var customers = await Repository.GetAllListAsync();
             return ObjectMapper.Map<List<CustomerDto>>(customers);
             //  return new ListResultDto<CustomerDto>(ObjectMapper.Map<List<CustomerDto>>(customers));
+        }
+
+        public async Task<List<OptionItemDto>> GetCustomerListForSelect(string q)
+        {
+            try
+            {
+                var query = await Repository.GetAllAsync() ;
+
+                if (!string.IsNullOrEmpty(q))
+                {
+                    query = query.Where(u => u.Name.Contains(q, StringComparison.OrdinalIgnoreCase) || u.PhoneNumber.Contains(q, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return query.Select(u => new OptionItemDto
+                {
+                    id = u.Id.ToString(),
+                    text = u.Name + " - " + u.PhoneNumber
+                }).ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return new List<OptionItemDto>();
         }
     }
 }
