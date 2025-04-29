@@ -1,4 +1,9 @@
 ﻿using InTN.Controllers;
+using InTN.Customers;
+using InTN.IdentityCodes;
+using InTN.OrderLogs;
+using InTN.Orders;
+using InTN.Orders.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -6,9 +11,27 @@ namespace InTN.Web.Controllers
 {
     public class OrdersController : InTNControllerBase
     {
+        private readonly IIdentityCodeAppService _identityCodeAppService;
+        public OrdersController(IOrderAppService orderService,
+             IIdentityCodeAppService identityCodeAppService
+         )
+        { 
+            _identityCodeAppService = identityCodeAppService;
+        }
+
         public async Task<IActionResult> Index()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            var identityCode = await _identityCodeAppService.GenerateNewSequentialNumberAsync("DH");
+            var model = new CreateOrderDto
+            {
+                OrderCode = identityCode.Code,
+            };
+            return View(model);
         }
     }
 }

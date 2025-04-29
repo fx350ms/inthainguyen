@@ -313,7 +313,7 @@
 		<text name="BagType" value="Loại bao" />
 		<text name="Bags" value="Danh sách bao" />
 		<text name="BagCode" value="Mã bao" />
-		<text name="CustomerName" value="Khách hàng" />
+		<text name="CustomerName" value="Tên khách hàng" />
 
 		<text name="OrderDate" value="Ngày đặt" />
 		<text name="OrderNumber" value="Mã đơn hàng" />
@@ -590,6 +590,16 @@
 		<text name="AssignCustomers" value="Gán khách hàng" />
 		<text name="Account" value="Tài khoản" />
 		<text name="CNWarehouseDate" value="Ngày nhập kho" />
-
+		<text name="Orders" value="Đơn hàng" />
+		<text name="CasualCustomer" value="Khách lẻ" />
+		
+		<text name="Pages_CreateOrder" value="Tạo đơn hàng" />
+		<text name="CustomerPhone" value="Số điện thoại khách hàng" />
+		<text name="CustomerEmail" value="Email khách hàng" />
+		<text name="CustomerAddress" value="Địa chỉ khách hàng" />
+		<text name="FileUrl" value="Đường dẫn tệp" />
+		<text name="CustomerType" value="Loại khách" />
+		<text name="LoyalCustomer" value="Khách quen" />
+		
 	</texts>
 </localizationDictionary>

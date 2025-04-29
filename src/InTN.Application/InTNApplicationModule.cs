@@ -26,6 +26,8 @@ public class InTNApplicationModule : AbpModule
             cfg.CreateMap<Customer, CustomerDto>().ReverseMap();
             cfg.CreateMap<IdentityCode, IdentityCodeDto>().ReverseMap();
             cfg.CreateMap<Order, OrderDto>().ReverseMap();
+            cfg.CreateMap<Order, CreateOrderDto>().ReverseMap();
+            cfg.CreateMap<CreateOrderDto, OrderDto>().ReverseMap();
             cfg.CreateMap<OrderAttachment, OrderAttachmentDto>().ReverseMap();
             cfg.CreateMap<OrderLog, OrderLogDto>().ReverseMap();
 
