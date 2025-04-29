@@ -592,7 +592,9 @@
 		<text name="CNWarehouseDate" value="Ngày nhập kho" />
 		<text name="Orders" value="Đơn hàng" />
 		<text name="CasualCustomer" value="Khách lẻ" />
+
 		
+		<text name="Pages_CreateQuotation" value="Báo giá đơn hàng" />
 		<text name="Pages_CreateOrder" value="Tạo đơn hàng" />
 		<text name="CustomerPhone" value="Số điện thoại khách hàng" />
 		<text name="CustomerEmail" value="Email khách hàng" />
@@ -600,6 +602,8 @@
 		<text name="FileUrl" value="Đường dẫn tệp" />
 		<text name="CustomerType" value="Loại khách" />
 		<text name="LoyalCustomer" value="Khách quen" />
-		
+		<text name="SelectFile" value="Chọn file" />
+		<text name="SelectFileQuotation" value="Chọn file báo giá" />
+	
 	</texts>
 </localizationDictionary>

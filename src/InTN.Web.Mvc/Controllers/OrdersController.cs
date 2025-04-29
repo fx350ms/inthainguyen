@@ -1,4 +1,5 @@
-﻿using InTN.Controllers;
+﻿using Abp.Application.Services.Dto;
+using InTN.Controllers;
 using InTN.Customers;
 using InTN.IdentityCodes;
 using InTN.OrderLogs;
@@ -12,10 +13,12 @@ namespace InTN.Web.Controllers
     public class OrdersController : InTNControllerBase
     {
         private readonly IIdentityCodeAppService _identityCodeAppService;
+        private readonly IOrderAppService _orderAppService;
         public OrdersController(IOrderAppService orderService,
              IIdentityCodeAppService identityCodeAppService
          )
-        { 
+        {
+            _orderAppService = orderService;
             _identityCodeAppService = identityCodeAppService;
         }
 
@@ -30,6 +33,18 @@ namespace InTN.Web.Controllers
             var model = new CreateOrderDto
             {
                 OrderCode = identityCode.Code,
+            };
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> CreateQuotation(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            var model = new QuotationDto()
+            {
+                OrderId = order.Id,
+                OrderCode = order.OrderCode,
             };
             return View(model);
         }

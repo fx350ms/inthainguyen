@@ -1,0 +1,87 @@
+﻿@using InTN
+@using InTN.Web.Models.Common.Modals
+@using InTN.Orders.Dto
+
+@model QuotationDto
+@{
+
+}
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/CreateQuotation.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/CreateQuotation.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Pages_CreateQuotation"): <strong class="text-primary">@Model.OrderCode</strong></h1>
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" id="modal-create-order">
+                        <form name="form-create-order" role="form" class="form-horizontal">
+                            <div class="modal-body">
+
+                                <div class="tab-content mt-4 ">
+
+                                    <div role="tabpanel" class="tab-pane container active form-content">
+
+                                        <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
+                                        <input type="hidden" name="OrderId" value="@Model.OrderId" />
+                                        <!-- Full Name -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-2 col-form-label">@L("TotalAmount")</label>
+                                            <div class="col-md-4">
+                                                <input type="number" class="form-control" name="TotalAmount" required>
+                                            </div>
+                                        </div>
+                                        <!-- Full Name -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-2 col-form-label">@L("SelectFileQuotation")</label>
+                                            <div class="col-md-10">
+                                                <input type="file" class="form-control" name="Attachments" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
+                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
