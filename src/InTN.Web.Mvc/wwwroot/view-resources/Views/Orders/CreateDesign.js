@@ -11,7 +11,7 @@
         if (!_$form.valid()) {
             return;
         }
-        
+
         // Tạo FormData để gửi dữ liệu và tệp
         var formData = new FormData();
         var files = $("input[name='Attachments']")[0].files;
@@ -28,7 +28,7 @@
         }
 
         $.ajax({
-            url: abp.appPath + 'api/services/app/Order/CreateQuotation',
+            url: abp.appPath + 'api/services/app/Order/ApproveDesign',
             type: 'POST',
             processData: false,
             contentType: false,

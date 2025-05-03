@@ -56,7 +56,7 @@
             },
             {
                 targets: 2,
-              
+
                 className: 'text-center',
                 render: function (data, type, row, meta) {
                     return row.orderCode;
@@ -64,7 +64,7 @@
             },
             {
                 targets: 3,
-               
+
                 data: 'customerName',
                 className: 'text-center',
                 render: function (data, type, row, meta) {
@@ -79,14 +79,14 @@
             },
             {
                 targets: 4,
-                
+
                 data: 'customerPhone',
                 className: 'text-center',
 
             },
             {
                 targets: 5,
-             
+
                 className: 'text-center',
                 data: 'orderDate',
                 render: (data, type, row, meta) => {
@@ -95,7 +95,7 @@
             },
             {
                 targets: 6,
-             
+
                 data: 'note',
                 className: 'text-center',
 
@@ -133,7 +133,7 @@
                         ` <div class="dropdown-menu" style="">`,
 
                         `   <a type="button" class="dropdown-item  bg-primary" data-order-id="${row.id}" href="/Orders/Detail/${row.id}" title="${l('Detail')}" data-toggle="tooltip">`,
-                        `       <i class="fas fa-eye"></i> ${l('View')}`,
+                        `       <i class="fas fa-eye"></i> ${l('ViewDetail')}`,
                         '   </a>',
                         isEditable ?
                             `   <a type="button" class="dropdown-item bg-secondary" data-order-id="${row.id}" href="/Orders/Edit/${row.id}" title="${l('Edit')}" data-toggle="tooltip">` +
@@ -147,8 +147,48 @@
                             '',
                         row.status === 1 ?
                             `   <a type="button" class="dropdown-item bg-success" data-order-id="${row.id}" href="/Orders/CreateQuotation/${row.id}" title="${l('CreateQuotation')}" data-toggle="tooltip">` +
-                            `       <i class="fas fa-file-invoice"></i> ${l('CreateQuotation')}` +
+                            `       <i class="fas fa-file-invoice"></i> Tạo phiếu báo giá` +
                             '   </a>' : '',
+                        row.status === 2 || row.status === 3 || row.status === 4 ?
+                            `   <a type="button" class="dropdown-item bg-success" data-order-id="${row.id}" href="/Orders/CreateDesign/${row.id}" title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-palette"></i> Tạo mẫu thiết kế` +
+                            '   </a>' : '',
+                        row.status === 3 ?
+                            `   <a type="button" class="dropdown-item bg-success" data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-tick"></i> Xác nhận mẫu` +
+                            '   </a>' : '',
+
+                        row.status === 6 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-hand-holding-usd"></i> Đặt cọc` +
+                            '   </a>' : '',
+                        row.status === 7 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-paint-roller"></i> In test` +
+                            '   </a>' : '',
+
+                        row.status === 8 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-thumbs-up"></i> In test OK` +
+                            '   </a>' : '',
+                        row.status === 9 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-cogs"></i> Thực hiện in` +
+                            '   </a>' : '',
+                        row.status === 10 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-truck-pickup"></i> Hoàn thành in và chuyển gia công` +
+                            '   </a>' : '',
+                        row.status === 11 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="fas fa-truck"></i> Hoàn thành gia công và gửi hàng` +
+                            '   </a>' : '',
+
+                        row.status === 13 ?
+                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `       <i class="far fa-check-circle"></i> Hoàn thành` +
+                            '   </a>' : '',
+
                         `    </div>`,
                         `   </div>`
                     ].join('');
@@ -197,6 +237,28 @@
         var orderName = $(this).attr('data-order-name');
 
         deleteOrders(orderId, orderName);
+    });
+
+    $(document).on('click', '.approve-design', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToApprove'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.approveDesign({
+                        id: orderId
+                    }).done(() => {
+                        abp.notify.info(l('SuccessfullyApprove'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
     });
 
     function deleteOrders(orderId, orderName) {

@@ -592,8 +592,8 @@
 		<text name="CNWarehouseDate" value="Ngày nhập kho" />
 		<text name="Orders" value="Đơn hàng" />
 		<text name="CasualCustomer" value="Khách lẻ" />
-
 		
+		<text name="Pages_CreateDesign" value="Thiết kế" />
 		<text name="Pages_CreateQuotation" value="Báo giá đơn hàng" />
 		<text name="Pages_CreateOrder" value="Tạo đơn hàng" />
 		<text name="CustomerPhone" value="Số điện thoại khách hàng" />
@@ -604,6 +604,12 @@
 		<text name="LoyalCustomer" value="Khách quen" />
 		<text name="SelectFile" value="Chọn file" />
 		<text name="SelectFileQuotation" value="Chọn file báo giá" />
-	
+		<text name="CreateDesign" value="Tạo thiết kế" />
+		<text name="CreateQuotation" value="Tạo báo giá" />
+		<text name="ViewDetail" value="Chi tiết" />
+		
+		
+		
+
 	</texts>
 </localizationDictionary>

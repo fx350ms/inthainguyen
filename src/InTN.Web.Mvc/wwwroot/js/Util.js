@@ -101,7 +101,18 @@ function PlaySound(type, callback) {
     }
 }
 
+// Function to create a delay with a callback
+function delay(milliseconds, callback) {
+    setTimeout(() => {
+        if (callback) callback();
+    }, milliseconds);
+}
 
+// Example usage:
+// delay(2000, () => {
+//     console.log('Executed after 2 seconds');
+// });
+//window.location.href = '/Orders';
 // Example usage:
 // console.log(formatCurrency(123456789)); // "123.456.789 đ"
 // console.log(formatDateToDDMMYYYY(new Date())); // "07/01/2025"
