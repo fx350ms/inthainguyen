@@ -13,11 +13,11 @@ public enum OrderStatus
     [Description("Đã xác nhận đơn")]
     OrderConfirmed = 3, // Đã xác nhận đơn  
 
-    //[Description("Đang thiết kế")]
-    //Designing = 4, // Đang thiết kế  
+    [Description("Đang thiết kế")]
+    Designing = 4, // Đang thiết kế  
 
-    //[Description("Đang chờ duyệt mẫu")]
-    //AwaitingSampleApproval = 5, // Đang chờ duyệt mẫu  
+    [Description("Đang chờ duyệt mẫu")]
+    AwaitingSampleApproval = 5, // Đang chờ duyệt mẫu  
 
     [Description("Đã duyệt mẫu")]
     DesignApproved = 6, // Đã duyệt mẫu  
@@ -58,4 +58,6 @@ public enum OrderAttachmentType
 
     [Description("Mẫu thiết kế")]
     DesignSample = 3, // Mẫu thiết kế
+
+
 }

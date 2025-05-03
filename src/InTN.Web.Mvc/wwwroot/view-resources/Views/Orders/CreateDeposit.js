@@ -11,7 +11,7 @@
         if (!_$form.valid()) {
             return;
         }
-        
+
         // Tạo FormData để gửi dữ liệu và tệp
         var formData = new FormData();
         var files = $("input[name='Attachments']")[0].files;
@@ -27,8 +27,9 @@
             formData.append(key, data[key]);
         }
 
+        debugger;
         $.ajax({
-            url: abp.appPath + 'api/services/app/Order/CreateQuotation',
+            url: abp.appPath + 'api/services/app/Order/UpdateStatusToDeposited',
             type: 'PUT',
             processData: false,
             contentType: false,
@@ -38,7 +39,7 @@
                 delay(1000, () => { window.location.href = '/Orders' });
             },
             error: function () {
-                PlaySound('warning'); abp.notify.error(l('SaveFailed'));
+                
             },
             complete: function () {
                 abp.ui.clearBusy(_$form);

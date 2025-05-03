@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InTN.Orders.Dto
 {
-    public class QuotationDto
+    public class OrderQuotationUploadDto
     {
         public int OrderId { get; set; }
         public string OrderCode { get; set; }

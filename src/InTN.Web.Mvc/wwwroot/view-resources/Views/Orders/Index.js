@@ -5,18 +5,22 @@
         _$modal = $('#OrderCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#OrdersTable');
+
     const orderStatusDescriptions = {
-        1: { text: 'Tiếp nhận yêu cầu', color: 'blue' },
-        2: { text: 'Đã báo giá', color: 'purple' },
-        3: { text: 'Đã xác nhận đơn', color: 'green' },
-        4: { text: 'Đang thiết kế', color: 'orange' },
-        5: { text: 'Đang chờ duyệt mẫu', color: 'cyan' },
-        6: { text: 'Đã duyệt mẫu', color: 'teal' },
-        7: { text: 'Đang in', color: 'yellow' },
-        8: { text: 'Đang gia công', color: 'pink' },
-        9: { text: 'Đã kiểm tra QC', color: 'lime' },
-        10: { text: 'Đang giao hàng', color: 'brown' },
-        11: { text: 'Hoàn thành nghiệm thu', color: 'gray' }
+        1: { text: 'Tiếp nhận yêu cầu', color: '#0000FF' }, // Blue
+        2: { text: 'Đã báo giá', color: '#800080' }, // Purple
+        3: { text: 'Đã xác nhận đơn', color: '#008000' }, // Green
+        4: { text: 'Đang thiết kế', color: '#FFA500' }, // Orange
+        5: { text: 'Đang chờ duyệt mẫu', color: '#00FFFF' }, // Cyan
+        6: { text: 'Đã duyệt mẫu', color: '#008080' }, // Teal
+        7: { text: 'Đã đặt cọc', color: '#FFD700' }, // Gold
+        8: { text: 'Đang in test', color: '#FF69B4' }, // Hot Pink
+        9: { text: 'Xác nhận in test (Ok)', color: '#32CD32' }, // Lime Green
+        10: { text: 'Đang in', color: '#FFFF00' }, // Yellow
+        11: { text: 'Đang gia công', color: '#FFC0CB' }, // Pink
+        12: { text: 'Đã kiểm tra QC', color: '#7FFF00' }, // Chartreuse
+        13: { text: 'Đang giao hàng', color: '#A52A2A' }, // Brown
+        14: { text: 'Hoàn thành nghiệm thu', color: '#808080' } // Gray
     };
     var _$ordersTable = _$table.DataTable({
         paging: true,
@@ -159,7 +163,7 @@
                             '   </a>' : '',
 
                         row.status === 6 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success" data-order-id="${row.id}" href="/Orders/CreateDeposit/${row.id}" data-order-code="${row.orderCode}"  title="Đặt cọc" data-toggle="tooltip">` +
                             `       <i class="fas fa-hand-holding-usd"></i> Đặt cọc` +
                             '   </a>' : '',
                         row.status === 7 ?

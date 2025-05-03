@@ -29,7 +29,7 @@
 
         $.ajax({
             url: abp.appPath + 'api/services/app/Order/ApproveDesign',
-            type: 'POST',
+            type: 'PUT',
             processData: false,
             contentType: false,
             data: formData,

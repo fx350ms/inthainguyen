@@ -42,7 +42,7 @@ namespace InTN.Orders
             return await base.CreateAsync(input);
         }
 
-
+        
         public async Task<Order> CreateNewAsync(CreateOrderDto input)
         {
             // Validate input
@@ -62,8 +62,8 @@ namespace InTN.Orders
             return await Repository.InsertAsync(order);
             //  return await base.CreateAsync(input);
         }
-
-        public async Task CreateQuotation([FromForm] QuotationDto input)
+        [HttpPut]
+        public async Task CreateQuotation([FromForm] OrderQuotationUploadDto input)
         {
             if (input.Attachments != null && input.Attachments.Any() && input.TotalAmount > 0)
             {
@@ -115,6 +115,7 @@ namespace InTN.Orders
         //    }
         //}
 
+        [HttpPut]
         public async Task ApproveDesign([FromForm] OrderDesignUploadDto input)
         {
             if (input.Attachments != null && input.Attachments.Any())
@@ -156,6 +157,8 @@ namespace InTN.Orders
             }
         }
 
+
+        [HttpPut]
         public async Task UpdateStatusToDepositedAsync([FromForm] OrderDepositUploadDto input)
         {
 
@@ -207,6 +210,8 @@ namespace InTN.Orders
         /// <param name="orderId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
+        /// 
+        [HttpPut]
         public async Task UpdateStatusToPrintedTestAsync(int id)
         {
             // Retrieve the order by ID
@@ -223,7 +228,7 @@ namespace InTN.Orders
             await Repository.UpdateAsync(order);
         }
 
-
+        [HttpPut]
         public async Task ConfirmPrintedTestAsync(int id)
         {
             // Retrieve the order by ID
@@ -256,6 +261,8 @@ namespace InTN.Orders
             await Repository.UpdateAsync(order);
         }
 
+
+        [HttpPut]
         public async Task PerformProcessingAsync(int id)
         {
             // Retrieve the order by ID
@@ -272,6 +279,7 @@ namespace InTN.Orders
             await Repository.UpdateAsync(order);
         }
 
+        [HttpPut]
         public async Task ShipOrderAsync(int id)
         {
             // Retrieve the order by ID
@@ -288,7 +296,7 @@ namespace InTN.Orders
             await Repository.UpdateAsync(order);
         }
 
-
+        [HttpPut]
         public async Task CompleteOrderAsync(int id)
         {
             // Retrieve the order by ID
