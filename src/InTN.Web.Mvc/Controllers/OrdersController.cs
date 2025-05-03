@@ -41,6 +41,27 @@ namespace InTN.Web.Controllers
         public async Task<IActionResult> CreateQuotation(int id)
         {
             var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var model = new QuotationDto()
+            {
+                OrderId = order.Id,
+                OrderCode = order.OrderCode,
+            };
+            return View(model);
+        }
+
+
+
+        public async Task<IActionResult> CreateDesign(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if(order == null)
+            {
+                return NotFound();
+            }
             var model = new QuotationDto()
             {
                 OrderId = order.Id,

@@ -15,7 +15,8 @@
         _orderService.createNew(order).done(function () {
             /*_$form[0].reset();*/
             abp.notify.info(l('SavedSuccessfully'));
-            window.location.href = '/Orders';
+            delay(1000, () => { window.location.href = '/Orders' });
+            
         }).always(function () {
         });
     });

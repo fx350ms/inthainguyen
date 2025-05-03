@@ -9,11 +9,11 @@
 @section scripts
 {
     <environment names="Development">
-        <script src="~/view-resources/Views/Orders/CreateQuotation.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Orders/CreateDesign.js" asp-append-version="true"></script>
     </environment>
 
     <environment names="Staging,Production">
-        <script src="~/view-resources/Views/Orders/CreateQuotation.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Orders/CreateDesign.min.js" asp-append-version="true"></script>
     </environment>
 
 }
@@ -34,7 +34,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h1>@L("Pages_CreateQuotation"): <strong class="text-primary">@Model.OrderCode</strong></h1>
+                <h1>@L("Pages_CreateDesign"): <strong class="text-primary">@Model.OrderCode</strong></h1>
             </div>
             <div class="col-sm-6">
             </div>
@@ -49,23 +49,13 @@
                     <div class="card-body" id="modal-create-order">
                         <form name="form-create-order" role="form" class="form-horizontal">
                             <div class="modal-body">
-
                                 <div class="tab-content mt-4 ">
-
                                     <div role="tabpanel" class="tab-pane container active form-content">
-
                                         <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
                                         <input type="hidden" name="OrderId" value="@Model.OrderId" />
                                         <!-- Full Name -->
                                         <div class="form-group row required">
-                                            <label class="col-md-2 col-form-label">@L("TotalAmount")</label>
-                                            <div class="col-md-4">
-                                                <input type="number" class="form-control" name="TotalAmount" required>
-                                            </div>
-                                        </div>
-                                        <!-- Full Name -->
-                                        <div class="form-group row required">
-                                            <label class="col-md-2 col-form-label">@L("SelectFileQuotation")</label>
+                                            <label class="col-md-2 col-form-label">@L("SelectFileDesign")</label>
                                             <div class="col-md-6">
                                                 <input type="file" class="form-control" name="Attachments" required>
                                             </div>
@@ -76,7 +66,7 @@
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
-                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("CompleteDesign")</button>
                             </div>
                         </form>
                     </div>
