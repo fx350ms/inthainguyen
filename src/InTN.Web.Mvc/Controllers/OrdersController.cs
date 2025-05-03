@@ -45,7 +45,7 @@ namespace InTN.Web.Controllers
             {
                 return NotFound();
             }
-            var model = new QuotationDto()
+            var model = new OrderQuotationUploadDto()
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
@@ -62,7 +62,23 @@ namespace InTN.Web.Controllers
             {
                 return NotFound();
             }
-            var model = new QuotationDto()
+            var model = new OrderDesignUploadDto()
+            {
+                OrderId = order.Id,
+                OrderCode = order.OrderCode,
+            };
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> CreateDeposit(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var model = new OrderDepositUploadDto()
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
