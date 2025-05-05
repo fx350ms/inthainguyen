@@ -9,6 +9,7 @@ using InTN.IdentityCodes.Dto;
 using InTN.OrderAttachments.Dto;
 using InTN.OrderLogs.Dto;
 using InTN.Orders.Dto;
+using InTN.Transactions.Dto;
 
 namespace InTN;
 
@@ -30,7 +31,9 @@ public class InTNApplicationModule : AbpModule
             cfg.CreateMap<CreateOrderDto, OrderDto>().ReverseMap();
             cfg.CreateMap<OrderAttachment, OrderAttachmentDto>().ReverseMap();
             cfg.CreateMap<OrderLog, OrderLogDto>().ReverseMap();
-
+            cfg.CreateMap<Transaction, TransactionDto>().ReverseMap();
+            cfg.CreateMap<Transaction, CreateTransactionDto>().ReverseMap();
+            cfg.CreateMap<TransactionDto, CreateTransactionDto>().ReverseMap();
         });
     }
 

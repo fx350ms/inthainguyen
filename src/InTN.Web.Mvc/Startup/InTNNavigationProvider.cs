@@ -49,20 +49,29 @@ public class InTNNavigationProvider : NavigationProvider
             )
             .AddItem(
                 new MenuItemDefinition(
-                    PageNames.Roles,
+                    PageNames.Orders,
                     L("Orders"),
                     url: "Orders",
                     icon: "fas fa-tasks",
-                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Roles)
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Orders)
                 )
             )
               .AddItem(
                 new MenuItemDefinition(
-                    PageNames.Roles,
+                    PageNames.Customers,
                     L("Customers"),
                     url: "Customers",
-                    icon: "fas fa-users",
-                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Roles)
+                    icon: "fas fa-user-friends",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Customers)
+                )
+            )
+              .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Transactions,
+                    L("Transactions"),
+                    url: "Transaction",
+                    icon: "fas fa-money-check-alt",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Transactions)
                 )
             )
             ;

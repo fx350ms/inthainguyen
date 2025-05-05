@@ -58,6 +58,39 @@ public enum OrderAttachmentType
 
     [Description("Mẫu thiết kế")]
     DesignSample = 3, // Mẫu thiết kế
+}
 
+public enum OrderPaymentStatus
+{
+    [Description("Chưa thanh toán")]
+    Unpaid = 0, // Chưa thanh toán  
 
+    [Description("Đặt cọc")]
+    Deposit = 1, // Đặt cọc
+
+    [Description("Đã thanh toán")]
+    Paid = 2, // Đã thanh toán  
+
+    [Description("Công nợ")]
+    Debt = 3 // Công nợ
+}
+
+public enum TransactionType
+{
+    [Description("Đặt cọc")]
+    Deposit = 1, // Đặt cọc  
+    [Description("Thanh toán đơn hàng")]
+    OrderPayment = 2, // Thanh toán đơn hàng  
+    [Description("Thanh toán công nợ")]
+    DebtPayment = 3 // Thanh toán công nợ  
+}
+
+public enum DebtType
+{
+    //Tăng công nợ
+    [Description("Tăng công nợ")]
+    Increase = 1, // Tăng công nợ
+    //Giảm công nợ
+    [Description("Giảm công nợ")]
+    Decrease = 2 // Giảm công nợ
 }

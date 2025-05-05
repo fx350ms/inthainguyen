@@ -88,5 +88,24 @@ namespace InTN.Web.Controllers
             };
             return View(model);
         }
+
+
+        public async Task<IActionResult> CreateTransaction(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var model = new OrderDepositUploadDto()
+            {
+                OrderId = order.Id,
+                OrderCode = order.OrderCode,
+                TotalAmount = order.TotalAmount ?? 0
+            };
+            return View(model);
+        }
+
+        
     }
 }

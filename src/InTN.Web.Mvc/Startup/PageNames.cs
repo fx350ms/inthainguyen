@@ -10,5 +10,5 @@ public class PageNames
 
     public const string Orders = "Orders";
     public const string Customers = "Customers";
-
+    public const string Transactions = "Transactions";
 }

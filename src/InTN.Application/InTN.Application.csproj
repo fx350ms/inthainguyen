@@ -14,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\InTN.Core\InTN.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Transactions\" />
-  </ItemGroup>
 </Project>
