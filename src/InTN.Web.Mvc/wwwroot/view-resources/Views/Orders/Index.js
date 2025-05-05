@@ -60,10 +60,11 @@
             },
             {
                 targets: 2,
-
                 className: 'text-center',
                 render: function (data, type, row, meta) {
-                    return row.orderCode;
+                    return `   <a type="button" data-order-id="${row.id}" href="/Orders/Detail/${row.id}" title="${l('Detail')}" data-toggle="tooltip">` +
+                        row.orderCode +
+                        '   </a>';
                 }
             },
             {
@@ -73,15 +74,14 @@
                 className: 'text-center',
                 render: function (data, type, row, meta) {
                     if (row.customerId == null) {
-                        return '<strong>' + row.customerName + '</strong> <span class="badge badge-info">Khách vãng lai</span>';
+                        return '<strong>' + row.customerName + '</strong> ';
                     } else {
-                        return '<strong>' + row.customerName + '</strong> <span class="badge badge-success">Khách quen</span>';
+                        return '<strong>' + row.customerName + '</strong>  <i title="Khách quen" class="far fa-check-circle text-success"></i>';
                     }
                 }
             },
             {
                 targets: 4,
-
                 data: 'customerPhone',
                 className: 'text-center',
 
@@ -104,6 +104,23 @@
             },
             {
                 targets: 7,
+                data: 'totalDeposit',
+                className: 'text-right',
+                render: function (data, type, row, meta) {
+                    return formatThousand(data);
+                }
+            },
+            {
+                targets: 8,
+                data: 'totalAmount',
+                className: 'text-right',
+                render: function (data, type, row, meta) {
+                    return formatThousand(data);
+                }
+
+            },
+            {
+                targets: 9,
                 width: 120,
                 data: 'status',
                 className: 'text-center',
@@ -119,7 +136,7 @@
             },
 
             {
-                targets: 8,
+                targets: 10,
                 data: null,
                 sortable: false,
                 width: 20,
@@ -268,7 +285,7 @@
     /*In test*/
     $(document).on('click', '.print-test', function () {
 
-      
+
         var orderId = $(this).attr("data-order-id");
         var orderCode = $(this).attr('data-order-code');
 
@@ -363,7 +380,6 @@
             null,
             (isConfirmed) => {
                 if (isConfirmed) {
-                    debugger;
                     _orderService.shipOrder(orderId).done(() => {
                         abp.notify.info(l('Order deliveried'));
                         _$ordersTable.ajax.reload();
@@ -393,7 +409,7 @@
             }
         );
     });
-    
+
 
     function deleteOrders(orderId, orderName) {
         abp.message.confirm(

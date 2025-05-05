@@ -46,4 +46,5 @@
         });
     });
 
+    $('#TotalAmount').maskNumber({ integer: true, thousands: '.' });
 })(jQuery);

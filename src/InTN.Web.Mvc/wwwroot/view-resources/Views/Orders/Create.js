@@ -27,7 +27,10 @@
         if (isCasualCustomer) {
             $('.select-customer-group').hide();
             $('input[name="CustomerName"], input[name="CustomerPhone"], input[name="CustomerEmail"], textarea[name="CustomerAddress"]').val('');
+            $('input[name="TotalDebt"], input[name="CreditLimit"]').val('0'); // Clear TotalDebt and CreditLimit
+            $('.debt-group').hide();
         } else {
+            $('.debt-group').show();
             $('.select-customer-group').show();
         }
     }).trigger('change'); // Trigger change on page load to set initial state
@@ -45,6 +48,8 @@
                 $('input[name="CustomerPhone"]').val(customerData.phoneNumber);
                 $('input[name="CustomerEmail"]').val(customerData.email);
                 $('textarea[name="CustomerAddress"]').val(customerData.address);
+                $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
+                $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
             });
 
         }

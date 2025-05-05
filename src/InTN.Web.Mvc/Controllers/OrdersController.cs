@@ -33,6 +33,7 @@ namespace InTN.Web.Controllers
             var model = new CreateOrderDto
             {
                 OrderCode = identityCode.Code,
+
             };
             return View(model);
         }
@@ -49,6 +50,7 @@ namespace InTN.Web.Controllers
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
+                 
             };
             return View(model);
         }
@@ -58,7 +60,7 @@ namespace InTN.Web.Controllers
         public async Task<IActionResult> CreateDesign(int id)
         {
             var order = await _orderAppService.GetAsync(new EntityDto(id));
-            if(order == null)
+            if (order == null)
             {
                 return NotFound();
             }
@@ -82,6 +84,7 @@ namespace InTN.Web.Controllers
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
+                TotalAmount = order.TotalAmount ?? 0
             };
             return View(model);
         }

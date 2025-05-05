@@ -20,14 +20,17 @@ namespace InTN.Orders
     public class OrderAppService : AsyncCrudAppService<Order, OrderDto, int, PagedResultRequestDto, OrderDto, OrderDto>, IOrderAppService
     {
         private readonly IRepository<OrderLog> _orderLogRepository;
-        public readonly IRepository<OrderAttachment> _orderAttachmentRepository;
+        private readonly IRepository<OrderAttachment> _orderAttachmentRepository;
+        private readonly IRepository<Transaction> _transactionRepository;
         public OrderAppService(IRepository<Order> repository,
             IRepository<OrderLog> orderLogRepository,
+            IRepository<Transaction> transactionRepository,
             IRepository<OrderAttachment> orderAttachmentRepository)
             : base(repository)
         {
             _orderAttachmentRepository = orderAttachmentRepository;
             _orderLogRepository = orderLogRepository;
+            _transactionRepository = transactionRepository;
         }
  
 
@@ -198,6 +201,13 @@ namespace InTN.Orders
                     throw new ArgumentException($"Order with ID {input.OrderId} not found", nameof(input.OrderId));
                 }
 
+                var orderLog = new OrderLog()
+                {
+                    OrderId = order.Id,
+                    Action = "UpdateStatusToDeposited",
+                    OldValue = order.ToJsonString(),
+                };
+                order.TotalDeposit = input.DepositAmount;
                 order.Status = (int)OrderStatus.Deposited; // Set default status to 0 (Pending)
                 Repository.Update(order);
 
@@ -227,6 +237,21 @@ namespace InTN.Orders
                         // Lưu hình ảnh vào database
                     }
                 }
+
+                orderLog.NewValue = order.ToJsonString();
+                await _orderLogRepository.InsertAsync(orderLog);
+
+                // Ghi lại giao dịch
+                var transaction = new Transaction
+                {
+                    CustomerId = order.CustomerId,
+                    OrderId = order.Id,
+                    Amount = input.DepositAmount,
+                    Description = "Đặt cọc đơn hàng",
+                };
+
+                await _transactionRepository.InsertAsync(transaction);
+
             }
         }
 
