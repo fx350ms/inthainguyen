@@ -10,17 +10,17 @@
         1: { text: 'Tiếp nhận yêu cầu', color: '#0000FF' }, // Blue
         2: { text: 'Đã báo giá', color: '#800080' }, // Purple
         3: { text: 'Đã xác nhận đơn', color: '#008000' }, // Green
-        4: { text: 'Đang thiết kế', color: '#FFA500' }, // Orange
+        4: { text: 'Đang thiết kế', color: '#117700' }, // Orange
         5: { text: 'Đang chờ duyệt mẫu', color: '#00FFFF' }, // Cyan
         6: { text: 'Đã duyệt mẫu', color: '#008080' }, // Teal
-        7: { text: 'Đã đặt cọc', color: '#FFD700' }, // Gold
+        7: { text: 'Đã đặt cọc', color: '#117700' }, // Gold
         8: { text: 'Đang in test', color: '#FF69B4' }, // Hot Pink
         9: { text: 'Xác nhận in test (Ok)', color: '#32CD32' }, // Lime Green
-        10: { text: 'Đang in', color: '#FFFF00' }, // Yellow
-        11: { text: 'Đang gia công', color: '#FFC0CB' }, // Pink
+        10: { text: 'Đang in', color: '#ff3a3a' }, // Yellow
+        11: { text: 'Đang gia công', color: '#009c9f' }, // Pink
         12: { text: 'Đã kiểm tra QC', color: '#7FFF00' }, // Chartreuse
         13: { text: 'Đang giao hàng', color: '#A52A2A' }, // Brown
-        14: { text: 'Hoàn thành nghiệm thu', color: '#808080' } // Gray
+        14: { text: 'Hoàn thành', color: '#28a745' } // Gray
     };
     var _$ordersTable = _$table.DataTable({
         paging: true,
@@ -77,8 +77,6 @@
                     } else {
                         return '<strong>' + row.customerName + '</strong> <span class="badge badge-success">Khách quen</span>';
                     }
-
-
                 }
             },
             {
@@ -167,29 +165,29 @@
                             `       <i class="fas fa-hand-holding-usd"></i> Đặt cọc` +
                             '   </a>' : '',
                         row.status === 7 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success print-test"  data-order-id="${row.id}" data-order-code="${row.orderCode}"   title="In test" data-toggle="tooltip">` +
                             `       <i class="fas fa-paint-roller"></i> In test` +
                             '   </a>' : '',
 
                         row.status === 8 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success confirm-print-test-ok"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="In test OK" data-toggle="tooltip">` +
                             `       <i class="fas fa-thumbs-up"></i> In test OK` +
                             '   </a>' : '',
                         row.status === 9 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success start-print"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Thực hiện in" data-toggle="tooltip">` +
                             `       <i class="fas fa-cogs"></i> Thực hiện in` +
                             '   </a>' : '',
                         row.status === 10 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success start-process"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Hoàn thành in và gia công" data-toggle="tooltip">` +
                             `       <i class="fas fa-truck-pickup"></i> Hoàn thành in và chuyển gia công` +
                             '   </a>' : '',
                         row.status === 11 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
-                            `       <i class="fas fa-truck"></i> Hoàn thành gia công và gửi hàng` +
+                            `   <a type="button" class="dropdown-item bg-success delivery-order"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Hoàn thành gia công và gửi hàng" data-toggle="tooltip">` +
+                            `       <i class="fas fa-truck"></i> Hoàn thành gia công & ship` +
                             '   </a>' : '',
 
                         row.status === 13 ?
-                            `   <a type="button" class="dropdown-item bg-success"  title="${l('CreateDesign')}" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success order-completed"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Hoàn thành đơn" data-toggle="tooltip">` +
                             `       <i class="far fa-check-circle"></i> Hoàn thành` +
                             '   </a>' : '',
 
@@ -243,6 +241,8 @@
         deleteOrders(orderId, orderName);
     });
 
+
+    /*Xác nhận design*/
     $(document).on('click', '.approve-design', function () {
         var orderId = $(this).attr("data-order-id");
         var orderCode = $(this).attr('data-order-code');
@@ -264,6 +264,136 @@
             }
         );
     });
+
+    /*In test*/
+    $(document).on('click', '.print-test', function () {
+
+      
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToPrintTest'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.updateStatusToPrintedTest(orderId).done(() => {
+                        abp.notify.info(l('StartPrintTest'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+
+    /*xác nhận in test OK*/
+    $(document).on('click', '.confirm-print-test-ok', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToConfirmForPrintTest'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.confirmPrintedTest(orderId).done(() => {
+                        abp.notify.info(l('PrintTestOk'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+
+    /*in thật*/
+    $(document).on('click', '.start-print', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToPrint'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.performPrinting(orderId).done(() => {
+                        abp.notify.info(l('StartPrint'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+
+    /*gia công*/
+    $(document).on('click', '.start-process', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToProcess'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.performProcessing(orderId).done(() => {
+                        abp.notify.info(l('StartPrint'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+
+    /*Hoàn thành gia công và gửi đơn*/
+    $(document).on('click', '.delivery-order', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToDelivery'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    debugger;
+                    _orderService.shipOrder(orderId).done(() => {
+                        abp.notify.info(l('Order deliveried'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+
+    /*Hoàn thành gia công và gửi đơn*/
+    $(document).on('click', '.order-completed', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToDelivery'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.completeOrder(orderId).done(() => {
+                        abp.notify.info(l('StartPrint'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+    
 
     function deleteOrders(orderId, orderName) {
         abp.message.confirm(
