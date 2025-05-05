@@ -14,6 +14,9 @@ using Abp.Authorization;
 using InTN.Authorization;
 using NuGet.Protocol;
 using Abp.Json;
+using InTN.IdentityCodes;
+using InTN.Commons;
+using System.Collections.Generic;
 
 namespace InTN.Orders
 {
@@ -22,17 +25,29 @@ namespace InTN.Orders
         private readonly IRepository<OrderLog> _orderLogRepository;
         private readonly IRepository<OrderAttachment> _orderAttachmentRepository;
         private readonly IRepository<Transaction> _transactionRepository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<CustomerBalanceHistory> _customerBalanceHistoryRepository;
+
+        private readonly IIdentityCodeAppService _identityCodeAppService;
+
         public OrderAppService(IRepository<Order> repository,
             IRepository<OrderLog> orderLogRepository,
             IRepository<Transaction> transactionRepository,
-            IRepository<OrderAttachment> orderAttachmentRepository)
+            IRepository<OrderAttachment> orderAttachmentRepository,
+            IRepository<Customer> customerRepository,
+            IRepository<CustomerBalanceHistory> customerBalanceHistoryRepository,
+            IIdentityCodeAppService identityCodeRepository
+            )
             : base(repository)
         {
             _orderAttachmentRepository = orderAttachmentRepository;
             _orderLogRepository = orderLogRepository;
             _transactionRepository = transactionRepository;
+            _customerRepository = customerRepository;
+            _customerBalanceHistoryRepository = customerBalanceHistoryRepository;
+            _identityCodeAppService = identityCodeRepository;
         }
- 
+
 
         /// <summary>
         /// /
@@ -121,7 +136,7 @@ namespace InTN.Orders
                     }
                     await _orderLogRepository.InsertAsync(orderLog);
                 }
-              
+
             }
         }
 
@@ -148,7 +163,7 @@ namespace InTN.Orders
                     order.Status = (int)OrderStatus.DesignApproved; // Set default status to 0 (Pending)
                     Repository.Update(order);
                     orderLog.NewValue = order.ToJsonString();
-                   
+
                     foreach (var file in input.Attachments)
                     {
 
@@ -179,7 +194,7 @@ namespace InTN.Orders
                     await _orderLogRepository.InsertAsync(orderLog);
                 }
 
-              
+
             }
         }
 
@@ -417,5 +432,105 @@ namespace InTN.Orders
             await _orderLogRepository.InsertAsync(orderLog);
         }
 
+
+        [HttpPut]
+        public async Task OrderDebtAsync(int id)
+        {
+            // Retrieve the order by ID
+            var order = await Repository.GetAsync(id);
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with ID {id} not found", nameof(id));
+            }
+
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "CompleteOrder",
+                OldValue = order.ToJsonString(),
+            };
+
+            // Update the status to "Completed"
+            order.PaymentStatus = (int)OrderPaymentStatus.Debt;
+
+            // Save the changes
+            await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
+
+
+            if (order.CustomerId.HasValue)
+            {
+                var customer = await _customerRepository.GetAsync(order.CustomerId.Value);
+                if (customer != null)
+                {
+
+                    var identityCode = await _identityCodeAppService.GenerateNewSequentialNumberAsync("GD");
+
+                    var transaction = new Transaction
+                    {
+                        TransactionCode = identityCode.Code,
+                        CustomerId = order.CustomerId,
+                        CustomerName = order.CustomerName,
+                        OrderId = order.Id,
+                        Amount = (order.TotalAmount ?? 0) - (order.TotalDeposit ?? 0),
+                        Description = "Công nợ đơn hàng",
+                    };
+                    var transactionId = await _transactionRepository.InsertAndGetIdAsync(transaction);
+                    // Ghi lại lịch sử công nợ
+                    var customerBalanceHistory = new CustomerBalanceHistory
+                    {
+                        CustomerId = order.CustomerId.Value,
+                        TransactionId = transactionId,
+                        Type = 1, // Tăng công nợ
+                        Amount = transaction.Amount,
+                        BalanceAfterTransaction = customer.TotalDebt + transaction.Amount, // Cập nhật số dư sau giao dịch
+                    };
+                    await _customerBalanceHistoryRepository.InsertAsync(customerBalanceHistory);
+
+                    customer.TotalDebt += transaction.Amount;
+                    await _customerRepository.UpdateAsync(customer);
+                }
+            }
+
+        }
+
+
+        
+
+
+        public async Task<List<OptionItemDto>> GetOrderListForSelect(string q)
+        {
+            try
+            {
+                var query = await Repository.GetAllAsync();
+                query = query.Where(u => 
+                u.Status == (int) OrderStatus.Completed && 
+                u.PaymentStatus != (int)OrderPaymentStatus.Debt  &&  
+                u.PaymentStatus != (int)OrderPaymentStatus.Paid
+                )
+                
+                ;
+                if (!string.IsNullOrEmpty(q))
+                {
+                    q = q.ToUpper();
+                    query = query.Where(u => u.OrderCode.ToUpper().Contains(q)  );
+                }
+
+                return query.Select(u => new OptionItemDto
+                {
+                    id = u.Id.ToString(),
+                    text = u.OrderCode
+                }).ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return new List<OptionItemDto>();
+        }
     }
 }

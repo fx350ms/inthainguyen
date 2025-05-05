@@ -1,0 +1,43 @@
+﻿@using InTN.Authorization
+
+ 
+<div class="abp-advanced-search">
+    <!-- Nút mở rộng/thu gọn -->
+    <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#OrderFilterCollapse">
+        <i class="fas fa-filter"></i> Bộ lọc nâng cao
+    </button>
+
+    <a href="@Url.Action("Create", "Transaction")" class="btn bg-blue float-sm-right" style="margin-right:10px">
+        <i class="fa fa-plus-square"></i>
+        @L("Create")
+    </a>
+
+    <div class="collapse" id="OrderFilterCollapse">
+        <form id="TransactionSearchForm" class="form-horizontal">
+            <div class="form-row">
+                <div class="col-md-3">
+                    <label for="Status">Khách hàng</label>
+                    <select class="select2 select2-hidden-accessible filter-customer-id" name="CustomerId" style="width: 100%;">
+                    </select>
+                </div>
+                
+
+                <!-- Trạng thái -->
+                <div class="col-md-6">
+                    <label for="TransactionDate">Từ khóa</label>
+                    <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("Search")" />
+                </div>
+            </div>
+
+            <!-- Căn phải nút tìm kiếm -->
+            <div class="form-row mt-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2 btn-search">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

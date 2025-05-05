@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace InTN.Transactions
 {
-    public interface ITransactionAppService : IApplicationService
+    public interface ITransactionAppService : IAsyncCrudAppService<TransactionDto, int, PagedResultRequestDto, TransactionDto, TransactionDto>
     {
-        Task CreateTransactionAsync(TransactionDto input);
+        //Task CreateTransactionAsync(TransactionDto input);
 
-        Task<PagedResultDto<TransactionDto>> GetAllAsync(PagedResultRequestDto input);
+        //Task<PagedResultDto<TransactionDto>> GetAllAsync(PagedResultRequestDto input);
 
     }
 }

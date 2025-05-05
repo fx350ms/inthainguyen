@@ -12,7 +12,7 @@ public class InTNAuthorizationProvider : AuthorizationProvider
         context.CreatePermission(PermissionNames.Pages_Users_Activation, L("UsersActivation"));
         context.CreatePermission(PermissionNames.Pages_Roles, L("Roles"));
         context.CreatePermission(PermissionNames.Pages_Tenants, L("Tenants"), multiTenancySides: MultiTenancySides.Host);
-
+       
 
         context.CreatePermission(PermissionNames.Pages_Orders, L("Orders"));
         context.CreatePermission(PermissionNames.Pages_Customers, L("Customers"));
@@ -27,6 +27,8 @@ public class InTNAuthorizationProvider : AuthorizationProvider
         context.CreatePermission(PermissionNames.Fn_Orders_ShipOrder, L("ShipOrder"));
         context.CreatePermission(PermissionNames.Fn_Orders_CompleteOrder, L("CompleteOrder"));
 
+        context.CreatePermission(PermissionNames.Pages_Transactions, L("Transactions"));
+        context.CreatePermission(PermissionNames.Fn_Transactions_Create, L("CreateTransaction"));
     }
 
     private static ILocalizableString L(string name)

@@ -1,22 +1,22 @@
 ﻿@using InTN.Web.Startup
 @using InTN.Authorization
-@using InTN.Orders.Dto
+@using InTN.Transactions.Dto
 @using InTN.Web.Models.Common.Modals
 @using InTN
- 
+
 
 @{
-    ViewBag.Title = L("Pages_Orders");
-    ViewBag.CurrentPageName = PageNames.Orders;
+    ViewBag.Title = L("Pages_Transactions");
+    ViewBag.CurrentPageName = PageNames.Transactions;
 }
 @section scripts
 {
     <environment names="Development">
-        <script src="~/view-resources/Views/Orders/Index.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Transactions/Index.js" asp-append-version="true"></script>
     </environment>
 
     <environment names="Staging,Production">
-        <script src="~/view-resources/Views/Orders/Index.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Transactions/Index.min.js" asp-append-version="true"></script>
     </environment>
 
 }
@@ -36,7 +36,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h1>@L("Pages_Orders")</h1>
+                <h1>@L("Pages_Transactions")</h1>
             </div>
             <div class="col-sm-6">
             </div>
@@ -51,30 +51,27 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            
+
                             <div class="col-md-12">
-                                @await Html.PartialAsync("~/Views/Orders/Index.AdvancedSearch.cshtml")
+                                @await Html.PartialAsync("~/Views/Transaction/Index.AdvancedSearch.cshtml")
                             </div>
                         </div>
-                    
+
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="OrdersTable" class="table table-striped table-bordered">
+                            <table id="TransactionsTable" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th>@L("STT")</th>
-                                        <th>@L("OrderCode")</th>
+                                        <th>@L("TransactionCode")</th>
                                         <th>@L("CustomerName")</th>
-                                        <th>@L("PhoneNumber")</th>
-                                        <th>@L("OrderDate")</th>
-                                        <th>@L("Note")</th>
-                                        <th>@L("Deposited")</th>
-                                        <th>@L("TotalAmount")</th>
-                                        <th>@L("Status")</th>
-                                        <th>@L("PaymentStatus")</th>
-                                        <th ></th>
+                                        <th>@L("Amount")</th>
+                                        <th>@L("Description")</th>
+                                        <th>@L("CreationTime")</th>
+                                       
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -86,4 +83,3 @@
         </div>
     </div>
 </section>
- 

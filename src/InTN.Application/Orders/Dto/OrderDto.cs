@@ -18,5 +18,6 @@ namespace InTN.Orders.Dto
         public string FileUrl { get; set; } = string.Empty; // Đường dẫn đến file đính kèm
         public decimal? TotalDeposit { get; set; } // Tổng số tiền đã đặt cọc
         public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
+        public int PaymentStatus { get; set; } // Trạng thái thanh toán
     }
 }

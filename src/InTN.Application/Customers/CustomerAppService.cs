@@ -49,7 +49,7 @@ namespace InTN.Customers
                 return query.Select(u => new OptionItemDto
                 {
                     id = u.Id.ToString(),
-                    text = u.Name + " - " + u.PhoneNumber
+                    text = u.Name 
                 }).ToList();
 
 

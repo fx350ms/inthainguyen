@@ -593,6 +593,7 @@
 		<text name="Orders" value="Đơn hàng" />
 		<text name="CasualCustomer" value="Khách lẻ" />
 
+		<text name="Pages_CreateTransaction" value="Tạo giao dịch" />
 		<text name="Pages_CreateDeposit" value="Đặt cọc" />
 		<text name="Pages_CreateDesign" value="Thiết kế" />
 		<text name="Pages_CreateQuotation" value="Báo giá đơn hàng" />
@@ -617,5 +618,9 @@
 		<text name="SelectFileDesign" value="Chọn tệp thiết kế" />
 		<text name="CompleteDesign" value="Hoàn tất thiết kế" />
 		<text name="DepositAmount" value="Số tiền đặt cọc" />
+
+		<text name="PaymentStatus" value="Trạng thái thanh toán" />
+		<text name="FileUpload" value="Tệp tải lên" />
+		<text name="SelectOrder" value="Chọn đơn hàng" />
 	</texts>
 </localizationDictionary>

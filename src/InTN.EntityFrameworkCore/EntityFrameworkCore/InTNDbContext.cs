@@ -22,7 +22,8 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<OrderLog> OrderLogs { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }
-    
+    public DbSet<CustomerBalanceHistory> CustomerBalanceHistories { get; set; }
+
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)
     {

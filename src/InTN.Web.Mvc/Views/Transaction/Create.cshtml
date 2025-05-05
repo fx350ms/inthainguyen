@@ -1,0 +1,155 @@
+﻿@using InTN.Transactions.Dto
+@using InTN.Web.Models.Common.Modals
+@using InTN
+@model TransactionDto
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Transactions/Create.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Transactions/Create.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Pages_CreateTransaction"): <strong class="text-primary">@Model.TransactionCode</strong></h1>
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body" id="modal-create-transaction">
+                        <form name="form-create-transaction" role="form" class="form-horizontal">
+                            <div class="modal-body">
+
+                                <div class="tab-content mt-4">
+                                    <div role="tabpanel" class="tab-pane container active form-content">
+
+                                        <!-- Transaction Code -->
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label">@L("TransactionCode")</label>
+                                            <div class="col-md-10">
+                                                <input type="text" class="form-control" name="TransactionCode" value="@Model.TransactionCode" readonly>
+                                            </div>
+                                        </div>
+
+                                        <!-- Customer -->
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label">@L("TransactionType")</label>
+                                            <div class="col-md-10">
+                                                <select class="form-control select-trans-type" name="TransactionType" style="width: 100%;">
+                                                   @*  <option value="@((int)TransactionType.Deposit)">@(TransactionType.Deposit.GetDescription())</option> *@
+                                                    <option value="@((int)TransactionType.DebtPayment)">@(TransactionType.DebtPayment.GetDescription())</option>
+                                                    <option value="@((int)TransactionType.OrderPayment)">@(TransactionType.OrderPayment.GetDescription())</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Customer -->
+                                        <div class="form-group row customer-group">
+                                            <label class="col-md-2 col-form-label">@L("Customer")</label>
+                                            <div class="col-md-10">
+                                                <select class="form-control select-customer-id" name="CustomerId" style="width: 100%;">
+                                                    <option value="">@L("SelectCustomer")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Total Debt -->
+                                        <div class="form-group row debt-group">
+                                            <label class="col-md-2 col-form-label">@L("TotalDebt")</label>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control mask-num" name="TotalDebt" readonly>
+                                            </div>
+                                            <label class="col-md-2 col-form-label">@L("CreditLimit")</label>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control mask-num" name="CreditLimit" readonly>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Order -->
+                                        <div class="form-group row order-group">
+                                            <label class="col-md-2 col-form-label">@L("SelectOrder")</label>
+                                            <div class="col-md-10">
+                                                <select class="form-control select-order-id" name="OrderId" style="width: 100%;">
+                                                    <option value="">@L("SelectOrder")</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Total Debt -->
+                                        <div class="form-group row order-debt-group">
+                                            <label class="col-md-2 col-form-label">@L("TotalDeposit")</label>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control mask-num" name="order_TotalDeposit" readonly>
+                                            </div>
+                                            <label class="col-md-2 col-form-label">@L("TotalAmount")</label>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control mask-num" name="order_TotalAmount" readonly>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Amount -->
+                                        <div class="form-group row required">
+                                            <label class="col-md-2 col-form-label">@L("Amount")</label>
+                                            <div class="col-md-10">
+                                                <input class="form-control mask-num" id="trans_TotalAmount" name="Amount" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Description -->
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label">@L("Description")</label>
+                                            <div class="col-md-10">
+                                                <textarea class="form-control" name="Description" rows="3"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <!-- File Upload -->
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-form-label">@L("FileUpload")</label>
+                                            <div class="col-md-10">
+                                                <input type="file" class="form-control" name="FileContent">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
+                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -4,7 +4,7 @@ namespace InTN;
 
 public static class InTNApplicationUtil
 {
-    public static string GetEnumDescription(Enum value)
+    public static string GetDescription(this Enum value)
     {
         var field = value.GetType().GetField(value.ToString());
         if (field != null)

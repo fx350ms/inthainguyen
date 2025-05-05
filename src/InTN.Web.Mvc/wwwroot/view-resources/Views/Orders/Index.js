@@ -22,6 +22,14 @@
         13: { text: 'Đang giao hàng', color: '#A52A2A' }, // Brown
         14: { text: 'Hoàn thành', color: '#28a745' } // Gray
     };
+
+    const orderPaymentStatusDescriptions = {
+        0: { text: 'Chưa thanh toán', color: '#FF0000' }, // Red
+        1: { text: 'Đã đặt cọc', color: '#0000FF' }, // Green
+        2: { text: 'Đã thanh toán', color: '#008000' }, // Blue
+        3: { text: 'Đã chuyển công nợ', color: '#FFA500' } // Orange
+    };
+
     var _$ordersTable = _$table.DataTable({
         paging: true,
         serverSide: true,
@@ -134,9 +142,23 @@
 
                 }
             },
-
             {
                 targets: 10,
+                width: 120,
+                data: 'paymentStatus',
+                className: 'text-center',
+                render: (data, type, row, meta) => {
+                   
+                    // Lấy mô tả và màu sắc của orderStatus từ đối tượng ánh xạ
+                    const status = orderPaymentStatusDescriptions[row.paymentStatus];
+
+                    // Trả về mô tả với màu sắc được áp dụng
+                    return `<p style="color: ${status ? status.color : 'black'};">${status ? status.text : 'Chưa xác định'}</p>`;
+
+                }
+            },
+            {
+                targets: 11,
                 data: null,
                 sortable: false,
                 width: 20,
@@ -208,6 +230,15 @@
                             `       <i class="far fa-check-circle"></i> Hoàn thành` +
                             '   </a>' : '',
 
+                        row.status === 14 && (row.paymentStatus === 0 || row.paymentStatus === 1)  ?
+                            `   <a type="button" class="dropdown-item bg-success " data-order-id="${row.id}" href="/Orders/CreateTransaction/${row.id}" data-order-code="${row.orderCode}"  title="Thanh toán" data-toggle="tooltip">` +
+                            `       <i class="far fa-check-circle"></i> Thanh toán` +
+                            '   </a>' +
+                                `   <a type="button" class="dropdown-item bg-info order-debt"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Chuyển công nợ" data-toggle="tooltip">` +
+                            `       <i class="far fa-credit-card"></i> Chuyển công nợ` +
+                            '   </a>'
+
+                            : '',
                         `    </div>`,
                         `   </div>`
                     ].join('');
@@ -410,6 +441,28 @@
         );
     });
 
+
+    /*Hoàn thành gia công và gửi đơn*/
+    $(document).on('click', '.order-debt', function () {
+        var orderId = $(this).attr("data-order-id");
+        var orderCode = $(this).attr('data-order-code');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('AreYouSureWantToChangeToDebt'),
+                orderCode),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _orderService.orderDebt(orderId).done(() => {
+                        abp.notify.info(l('StartPrint'));
+                        _$ordersTable.ajax.reload();
+                    });
+                }
+            }
+        );
+    });
+   
 
     function deleteOrders(orderId, orderName) {
         abp.message.confirm(
