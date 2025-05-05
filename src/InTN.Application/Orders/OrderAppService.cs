@@ -10,39 +10,36 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.IO;
 using System.Net.Mail;
+using Abp.Authorization;
+using InTN.Authorization;
+using NuGet.Protocol;
+using Abp.Json;
 
 namespace InTN.Orders
 {
     public class OrderAppService : AsyncCrudAppService<Order, OrderDto, int, PagedResultRequestDto, OrderDto, OrderDto>, IOrderAppService
     {
-
+        private readonly IRepository<OrderLog> _orderLogRepository;
         public readonly IRepository<OrderAttachment> _orderAttachmentRepository;
         public OrderAppService(IRepository<Order> repository,
+            IRepository<OrderLog> orderLogRepository,
             IRepository<OrderAttachment> orderAttachmentRepository)
             : base(repository)
         {
             _orderAttachmentRepository = orderAttachmentRepository;
+            _orderLogRepository = orderLogRepository;
         }
+ 
 
-        public override async Task<PagedResultDto<OrderDto>> GetAllAsync(PagedResultRequestDto input)
-        {
-            try
-            {
-                var data = await base.GetAllAsync(input);
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<OrderDto> CreateOrderWithAttachmentAsync(OrderDto input)
-        {
-            return await base.CreateAsync(input);
-        }
-
-        
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        [AbpAuthorize(PermissionNames.Fn_Orders_CreateQuotation)]
+        [HttpPost]
         public async Task<Order> CreateNewAsync(CreateOrderDto input)
         {
             // Validate input
@@ -59,105 +56,136 @@ namespace InTN.Orders
             input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
             var order = ObjectMapper.Map<Order>(input);
-            return await Repository.InsertAsync(order);
-            //  return await base.CreateAsync(input);
+
+            order = await Repository.InsertAsync(order);
+            await _orderLogRepository.InsertAsync(new OrderLog
+            {
+                OrderId = order.Id,
+                Action = "Create",
+                NewValue = order.ToJsonString(),
+            });
+
+            return order;
         }
+
         [HttpPut]
-        public async Task CreateQuotation([FromForm] OrderQuotationUploadDto input)
+        public async Task CreateQuotationAsync([FromForm] OrderQuotationUploadDto input)
         {
             if (input.Attachments != null && input.Attachments.Any() && input.TotalAmount > 0)
             {
                 var order = Repository.Get(input.OrderId);
                 if (order != null)
                 {
+                    var orderLog = new OrderLog()
+                    {
+                        OrderId = order.Id,
+                        Action = "CreateQuotation",
+                        OldValue = order.ToJsonString(),
+                    };
+
                     order.TotalAmount = input.TotalAmount;
                     order.Status = (int)OrderStatus.Quoted; // Set default status to 0 (Pending)
                     Repository.Update(order);
-                }
 
-                foreach (var file in input.Attachments)
-                {
+                    orderLog.NewValue = order.ToJsonString();
 
-                    using (var memoryStream = new MemoryStream())
+                    foreach (var file in input.Attachments)
                     {
-                        await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
 
-                        var attachment = new OrderAttachment
+                        using (var memoryStream = new MemoryStream())
                         {
-                            OrderId = input.OrderId,
-                            FileName = file.FileName,
-                            FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                            FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
-                            FileSize = file.Length,
-                            Type = (int)OrderAttachmentType.Invoice,    // Loại file (image/jpeg, image/png)
-                        };
-                        try
-                        {
-                            await _orderAttachmentRepository.InsertAsync(attachment);
-                        }
-                        catch (System.Exception ex)
-                        {
+                            await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
 
+                            var attachment = new OrderAttachment
+                            {
+                                OrderId = input.OrderId,
+                                FileName = file.FileName,
+                                FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                FileSize = file.Length,
+                                Type = (int)OrderAttachmentType.Invoice,    // Loại file (image/jpeg, image/png)
+                            };
+                            try
+                            {
+                                await _orderAttachmentRepository.InsertAsync(attachment);
+                            }
+                            catch (System.Exception ex)
+                            {
+
+                            }
+                            // Lưu hình ảnh vào database
                         }
-                        // Lưu hình ảnh vào database
                     }
+                    await _orderLogRepository.InsertAsync(orderLog);
                 }
+              
             }
         }
 
-        //public async Task ApproveDesign(int id)
-        //{
-        //    var order = await Repository.GetAsync(id);
-        //    if (order != null)
-        //    {
-        //        order.Status = (int)OrderStatus.DesignApproved; //  
-        //        await Repository.UpdateAsync(order);
-        //    }
-        //}
 
+        /// <summary>
+        /// Thực hiện duyệt mẫu thiết kế
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPut]
-        public async Task ApproveDesign([FromForm] OrderDesignUploadDto input)
+        public async Task ApproveDesignAsync([FromForm] OrderDesignUploadDto input)
         {
             if (input.Attachments != null && input.Attachments.Any())
             {
                 var order = Repository.Get(input.OrderId);
                 if (order != null)
                 {
+                    var orderLog = new OrderLog()
+                    {
+                        OrderId = order.Id,
+                        Action = "ApproveDesign",
+                        OldValue = order.ToJsonString(),
+                    };
                     order.Status = (int)OrderStatus.DesignApproved; // Set default status to 0 (Pending)
                     Repository.Update(order);
-                }
-
-                foreach (var file in input.Attachments)
-                {
-
-                    using (var memoryStream = new MemoryStream())
+                    orderLog.NewValue = order.ToJsonString();
+                   
+                    foreach (var file in input.Attachments)
                     {
-                        await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
 
-                        var attachment = new OrderAttachment
+                        using (var memoryStream = new MemoryStream())
                         {
-                            OrderId = input.OrderId,
-                            FileName = file.FileName,
-                            FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                            FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
-                            FileSize = file.Length,
-                            Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
-                        };
-                        try
-                        {
-                            await _orderAttachmentRepository.InsertAsync(attachment);
-                        }
-                        catch (System.Exception ex)
-                        {
+                            await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
 
+                            var attachment = new OrderAttachment
+                            {
+                                OrderId = input.OrderId,
+                                FileName = file.FileName,
+                                FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                FileSize = file.Length,
+                                Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
+                            };
+                            try
+                            {
+                                await _orderAttachmentRepository.InsertAsync(attachment);
+                            }
+                            catch (System.Exception ex)
+                            {
+
+                            }
+                            // Lưu hình ảnh vào database
                         }
-                        // Lưu hình ảnh vào database
                     }
+                    await _orderLogRepository.InsertAsync(orderLog);
                 }
+
+              
             }
         }
 
-
+        /// <summary>
+        /// Thực hiện cập nhật trạng thái đơn hàng thành đã đặt cọc
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         [HttpPut]
         public async Task UpdateStatusToDepositedAsync([FromForm] OrderDepositUploadDto input)
         {
@@ -175,7 +203,6 @@ namespace InTN.Orders
 
                 foreach (var file in input.Attachments)
                 {
-
                     using (var memoryStream = new MemoryStream())
                     {
                         await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
@@ -203,7 +230,6 @@ namespace InTN.Orders
             }
         }
 
-
         /// <summary>
         /// Thực hiện in test
         /// </summary>
@@ -220,12 +246,20 @@ namespace InTN.Orders
             {
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
-
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "UpdateStatusToPrintedTest",
+                OldValue = order.ToJsonString(),
+            };
             // Update the status to "Printed Test"
             order.Status = (int)OrderStatus.PrintingTest;
 
             // Save the changes
             await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
         }
 
         [HttpPut]
@@ -238,13 +272,23 @@ namespace InTN.Orders
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
 
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "ConfirmPrintedTest",
+                OldValue = order.ToJsonString(),
+            };
             // Update the status to "Test Printed Confirmed"
             order.Status = (int)OrderStatus.PrintingTestConfirmed;
 
             // Save the changes
             await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
         }
 
+        [HttpPut]
         public async Task PerformPrintingAsync(int id)
         {
             // Retrieve the order by ID
@@ -253,14 +297,21 @@ namespace InTN.Orders
             {
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
-
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "PerformPrinting",
+                OldValue = order.ToJsonString(),
+            };
             // Update the status to "Printing"
             order.Status = (int)OrderStatus.Printing;
 
             // Save the changes
             await Repository.UpdateAsync(order);
-        }
 
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
+        }
 
         [HttpPut]
         public async Task PerformProcessingAsync(int id)
@@ -272,11 +323,20 @@ namespace InTN.Orders
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
 
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "PerformProcessing",
+                OldValue = order.ToJsonString(),
+            };
             // Update the status to "Processing"
             order.Status = (int)OrderStatus.Processing;
 
             // Save the changes
             await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
         }
 
         [HttpPut]
@@ -289,11 +349,20 @@ namespace InTN.Orders
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
 
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "ShipOrder",
+                OldValue = order.ToJsonString(),
+            };
             // Update the status to "Shipped"
             order.Status = (int)OrderStatus.Delivering;
 
             // Save the changes
             await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
         }
 
         [HttpPut]
@@ -306,15 +375,22 @@ namespace InTN.Orders
                 throw new ArgumentException($"Order with ID {id} not found", nameof(id));
             }
 
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "CompleteOrder",
+                OldValue = order.ToJsonString(),
+            };
+
             // Update the status to "Completed"
             order.Status = (int)OrderStatus.Completed;
 
             // Save the changes
             await Repository.UpdateAsync(order);
+
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
         }
-
-
-
 
     }
 }
