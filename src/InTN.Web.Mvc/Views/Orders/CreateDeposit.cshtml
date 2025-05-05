@@ -56,11 +56,19 @@
 
                                         <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
                                         <input type="hidden" name="OrderId" value="@Model.OrderId" />
-                                        <!-- Full Name -->
-                                        <div class="form-group row required">
+                                            
+                                    <!-- Total Amount -->
+                                        <div class="form-group row">
                                             <label class="col-md-2 col-form-label">@L("TotalAmount")</label>
                                             <div class="col-md-6">
-                                                <input type="number" class="form-control" name="TotalAmount" required>
+                                                <input type="text" class="form-control mask-number" value="@Model.TotalAmount.ToString("N0")" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row required">
+                                            <label class="col-md-2 col-form-label">@L("DepositAmount")</label>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control mask-number" name="DepositAmount" required>
                                             </div>
                                         </div>
                                         <!-- Full Name -->

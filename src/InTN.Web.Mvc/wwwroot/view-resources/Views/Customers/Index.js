@@ -75,9 +75,17 @@
                 data: 'address',
                 sortable: false
             },
-
             {
                 targets: 6,
+                data: 'totalDebt',
+                sortable: false
+            }, {
+                targets: 7,
+                data: 'creditLimit',
+                sortable: false
+            },
+            {
+                targets: 8,
                 data: null,
                 sortable: false,
                 width: 20,

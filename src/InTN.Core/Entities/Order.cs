@@ -9,8 +9,8 @@ namespace InTN.Entities
         public string OrderCode { get; set; } = string.Empty;
         public int? CustomerId { get; set; }
         public DateTime OrderDate { get; set; }
-        public int Status { get; set; } 
-        public string Note { get; set; } = string.Empty;    
+        public int Status { get; set; }
+        public string Note { get; set; } = string.Empty;
 
         public string FileUrl { get; set; } = string.Empty; // Đường dẫn đến file đính kèm
 
@@ -19,6 +19,7 @@ namespace InTN.Entities
         public string CustomerPhone { get; set; } = string.Empty; // Số điện thoại khách hàng   
         public string CustomerEmail { get; set; } = string.Empty; // Email khách hàng
 
+        public decimal? TotalDeposit { get; set; } // Tổng số tiền đã đặt cọc
         public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
 
     }

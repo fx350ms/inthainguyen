@@ -42,7 +42,8 @@ namespace InTN.Customers
 
                 if (!string.IsNullOrEmpty(q))
                 {
-                    query = query.Where(u => u.Name.Contains(q, StringComparison.OrdinalIgnoreCase) || u.PhoneNumber.Contains(q, StringComparison.OrdinalIgnoreCase));
+                    q = q.ToUpper();
+                    query = query.Where(u => u.Name.ToUpper().Contains(q) || u.PhoneNumber.Contains(q));
                 }
 
                 return query.Select(u => new OptionItemDto
@@ -59,5 +60,19 @@ namespace InTN.Customers
             }
             return new List<OptionItemDto>();
         }
+
+        public async Task UpdateCustomerCreditLimitAsync(int customerId, decimal? newCreditLimit)
+        {
+            var customer = await Repository.GetAsync(customerId);
+            if (customer == null)
+            {
+                throw new Exception("Customer not found");
+            }
+
+            customer.CreditLimit = newCreditLimit;
+            await Repository.UpdateAsync(customer);
+        }
+
+
     }
 }

@@ -51,7 +51,22 @@
                                     <span asp-validation-for="Address" class="text-danger"></span>
                                 </div>
                             </div>
-
+                            <!-- TotalDebt -->
+                            <div class="form-group row required">
+                                <label class="col-md-3 col-form-label">@L("TotalDebt")</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="TotalDebt" asp-for="TotalDebt" required>
+                                    <span asp-validation-for="TotalDebt" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <!-- CreditLimit -->
+                            <div class="form-group row required">
+                                <label class="col-md-3 col-form-label">@L("CreditLimit")</label>
+                                <div class="col-md-9">
+                                    <input type="number" class="form-control" name="CreditLimit" asp-for="CreditLimit" required>
+                                    <span asp-validation-for="CreditLimit" class="text-danger"></span>
+                                </div>
+                            </div>
 
                         </div>
                         

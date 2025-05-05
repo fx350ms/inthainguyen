@@ -20,6 +20,8 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<Customer> Customers { get; set; }
     public DbSet<OrderAttachment> OrderAttachments { get; set; }
     public DbSet<OrderLog> OrderLogs { get; set; }
+
+    public DbSet<Transaction> Transactions { get; set; }
     
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)

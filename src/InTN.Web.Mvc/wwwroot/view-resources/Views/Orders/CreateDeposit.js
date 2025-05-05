@@ -27,7 +27,6 @@
             formData.append(key, data[key]);
         }
 
-        debugger;
         $.ajax({
             url: abp.appPath + 'api/services/app/Order/UpdateStatusToDeposited',
             type: 'PUT',
@@ -47,4 +46,5 @@
         });
     });
 
+    $('.mask-number').maskNumber({ integer: true, thousands: '.' });
 })(jQuery);
