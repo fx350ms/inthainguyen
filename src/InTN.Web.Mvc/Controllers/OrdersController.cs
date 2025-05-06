@@ -2,9 +2,11 @@
 using InTN.Controllers;
 using InTN.Customers;
 using InTN.IdentityCodes;
+using InTN.OrderAttachments;
 using InTN.OrderLogs;
 using InTN.Orders;
 using InTN.Orders.Dto;
+using InTN.Web.Models.Orders;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -14,12 +16,19 @@ namespace InTN.Web.Controllers
     {
         private readonly IIdentityCodeAppService _identityCodeAppService;
         private readonly IOrderAppService _orderAppService;
+        private readonly IOrderLogAppService _orderLogAppService;
+        private readonly IOrderAttachmentAppService _orderAttachmentAppService;
+
         public OrdersController(IOrderAppService orderService,
-             IIdentityCodeAppService identityCodeAppService
+             IIdentityCodeAppService identityCodeAppService,
+             IOrderLogAppService orderLogAppService,
+                IOrderAttachmentAppService orderAttachmentAppService
          )
         {
             _orderAppService = orderService;
             _identityCodeAppService = identityCodeAppService;
+            _orderLogAppService = orderLogAppService;
+            _orderAttachmentAppService = orderAttachmentAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -50,7 +59,7 @@ namespace InTN.Web.Controllers
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
-                 
+
             };
             return View(model);
         }
@@ -106,6 +115,32 @@ namespace InTN.Web.Controllers
             return View(model);
         }
 
-        
+        public async Task<IActionResult> Detail(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var model = new OrderDetailModel()
+            {
+                OrderDto = order,
+                OrderLogs = await _orderLogAppService.GetOrderLogsByOrderIdAsync(order.Id),
+                OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id)
+            };
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> DownloadAttachment(int fileId, string fileName)
+        {
+            var file = await _orderAttachmentAppService.GetAsync(new EntityDto<int>(fileId));
+            if (file == null || file.FileContent == null)
+            {
+                return NotFound();
+            }
+
+            return File(file.FileContent, "application/octet-stream", fileName);
+        }
     }
 }
