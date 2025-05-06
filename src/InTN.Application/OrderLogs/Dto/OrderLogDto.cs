@@ -2,7 +2,7 @@
 
 namespace InTN.OrderLogs.Dto
 {
-    public class OrderLogDto : EntityDto<int>
+    public class OrderLogDto : FullAuditedEntityDto<int>
     {
         public int OrderId { get; set; }
         public string Action { get; set; } // Hành động (Created, Updated, Completed, etc.)

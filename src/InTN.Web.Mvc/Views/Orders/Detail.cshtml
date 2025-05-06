@@ -1,0 +1,156 @@
+﻿@using InTN.Web.Models.Orders
+@using InTN
+@using InTN.Commons
+
+@model InTN.Web.Models.Orders.OrderDetailModel
+
+@if (Model != null && Model.OrderDto != null)
+{
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Tiêu đề đơn hàng -->
+                    <h1 class="text-center">Chi tiết đơn hàng: <strong class="text-danger">Đơn hàng #@Model.OrderDto.OrderCode</strong></h1>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <!-- Thông tin chi tiết đơn hàng -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Khách hàng:</strong> @Model.OrderDto.CustomerName</p>
+                                    <p><strong>Địa chỉ:</strong> @Model.OrderDto.CustomerAddress</p>
+                                    <p><strong>Số điện thoại:</strong> @Model.OrderDto.CustomerPhone</p>
+                                    <p><strong>Email:</strong> @Model.OrderDto.CustomerEmail</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Ngày đặt hàng:</strong> @Model.OrderDto.OrderDate.ToString("dd/MM/yyyy")</p>
+                                    <p><strong>Trạng thái:</strong> @(((OrderStatus)Model.OrderDto.Status).GetDescription()) </p>
+                                    <p><strong>Tổng tiền:</strong> @Model.OrderDto.TotalAmount?.ToString("N0") VNĐ</p>
+                                    <p><strong>Đã đặt cọc:</strong> @Model.OrderDto.TotalDeposit?.ToString("N0") VNĐ</p>
+                                    <p><strong>Trạng thái thanh toán:</strong>@(((OrderPaymentStatus)Model.OrderDto.PaymentStatus).GetDescription()) </p>
+                                </div>
+                            </div>
+                            <hr />
+                            <div>
+                                <div class="">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" role="tab" href="#order-attachments">Đính kèm</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" role="tab" href="#order-history">Lịch sử</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane active" id="order-attachments">
+
+                                            <div class="col-12 row">
+                                                <div class="card-body">
+                                                    @if (Model.OrderAttachments != null && Model.OrderAttachments.Count > 0)
+                                                    {
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Tên file</th>
+                                                                    <th>Kích thước</th>
+                                                                    <th>Loại file</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var attachment in Model.OrderAttachments)
+                                                                {
+                                                                    <tr>
+                                                                        <td><a href="@Url.Action("DownloadAttachment", "Orders", new { fileId = attachment.Id, fileName = attachment.FileName })" target="_blank"><i class="fas fa-download"></i> @attachment.FileName</a></td>
+                                                                        <td>@attachment.FileSize KB</td>
+                                                                        <td>@(((OrderAttachmentType)attachment.Type).GetDescription())</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>Không có tệp đính kèm.</p>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="order-history">
+                                            <div class="table-responsive">
+                                                @if (Model.OrderLogs != null && Model.OrderLogs.Count > 0)
+                                                {
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Thời gian</th>
+                                                                <th>Hành động</th>
+                                                                <th>Ghi chú</th>
+                                                                <th>Giá trị cũ</th>
+                                                                <th>Giá trị mới</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var log in Model.OrderLogs)
+                                                            {
+                                                                <tr>
+                                                                    <td>@log.CreationTime.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                                                    <td>@log.Action</td>
+                                                                    <td>@log.Note</td>
+                                                                    <td data-id="@log.Id" class="old-value"></td>
+                                                                    <td data-id="@log.Id" class="new-value"></td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                }
+                                                else
+                                                {
+                                                    <p>Không có lịch sử đơn hàng.</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+@section scripts {
+
+    
+
+    @if (Model.OrderLogs != null && Model.OrderLogs.Count > 0)
+    {
+        foreach (var log in Model.OrderLogs)
+        {
+            <script>
+                var id = @Html.Raw(log.Id);
+                var newValue =  @Html.Raw(log.NewValue);
+                 var oldValue =  @Html.Raw(log.OldValue);
+                var jsonViewer1 = new JSONViewer();
+                $('.old-value[data-id='+id+']').html(jsonViewer1.getContainer());
+                jsonViewer1.showJSON(oldValue);
+                  var jsonViewer2 = new JSONViewer();
+                 $('.new-value[data-id='+id+']').html(jsonViewer2.getContainer());
+                jsonViewer2.showJSON(newValue);
+            </script>
+
+        }
+
+    }
+}
