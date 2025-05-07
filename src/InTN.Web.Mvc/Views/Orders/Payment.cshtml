@@ -1,0 +1,115 @@
+﻿@using InTN.Orders.Dto
+ @using InTN.Transactions.Dto
+@using InTN.Web.Models.Common.Modals
+@using InTN
+
+@model OrderTransactionUploadDto
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+    </style>
+}
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Payment.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Payment.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Pages_OrderPayment"): <strong class="text-primary">@Model.OrderCode</strong></h1>
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @if (Model.PaymentStatus == (int)OrderPaymentStatus.Paid || Model.PaymentStatus == (int)OrderPaymentStatus.Debt)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @L("TheOrderHasBeenPaidOrNoOutstandingDebt")
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <a href="~/Orders" class="btn btn-secondary">@L("BackToOrderList")</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card-body" id="modal-create-transaction">
+                            <form name="form-create-transaction" role="form" class="form-horizontal">
+                                <div class="modal-body">
+                                    <input type="hidden" name="OrderId" value="@Model.OrderId" />
+                                    <input type="hidden" name="TransactionType" value="@((int)TransactionType.OrderPayment)" />
+                                    <div class="tab-content mt-4">
+                                        <div role="tabpanel" class="tab-pane container active form-content">
+
+
+                                            <!-- Total Debt -->
+                                            <div class="form-group row order-debt-group">
+                                                <label class="col-md-2 col-form-label">@L("TotalDeposit")</label>
+                                                <div class="col-md-4">
+                                                    <input type="text" class="form-control mask-number" name="order_TotalDeposit" value="@Model.TotalDeposit.ToString("N0")" readonly>
+                                                </div>
+                                                <label class="col-md-2 col-form-label">@L("TotalAmount")</label>
+                                                <div class="col-md-4">
+                                                    <input type="text" class="form-control mask-number" name="order_TotalAmount" value="@Model.TotalAmount.ToString("N0")" readonly>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Amount -->
+                                            <div class="form-group row required">
+                                                <label class="col-md-2 col-form-label">@L("Amount")</label>
+                                                <div class="col-md-10">
+                                                    <input class="form-control mask-number" id="trans_TotalAmount" value="@((Model.TotalAmount - Model.TotalDeposit).ToString("N0"))" name="Amount" readonly>
+                                                </div>
+                                            </div>
+
+                                            <!-- Description -->
+                                            <div class="form-group row">
+                                                <label class="col-md-2 col-form-label">@L("Description")</label>
+                                                <div class="col-md-10">
+                                                    <textarea class="form-control" name="Description" rows="3"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <!-- File Upload -->
+                                            <div class="form-group row">
+                                                <label class="col-md-2 col-form-label">@L("FileUpload")</label>
+                                                <div class="col-md-10">
+                                                    <input type="file" class="form-control" name="Attachments">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
+                                    <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                                </div>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

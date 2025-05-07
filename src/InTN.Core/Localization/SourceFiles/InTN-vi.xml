@@ -592,7 +592,8 @@
 		<text name="CNWarehouseDate" value="Ngày nhập kho" />
 		<text name="Orders" value="Đơn hàng" />
 		<text name="CasualCustomer" value="Khách lẻ" />
-
+		
+		<text name="Pages_OrderPayment" value="Thanh toán đơn hàng" />
 		<text name="Pages_CreateTransaction" value="Tạo giao dịch" />
 		<text name="Pages_CreateDeposit" value="Đặt cọc" />
 		<text name="Pages_CreateDesign" value="Thiết kế" />
@@ -613,7 +614,7 @@
 		<text name="SelectFileDeposit" value="Chọn tệp nạp tiền" />
 		<text name="TotalDebt" value="Tổng công nợ" />
 		<text name="CreditLimit" value="Hạn mức tín dụng" />
-		<text name="TotalDeposit" value="Tổng số tiền nạp" />
+		<text name="TotalDeposit" value="Tổng số đặt cọc" />
 		<text name="Deposited" value="Đã đặt cọc" />
 		<text name="SelectFileDesign" value="Chọn tệp thiết kế" />
 		<text name="CompleteDesign" value="Hoàn tất thiết kế" />
@@ -622,5 +623,8 @@
 		<text name="PaymentStatus" value="Trạng thái thanh toán" />
 		<text name="FileUpload" value="Tệp tải lên" />
 		<text name="SelectOrder" value="Chọn đơn hàng" />
+		<text name="TheOrderHasBeenPaidOrNoOutstandingDebt" value="Đơn hàng đã được thanh toán hoặc chuyển công nợ" />
+		<text name="BackToOrderList" value="Quay lại danh sách đơn hàng" />
+
 	</texts>
 </localizationDictionary>

@@ -78,11 +78,17 @@
             {
                 targets: 6,
                 data: 'totalDebt',
-                sortable: false
+                sortable: false,
+                render: function (data, type, row, meta) {
+                    return formatThousand(data);
+                }
             }, {
                 targets: 7,
                 data: 'creditLimit',
-                sortable: false
+                sortable: false,
+                render: function (data, type, row, meta) {
+                    return formatThousand(data);
+                }
             },
             {
                 targets: 8,

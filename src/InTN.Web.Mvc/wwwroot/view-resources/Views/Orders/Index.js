@@ -231,7 +231,7 @@
                             '   </a>' : '',
 
                         row.status === 14 && (row.paymentStatus === 0 || row.paymentStatus === 1)  ?
-                            `   <a type="button" class="dropdown-item bg-success " data-order-id="${row.id}" href="/Orders/CreateTransaction/${row.id}" data-order-code="${row.orderCode}"  title="Thanh toán" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-success " data-order-id="${row.id}" href="/Orders/Payment/${row.id}" data-order-code="${row.orderCode}"  title="Thanh toán" data-toggle="tooltip">` +
                             `       <i class="far fa-check-circle"></i> Thanh toán` +
                             '   </a>' +
                                 `   <a type="button" class="dropdown-item bg-info order-debt"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Chuyển công nợ" data-toggle="tooltip">` +
