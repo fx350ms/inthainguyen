@@ -11,85 +11,119 @@
     //- MONTHLY SALES CHART -
     //-----------------------
 
-    // Get context with jQuery - using jQuery's .get() method.
-    var salesChartCanvas = $('#salesChart').get(0).getContext('2d');
-    // This will get the first returned node in the jQuery collection.
-
-    var salesChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'Electronics',
-                fill: '#dee2e6',
-                borderColor: '#ced4da',
-                pointBackgroundColor: '#ced4da',
-                pointBorderColor: '#c1c7d1',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgb(220,220,220)',
-                spanGaps: true,
-                data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-                label: 'Digital Goods',
-                fill: 'rgba(0, 123, 255, 0.9)',
-                borderColor: 'rgba(0, 123, 255, 1)',
-                pointBackgroundColor: '#3b8bba',
-                pointBorderColor: 'rgba(0, 123, 255, 1)',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(0, 123, 255, 1)',
-                spanGaps: true,
-                data: [28, 48, 40, 19, 86, 27, 90]
-            }
-        ]
-    };
-
-    var salesChartOptions = {
-        //Boolean - If we should show the scale at all
-        showScale: true,
-        //Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines: false,
-        //String - Colour of the grid lines
-        scaleGridLineColor: 'rgba(0,0,0,.05)',
-        //Number - Width of the grid lines
-        scaleGridLineWidth: 1,
-        //Boolean - Whether to show horizontal lines (except X axis)
-        scaleShowHorizontalLines: true,
-        //Boolean - Whether to show vertical lines (except Y axis)
-        scaleShowVerticalLines: true,
-        //Boolean - Whether the line is curved between points
-        bezierCurve: true,
-        //Number - Tension of the bezier curve between points
-        bezierCurveTension: 0.3,
-        //Boolean - Whether to show a dot for each point
-        pointDot: false,
-        //Number - Radius of each point dot in pixels
-        pointDotRadius: 4,
-        //Number - Pixel width of point dot stroke
-        pointDotStrokeWidth: 1,
-        //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-        pointHitDetectionRadius: 20,
-        //Boolean - Whether to show a stroke for datasets
-        datasetStroke: true,
-        //Number - Pixel width of dataset stroke
-        datasetStrokeWidth: 2,
-        //Boolean - Whether to fill the dataset with a color
-        datasetFill: true,
-        //String - A legend template
-        legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].lineColor%>"></span><%=datasets[i].label%></li><%}%></ul>',
-        //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-        maintainAspectRatio: false,
-        //Boolean - whether to make the chart responsive to window resizing
-        responsive: true
-    };
-
-    //Create the line chart
-    var salesChart = new Chart(salesChartCanvas, {
-        type: 'line',
-        data: salesChartData,
-        options: salesChartOptions
-    });
 
     //---------------------------
     //- END MONTHLY SALES CHART -
     //---------------------------
+
+
+    var _orderService = abp.services.app.order,
+        l = abp.localization.getSource('pbt'),
+        _$table = $('#OrdersTable');
+
+    const orderStatusDescriptions = {
+        1: { text: 'Tiếp nhận yêu cầu', color: '#0000FF' }, // Blue
+        2: { text: 'Đã báo giá', color: '#800080' }, // Purple
+        3: { text: 'Đã xác nhận đơn', color: '#008000' }, // Green
+        4: { text: 'Đang thiết kế', color: '#117700' }, // Orange
+        5: { text: 'Đang chờ duyệt mẫu', color: '#00FFFF' }, // Cyan
+        6: { text: 'Đã duyệt mẫu', color: '#008080' }, // Teal
+        7: { text: 'Đã đặt cọc', color: '#117700' }, // Gold
+        8: { text: 'Đang in test', color: '#FF69B4' }, // Hot Pink
+        9: { text: 'Xác nhận in test (Ok)', color: '#32CD32' }, // Lime Green
+        10: { text: 'Đang in', color: '#ff3a3a' }, // Yellow
+        11: { text: 'Đang gia công', color: '#009c9f' }, // Pink
+        12: { text: 'Đã kiểm tra QC', color: '#7FFF00' }, // Chartreuse
+        13: { text: 'Đang giao hàng', color: '#A52A2A' }, // Brown
+        14: { text: 'Hoàn thành', color: '#28a745' } // Gray
+    };
+     
+
+    var _$ordersTable = _$table.DataTable({
+        paging: true,
+        serverSide: true,
+        listAction: {
+            ajaxFunction: _orderService.getAllOrderToday,
+            inputFilter: function () {
+                return $('#OrderSearchForm').serializeFormToObject(true);
+            }
+        },
+        buttons: [
+            {
+                name: 'refresh',
+                text: '<i class="fas fa-redo-alt"></i>',
+                action: () => _$ordersTable.draw(false)
+            }
+        ],
+        responsive: {
+            details: {
+                type: 'column'
+            }
+        },
+        columnDefs: [
+            {
+                targets: 0,
+                className: 'control',
+                defaultContent: '',
+            },
+            {
+                targets: 1,
+                width: 20,
+                className: 'text-center',
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {
+                targets: 2,
+                className: 'text-center',
+                render: function (data, type, row, meta) {
+                    return `   <a type="button" data-order-id="${row.id}" href="/Orders/Detail/${row.id}" title="${l('Detail')}" data-toggle="tooltip">` +
+                        row.orderCode +
+                        '   </a>';
+                }
+            },
+            {
+                targets: 3,
+
+                data: 'customerName',
+                className: 'text-center',
+                render: function (data, type, row, meta) {
+                    if (row.customerId == null) {
+                        return '<strong>' + row.customerName + '</strong> ';
+                    } else {
+                        return '<strong>' + row.customerName + '</strong>  <i title="Khách quen" class="far fa-check-circle text-success"></i>';
+                    }
+                }
+            },
+            
+            {
+                targets: 4,
+                width: 120,
+                data: 'status',
+                className: 'text-center',
+                render: (data, type, row, meta) => {
+
+                    // Lấy mô tả và màu sắc của orderStatus từ đối tượng ánh xạ
+                    const status = orderStatusDescriptions[row.status];
+
+                    // Trả về mô tả với màu sắc được áp dụng
+                    return `<p style="color: ${status ? status.color : 'black'};">${status ? status.text : 'Chưa xác định'}</p>`;
+
+                }
+            },
+            {
+                targets: 5,
+                data: 'totalAmount',
+                className: 'text-right',
+                render: function (data, type, row, meta) {
+                    return formatThousand(data);
+                }
+
+            },
+            
+        ]
+    });
+
+     
 });

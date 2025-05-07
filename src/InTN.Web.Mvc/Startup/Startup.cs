@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using InTN.StatisticAndReporting;
 
 namespace InTN.Web.Startup;
 
@@ -65,6 +66,8 @@ public class Startup
                     )
             )
         );
+
+        services.AddSingleton<IStatisticReportingAppService, StatisticReportingAppService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)

@@ -17,6 +17,7 @@ using Abp.Json;
 using InTN.IdentityCodes;
 using InTN.Commons;
 using System.Collections.Generic;
+using Abp.AutoMapper;
 
 namespace InTN.Orders
 {
@@ -497,7 +498,7 @@ namespace InTN.Orders
         }
 
 
-        
+
 
 
         public async Task<List<OptionItemDto>> GetOrderListForSelect(string q)
@@ -505,17 +506,17 @@ namespace InTN.Orders
             try
             {
                 var query = await Repository.GetAllAsync();
-                query = query.Where(u => 
-                u.Status == (int) OrderStatus.Completed && 
-                u.PaymentStatus != (int)OrderPaymentStatus.Debt  &&  
+                query = query.Where(u =>
+                u.Status == (int)OrderStatus.Completed &&
+                u.PaymentStatus != (int)OrderPaymentStatus.Debt &&
                 u.PaymentStatus != (int)OrderPaymentStatus.Paid
                 )
-                
+
                 ;
                 if (!string.IsNullOrEmpty(q))
                 {
                     q = q.ToUpper();
-                    query = query.Where(u => u.OrderCode.ToUpper().Contains(q)  );
+                    query = query.Where(u => u.OrderCode.ToUpper().Contains(q));
                 }
 
                 return query.Select(u => new OptionItemDto
@@ -531,6 +532,24 @@ namespace InTN.Orders
 
             }
             return new List<OptionItemDto>();
+        }
+
+
+        public async Task<PagedResultDto<OrderDto>> GetAllOrderTodayAsync(PagedResultRequestDto input)
+        {
+            var query = base.CreateFilteredQuery(input);
+
+            query = query.Where(x => x.CreationTime.Date == DateTime.Now.Date);
+
+            var count = query.Count();
+            query = ApplySorting(query, input);
+            query = ApplyPaging(query, input);
+            var data = ObjectMapper.Map<List<OrderDto>>(query.ToList());
+            return new PagedResultDto<OrderDto>()
+            {
+                Items = data,
+                TotalCount = count
+            };
         }
     }
 }
