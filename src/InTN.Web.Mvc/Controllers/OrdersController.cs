@@ -99,18 +99,21 @@ namespace InTN.Web.Controllers
         }
 
 
-        public async Task<IActionResult> CreateTransaction(int id)
+        public async Task<IActionResult> Payment(int id)
         {
             var order = await _orderAppService.GetAsync(new EntityDto(id));
             if (order == null)
             {
                 return NotFound();
             }
-            var model = new OrderDepositUploadDto()
+
+            var model = new OrderTransactionUploadDto()
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
-                TotalAmount = order.TotalAmount ?? 0
+                TotalAmount = order.TotalAmount ?? 0,
+                TotalDeposit = order.TotalDeposit ?? 0,
+                PaymentStatus = order.PaymentStatus 
             };
             return View(model);
         }
@@ -142,5 +145,6 @@ namespace InTN.Web.Controllers
 
             return File(file.FileContent, "application/octet-stream", fileName);
         }
+
     }
 }

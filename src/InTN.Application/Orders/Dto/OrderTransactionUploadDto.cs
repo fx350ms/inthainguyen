@@ -9,6 +9,8 @@ namespace InTN.Orders.Dto
         public string OrderCode { get; set; }
         public List<IFormFile> Attachments { get; set; }
         public decimal TotalAmount { get; set; }
-        public decimal DepositAmount { get; set; }
+        public decimal TotalDeposit { get; set; }
+        public decimal Amount { get; set; }
+        public int PaymentStatus { get; set; }
     }
 }

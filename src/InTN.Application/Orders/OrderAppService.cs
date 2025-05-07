@@ -447,7 +447,7 @@ namespace InTN.Orders
             var orderLog = new OrderLog()
             {
                 OrderId = order.Id,
-                Action = "CompleteOrder",
+                Action = "Debt",
                 OldValue = order.ToJsonString(),
             };
 
@@ -459,7 +459,6 @@ namespace InTN.Orders
 
             orderLog.NewValue = order.ToJsonString();
             await _orderLogRepository.InsertAsync(orderLog);
-
 
             if (order.CustomerId.HasValue)
             {
@@ -499,6 +498,81 @@ namespace InTN.Orders
 
 
 
+        /// <summary>
+        /// Thực hiện thanh toán đơn hàng
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task OrderPaymentAsync([FromForm] OrderTransactionUploadDto input)
+        {
+            byte[] fileContent = null;
+            if (input.Attachments != null && input.Attachments.Any())
+            {
+                var order = Repository.Get(input.OrderId);
+                if (order != null)
+                {
+                    var orderLog = new OrderLog()
+                    {
+                        OrderId = order.Id,
+                        Action = "Payment",
+                        OldValue = order.ToJsonString(),
+                    };
+                    order.PaymentStatus = (int)OrderPaymentStatus.Paid; // Set default status to 0 (Pending)
+                    Repository.Update(order);
+                    orderLog.NewValue = order.ToJsonString();
+
+                    foreach (var file in input.Attachments)
+                    {
+
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
+                            fileContent = memoryStream.ToArray(); // Chuyển đổi dữ liệu thành mảng byte
+                            var attachment = new OrderAttachment
+                            {
+                                OrderId = input.OrderId,
+                                FileName = file.FileName,
+                                FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                                FileContent = fileContent, // Dữ liệu nhị phân của hình ảnh
+                                FileSize = file.Length,
+                                Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
+                            };
+                            try
+                            {
+                                await _orderAttachmentRepository.InsertAsync(attachment);
+                            }
+                            catch (System.Exception ex)
+                            {
+
+                            }
+                            // Lưu hình ảnh vào database
+                        }
+                    }
+                    await _orderLogRepository.InsertAsync(orderLog);
+
+                    var identity = await _identityCodeAppService.GenerateNewSequentialNumberAsync("GD");
+
+                    // Ghi lại giao dịch
+                    var transaction = new Transaction
+                    {
+                        TransactionCode = identity.Code,
+                        CustomerId = order.CustomerId,
+                        CustomerName = order.CustomerName,
+                        OrderId = order.Id,
+                        Amount = input.Amount,
+                        Description = "Thanh toán đơn hàng",
+                        FileContent = fileContent,
+                        TransactionType = (int)TransactionType.OrderPayment,
+
+                    };
+
+                    var transactionId = await _transactionRepository.InsertAndGetIdAsync(transaction);
+                }
+
+
+            }
+        }
 
 
         public async Task<List<OptionItemDto>> GetOrderListForSelect(string q)
