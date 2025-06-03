@@ -97,8 +97,7 @@
 
         if (customerId) {
             // Simulate fetching customer data (replace with actual AJAX call if needed)
-            _customerService.get({ id: customerId }).done(function (customerData) {
-                debugger;
+            _customerService.getByCustomerWalletBalance({ id: customerId }).done(function (customerData) {
                 $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
                 $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
             });

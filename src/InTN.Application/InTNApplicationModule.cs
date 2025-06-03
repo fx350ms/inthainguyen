@@ -3,12 +3,18 @@ using Abp.Localization;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using InTN.Authorization;
+using InTN.Brands.Dto;
 using InTN.Customers.Dto;
 using InTN.Entities;
+using InTN.FileUploads.Dto;
 using InTN.IdentityCodes.Dto;
 using InTN.OrderAttachments.Dto;
 using InTN.OrderLogs.Dto;
 using InTN.Orders.Dto;
+using InTN.ProductCategories.Dto;
+using InTN.ProductProperties.Dto;
+using InTN.ProductTypes.Dto;
+using InTN.Suppliers.Dto;
 using InTN.Transactions.Dto;
 
 namespace InTN;
@@ -34,6 +40,15 @@ public class InTNApplicationModule : AbpModule
             cfg.CreateMap<Transaction, TransactionDto>().ReverseMap();
             cfg.CreateMap<Transaction, CreateTransactionDto>().ReverseMap();
             cfg.CreateMap<TransactionDto, CreateTransactionDto>().ReverseMap();
+
+            cfg.CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
+            cfg.CreateMap<ProductProperty, ProductPropertyDto>().ReverseMap();
+            cfg.CreateMap<Supplier, SupplierDto>().ReverseMap();
+            cfg.CreateMap<Brand, BrandDto>().ReverseMap();
+            cfg.CreateMap<ProductType, ProductTypeDto>().ReverseMap();
+
+            cfg.CreateMap<FileUpload, FileUploadDto>().ReverseMap();
+            cfg.CreateMap<FileUpload, CreateFileUploadDto>().ReverseMap();
         });
     }
 

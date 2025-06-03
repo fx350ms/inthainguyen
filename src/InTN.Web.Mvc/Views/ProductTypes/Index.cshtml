@@ -1,0 +1,71 @@
+@using InTN.Web.Startup
+@using InTN.ProductTypes.Dto
+
+@{
+    ViewBag.Title = L("ProductTypes");
+    ViewBag.CurrentPageName = PageNames.ProductTypes;
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/ProductTypes/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/ProductTypes/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("ProductTypes")</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @await Html.PartialAsync("~/Views/ProductTypes/Index.AdvancedSearch.cshtml")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="ProductTypesTable" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>@L("STT")</th>
+                                        <th>@L("Name")</th>
+                                        <th>@L("Description")</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@await Html.PartialAsync("~/Views/ProductTypes/_CreateModal.cshtml", new ProductTypeDto() { });
+
+<div class="modal fade" id="ProductTypeEditModal" tabindex="-1" role="dialog" aria-labelledby="ProductTypeEditModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>

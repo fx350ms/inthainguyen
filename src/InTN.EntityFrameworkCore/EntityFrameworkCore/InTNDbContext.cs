@@ -24,6 +24,14 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<CustomerBalanceHistory> CustomerBalanceHistories { get; set; }
 
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<ProductProperty> ProductProperties { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<ProductType> ProductTypes { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<FileUpload> FileUploads { get; set; }
+
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)
     {
