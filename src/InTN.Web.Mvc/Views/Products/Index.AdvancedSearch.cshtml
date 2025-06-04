@@ -1,0 +1,29 @@
+<div class="abp-advanced-search">
+    <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#ProductFilterCollapse">
+        <i class="fas fa-filter"></i> Bộ lọc nâng cao
+    </button>
+
+    <a href="javascript:;" data-toggle="modal" data-target="#ProductCreateModal" class="btn bg-blue float-sm-right">
+        <i class="fa fa-plus-square"></i>
+        @L("Create")
+    </a>
+
+    <div class="collapse" id="ProductFilterCollapse">
+        <form id="ProductSearchForm" class="form-horizontal">
+            <div class="form-row">
+                <div class="col-md-6">
+                    <label for="Keyword">Từ khóa</label>
+                    <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("Search")" />
+                </div>
+            </div>
+
+            <div class="form-row mt-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2 btn-search">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

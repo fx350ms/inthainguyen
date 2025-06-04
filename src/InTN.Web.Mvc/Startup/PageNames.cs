@@ -11,4 +11,10 @@ public class PageNames
     public const string Orders = "Orders";
     public const string Customers = "Customers";
     public const string Transactions = "Transactions";
+    public const string ProductCategories = "ProductCategories";
+    public const string ProductProperties = "ProductProperties";
+    public const string Suppliers = "Suppliers";
+    public const string Brands = "Brands";
+    public const string ProductTypes = "ProductTypes";
+    public const string Products = "Products";
 }

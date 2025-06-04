@@ -1,0 +1,28 @@
+@using InTN.Web.Models.Common.Modals
+@using InTN.ProductProperties.Dto
+
+@model ProductPropertyDto
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditProductProperty")))
+
+<form name="ProductPropertyEditForm" role="form" class="form-horizontal">
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label">@L("Name")</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="Name" value="@Model.Name" required>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+
+<script src="~/view-resources/Views/ProductProperties/_EditModal.js" asp-append-version="true"></script>

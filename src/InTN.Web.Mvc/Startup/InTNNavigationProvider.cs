@@ -74,7 +74,61 @@ public class InTNNavigationProvider : NavigationProvider
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Transactions)
                 )
             )
-            ;
+             // Các menu mới
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.ProductCategories,
+                    L("ProductCategories"),
+                    url: "ProductCategories",
+                    icon: "fas fa-sitemap",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_ProductCategories)
+                )
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.ProductProperties,
+                    L("ProductProperties"),
+                    url: "ProductProperties",
+                    icon: "fas fa-tags",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_ProductProperties)
+                )
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Suppliers,
+                    L("Suppliers"),
+                    url: "Suppliers",
+                    icon: "fas fa-truck",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Suppliers)
+                )
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Brands,
+                    L("Brands"),
+                    url: "Brands",
+                    icon: "fas fa-briefcase",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Brands)
+                )
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.ProductTypes,
+                    L("ProductTypes"),
+                    url: "ProductTypes",
+                    icon: "fas fa-boxes",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_ProductTypes)
+                )
+            )  .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Products,
+                    L("Products"),
+                    url: "Products",
+                    icon: "fas fa-box",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Products)
+                )
+            );
+            
     }
 
     private static ILocalizableString L(string name)

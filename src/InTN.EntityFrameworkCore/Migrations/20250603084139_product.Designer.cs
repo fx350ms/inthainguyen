@@ -4,6 +4,7 @@ using InTN.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InTN.Migrations
 {
     [DbContext(typeof(InTNDbContext))]
-    partial class InTNDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603084139_product")]
+    partial class product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1682,34 +1685,6 @@ namespace InTN.Migrations
                     b.ToTable("CustomerBalanceHistories");
                 });
 
-            modelBuilder.Entity("InTN.Entities.FileUpload", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("FileContent")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("FileType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FileUploads");
-                });
-
             modelBuilder.Entity("InTN.Entities.IdentityCode", b =>
                 {
                     b.Property<long>("Id")
@@ -2018,14 +1993,8 @@ namespace InTN.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FileUploadIds")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InvoiceNote")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -2054,7 +2023,7 @@ namespace InTN.Migrations
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Unit")
+                    b.PrimitiveCollection<string>("Units")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

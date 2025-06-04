@@ -29,6 +29,40 @@ public class InTNAuthorizationProvider : AuthorizationProvider
 
         context.CreatePermission(PermissionNames.Pages_Transactions, L("Transactions"));
         context.CreatePermission(PermissionNames.Fn_Transactions_Create, L("CreateTransaction"));
+          // Permissions for ProductCategories
+        context.CreatePermission(PermissionNames.Pages_ProductCategories, L("ProductCategories"));
+        context.CreatePermission(PermissionNames.Fn_ProductCategories_Create, L("CreateProductCategory"));
+        context.CreatePermission(PermissionNames.Fn_ProductCategories_Edit, L("EditProductCategory"));
+        context.CreatePermission(PermissionNames.Fn_ProductCategories_Delete, L("DeleteProductCategory"));
+
+        // Permissions for ProductProperties
+        context.CreatePermission(PermissionNames.Pages_ProductProperties, L("ProductProperties"));
+        context.CreatePermission(PermissionNames.Fn_ProductProperties_Create, L("CreateProductProperty"));
+        context.CreatePermission(PermissionNames.Fn_ProductProperties_Edit, L("EditProductProperty"));
+        context.CreatePermission(PermissionNames.Fn_ProductProperties_Delete, L("DeleteProductProperty"));
+
+        // Permissions for Suppliers
+        context.CreatePermission(PermissionNames.Pages_Suppliers, L("Suppliers"));
+        context.CreatePermission(PermissionNames.Fn_Suppliers_Create, L("CreateSupplier"));
+        context.CreatePermission(PermissionNames.Fn_Suppliers_Edit, L("EditSupplier"));
+        context.CreatePermission(PermissionNames.Fn_Suppliers_Delete, L("DeleteSupplier"));
+
+        // Permissions for Brands
+        context.CreatePermission(PermissionNames.Pages_Brands, L("Brands"));
+        context.CreatePermission(PermissionNames.Fn_Brands_Create, L("CreateBrand"));
+        context.CreatePermission(PermissionNames.Fn_Brands_Edit, L("EditBrand"));
+        context.CreatePermission(PermissionNames.Fn_Brands_Delete, L("DeleteBrand"));
+
+        // Permissions for ProductTypes
+        context.CreatePermission(PermissionNames.Pages_ProductTypes, L("ProductTypes"));
+        context.CreatePermission(PermissionNames.Fn_ProductTypes_Create, L("CreateProductType"));
+        context.CreatePermission(PermissionNames.Fn_ProductTypes_Edit, L("EditProductType"));
+        context.CreatePermission(PermissionNames.Fn_ProductTypes_Delete, L("DeleteProductType"));
+
+        context.CreatePermission(PermissionNames.Pages_Products, L("Products"));
+        context.CreatePermission(PermissionNames.Fn_Products_Create, L("CreateProduct"));
+        context.CreatePermission(PermissionNames.Fn_Products_Edit, L("EditProduct"));
+        context.CreatePermission(PermissionNames.Fn_Products_Delete, L("DeleteProduct"));
     }
 
     private static ILocalizableString L(string name)
