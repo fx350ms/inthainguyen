@@ -26,5 +26,6 @@ namespace InTN.Entities
         public decimal? Cost { get; set; } // Giá vốn
         public string FileUploadIds { get; set; } // Danh sách ID của các tệp đính kèm (dưới dạng chuỗi JSON hoặc danh sách ID)   
         public bool IsActive { get; set; } = true; // Trạng thái hoạt động của sản phẩm
+
     }
 }

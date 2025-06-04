@@ -119,8 +119,16 @@ public class InTNNavigationProvider : NavigationProvider
                     icon: "fas fa-boxes",
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_ProductTypes)
                 )
+            )  .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Products,
+                    L("Products"),
+                    url: "Products",
+                    icon: "fas fa-box",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Products)
+                )
             );
-            ;
+            
     }
 
     private static ILocalizableString L(string name)

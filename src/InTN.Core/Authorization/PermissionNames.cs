@@ -57,6 +57,12 @@ public static class PermissionNames
     public const string Fn_ProductTypes_Create = "Fn.ProductTypes.Create";
     public const string Fn_ProductTypes_Edit = "Fn.ProductTypes.Edit";
     public const string Fn_ProductTypes_Delete = "Fn.ProductTypes.Delete";
+
+     // Thêm Product
+    public const string Pages_Products = "Pages.Products";
+    public const string Fn_Products_Create = "Fn.Products.Create";
+    public const string Fn_Products_Edit = "Fn.Products.Edit";
+    public const string Fn_Products_Delete = "Fn.Products.Delete";
 }
 
 

@@ -58,6 +58,11 @@ public class InTNAuthorizationProvider : AuthorizationProvider
         context.CreatePermission(PermissionNames.Fn_ProductTypes_Create, L("CreateProductType"));
         context.CreatePermission(PermissionNames.Fn_ProductTypes_Edit, L("EditProductType"));
         context.CreatePermission(PermissionNames.Fn_ProductTypes_Delete, L("DeleteProductType"));
+
+        context.CreatePermission(PermissionNames.Pages_Products, L("Products"));
+        context.CreatePermission(PermissionNames.Fn_Products_Create, L("CreateProduct"));
+        context.CreatePermission(PermissionNames.Fn_Products_Edit, L("EditProduct"));
+        context.CreatePermission(PermissionNames.Fn_Products_Delete, L("DeleteProduct"));
     }
 
     private static ILocalizableString L(string name)

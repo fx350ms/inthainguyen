@@ -75,6 +75,15 @@ public enum OrderPaymentStatus
     Debt = 3 // Công nợ
 }
 
+public enum FileUploadType
+{
+    [Description("Khác")]
+    Other = 0, // Khác  
+    [Description("Ảnh sản phẩm")]
+    ProductImage = 1, // ảnh sản phẩm
+}
+
+
 public enum TransactionType
 {
     [Description("Đặt cọc")]
