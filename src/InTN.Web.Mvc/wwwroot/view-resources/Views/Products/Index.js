@@ -63,7 +63,7 @@
                 targets: 6,
                 data: null,
                 sortable: false,
-                width: 50,
+                width: 20,
                 render: (data, type, row, meta) => {
                     return [
                         ` <div class="btn-group"> `,
@@ -71,19 +71,22 @@
                         ` </button>`,
                         ` <div class="dropdown-menu" style="">`,
 
-                        `   <a type="button" class="dropdown-item  bg-warning  btn-edit-product" data-toggle="modal" data-target="#ProductEditModal">`,
+                        `   <a type="button" class="dropdown-item  bg-warning  btn-edit-product" data-toggle="modal" data-id="${row.id}" data-target="#ProductEditModal">`,
                         `       <i class="fas fa-eye"></i> ${l('Edit')}`,
                         '   </a>',
+
+                        `   <a   href='/Products/EditPriceCombination?id=${row.id}' class="dropdown-item  bg-info  btn-edit-price"  data-id="${row.id}" data-target="#ProductEditPriceModal">`,
+                        `       <i class="fas fa-coins"></i> ${l('EditPrice')}`,
+                        '   </a>',
+                         
+
                         `   <a type="button" class="dropdown-item  bg-danger  btn-delete-product" data-toggle="modal" data-id="${row.id}"  >`,
                         `       <i class="fas fa-eye"></i> ${l('Delete')}`,
                         '   </a>',
                         `    </div>`,
                         `   </div>`
                     ].join('');
-                    //return [
-                    //    `<button type="button" class="btn btn-warning btn-edit-product" data-id="${row.id}" data-toggle="modal" data-target="#ProductEditModal">${l('Edit')}</button>`,
-                    //    `<button type="button" class="btn btn-danger btn-delete-product" data-id="${row.id}">${l('Delete')}</button>`
-                    //].join('');
+                  
                 }
             }
         ]
@@ -153,6 +156,7 @@
             }
         });
     });
+
 
     $(document).on('click', '.btn-delete-product', function () {
         var id = $(this).data('id');

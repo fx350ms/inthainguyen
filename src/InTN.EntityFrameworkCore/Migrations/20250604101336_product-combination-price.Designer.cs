@@ -4,6 +4,7 @@ using InTN.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InTN.Migrations
 {
     [DbContext(typeof(InTNDbContext))]
-    partial class InTNDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250604101336_product-combination-price")]
+    partial class productcombinationprice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2081,7 +2084,7 @@ namespace InTN.Migrations
                     b.ToTable("ProductCategories");
                 });
 
-            modelBuilder.Entity("InTN.Entities.ProductPriceCombination", b =>
+            modelBuilder.Entity("InTN.Entities.ProductCombinationPrice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -2097,7 +2100,7 @@ namespace InTN.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductPriceCombinations");
+                    b.ToTable("ProductCombinationPrices");
                 });
 
             modelBuilder.Entity("InTN.Entities.ProductProperty", b =>

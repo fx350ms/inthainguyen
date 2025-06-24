@@ -1,0 +1,124 @@
+﻿@using InTN.Web.Startup
+@using InTN.Products.Dto
+@using InTN.Web.Models.Products
+
+@{
+    ViewBag.Title = L("Products");
+    ViewBag.CurrentPageName = PageNames.Products;
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Products/EditPriceCombination.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Products/EditPriceCombination.min.js" asp-append-version="true"></script>
+    </environment>
+ 
+}
+
+
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+
+            .property-item {
+            margin-bottom: 15px;
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .property-header .remove-property-btn {
+            margin-left: 10px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice
+        {
+            color: #0029ff;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove
+        {
+            color: #Ff0000 ;
+        }
+    </style>
+}
+
+ @model InTN.Web.Models.Products.ProductEditPriceCombinationModel
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("ProductPriceCombination"): <span class="text-info">  @Model.ProductName</span></h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                     <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <label for="property-select">Thuộc tính</label>
+                                <select id="property-select" class="form-control" multiple="multiple">
+                                    <option value="">-- Chọn thuộc tính --</option>
+                                    @foreach (var prop in Model.ProductProperties)
+                                    {
+                                        <option value="@prop.Id" data-name="@prop.Name">@prop.Name</option>
+                                    }
+                                </select>
+                            </div>
+                          
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 class="mb-2">Bảng thuộc tính</h6>
+                                <div id="property-values-container" class="row">
+                                    <!-- Từng thuộc tính sẽ được render động ở đây -->
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="mb-2">Bảng tổ hợp và giá</h6>
+                                <table class="table table-bordered table-sm" id="combination-table">
+                                    <thead>
+                                        <tr id="combination-table-header">
+                                            <!-- sẽ được render tự động -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="combination-table-body">
+                                        <!-- sẽ được render tự động -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
