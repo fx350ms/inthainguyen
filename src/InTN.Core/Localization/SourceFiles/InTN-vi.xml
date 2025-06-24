@@ -650,6 +650,7 @@
 		<text name="SelectProductCategory" value="Chọn danh mục sản phẩm" />
 		<text name="SelectSupplier" value="Chọn nhà cung cấp" />
 		<text name="SelectProductType" value="Chọn loại sản phẩm" />
-
+		<text name="ProductPriceCombination" value="Bảng giá sản phẩm" />
+		
 	</texts>
 </localizationDictionary>

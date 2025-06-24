@@ -77,6 +77,7 @@ namespace InTN.Web.Controllers
             var model = new ProductEditPriceCombinationModel()
             {
                 ProductId = product.Id,
+                ProductName = product.Name,
                 ProductProperties = (await _productPropertyService.GetAllProductPropertiesAsync()),
             };
             return View( model);

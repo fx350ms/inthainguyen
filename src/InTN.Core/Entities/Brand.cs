@@ -2,9 +2,9 @@
 
 namespace InTN.Entities
 {
-    public class ProductCategory : Entity<int>
+    public class Brand : Entity<int>
     {
         public string Name { get; set; }
-        public int? ParentId { get; set; }
+        public string Description { get; set; }
     }
 }
