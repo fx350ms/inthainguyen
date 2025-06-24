@@ -13,5 +13,7 @@ namespace InTN.Products
         ProductDto>            // DTO cho cập nhật
     {
         Task<ProductDto> GetProductDetailsAsync(int id); // Lấy chi tiết sản phẩm
+
+        Task<PagedResultDto<ProductDto>> GetProductsAsync(PagedProductResultRequestDto input);
     }
 }

@@ -103,3 +103,11 @@ public enum DebtType
     [Description("Giảm công nợ")]
     Decrease = 2 // Giảm công nợ
 }
+
+public enum ProductStatus
+{
+    [Description("Đang hoạt động")]
+    Active = 1, // Đang hoạt động  
+    [Description("Ngừng hoạt động")]
+    Inactive = 2 // Ngừng hoạt động
+}
