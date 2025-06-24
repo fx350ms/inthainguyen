@@ -9,7 +9,7 @@
         paging: true,
         serverSide: true,
         listAction: {
-            ajaxFunction: _productService.getAll,
+            ajaxFunction: _productService.getProducts,
             inputFilter: function () {
                 return $('#ProductSearchForm').serializeFormToObject(true);
             }
@@ -55,12 +55,50 @@
             },
             {
                 targets: 5,
-                data: 'isActive',
+                data: 'cost',
                 sortable: false,
-                render: (data) => data ? l('Active') : l('Inactive'),
             },
             {
                 targets: 6,
+                data: 'unit',
+                sortable: false,
+            },
+            {
+                targets: 7,
+                data: 'description',
+                sortable: false,
+            },
+            {
+                targets: 8,
+                data: 'invoiceNote',
+                sortable: false,
+            },
+            {
+                targets: 9,
+                data: 'supplierName',
+                sortable: false,
+            },
+            {
+                targets: 10,
+                data: 'productTypeName',
+                sortable: false,
+            },
+            {
+                targets: 11,
+                data: 'productCategoryName',
+                sortable: false,
+            },
+            {
+                targets: 12,
+                data: 'isActive',
+                sortable: false,
+                className : 'text-center',
+                render: (data) => data
+                    ? `<span title="${l('Active')}" style="color:green;"><i class="fas fa-check-circle"></i></span>`
+                    : `<span title="${l('Inactive')}" style="color:red;"><i class="fas fa-times-circle"></i></span>`,
+            },
+            {
+                targets: 13,
                 data: null,
                 sortable: false,
                 width: 20,
@@ -71,7 +109,7 @@
                         ` </button>`,
                         ` <div class="dropdown-menu" style="">`,
 
-                        `   <a type="button" class="dropdown-item  bg-warning  btn-edit-product" data-toggle="modal" data-id="${row.id}" data-target="#ProductEditModal">`,
+                        `   <a type="button" class="dropdown-item  bg-primary  btn-edit-product" data-toggle="modal" data-id="${row.id}" data-target="#ProductEditModal">`,
                         `       <i class="fas fa-eye"></i> ${l('Edit')}`,
                         '   </a>',
 
@@ -172,5 +210,18 @@
                 }
             }
         );
+    });
+
+    
+    $('.btn-search').on('click', (e) => {
+        _$productsTable.ajax.reload();
+        return false;
+    });
+
+    $('.txt-search').on('keypress', (e) => {
+        if (e.which == 13) {
+            _$productsTable.ajax.reload();
+            return false;
+        }
     });
 })(jQuery);

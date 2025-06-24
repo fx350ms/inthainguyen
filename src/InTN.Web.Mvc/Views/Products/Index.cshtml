@@ -158,7 +158,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-12">
-                                @await Html.PartialAsync("~/Views/Products/Index.AdvancedSearch.cshtml")
+                                @await Html.PartialAsync("~/Views/Products/Index.AdvancedSearch.cshtml", Model)
                             </div>
                         </div>
                     </div>
@@ -172,8 +172,14 @@
                                         <th>@L("Code")</th>
                                         <th>@L("Name")</th>
                                         <th>@L("Price")</th>
-                                        <th>@L("IsActive")</th>
-                                        <th></th>
+                                        <th>@L("Cost")</th>
+                                        <th>@L("Unit")</th>
+                                        <th>@L("Description")</th>
+                                        <th>@L("InvoiceNote")</th>
+                                        <th>@L("Supplier")</th>
+                                        <th>@L("ProductType")</th>
+                                        <th>@L("ProductCategory")</th>
+                                        <th>@L("Status")</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
