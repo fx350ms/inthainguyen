@@ -625,6 +625,31 @@
 		<text name="SelectOrder" value="Chọn đơn hàng" />
 		<text name="TheOrderHasBeenPaidOrNoOutstandingDebt" value="Đơn hàng đã được thanh toán hoặc chuyển công nợ" />
 		<text name="BackToOrderList" value="Quay lại danh sách đơn hàng" />
+		<text name="ProductCategories" value="Danh mục sản phẩm" />
+		<text name="ParentCategory" value="Danh mục cha" />
+		<text name="CreateNewProductCategory" value="Tạo danh mục sản phẩm mới" />
+		<text name="ProductProperties" value="Thuộc tính sản phẩm" />
+		<text name="CreateNewProductProperty" value="Tạo thuộc tính sản phẩm mới" />
+		<text name="Suppliers" value="Nhà cung cấp" />
+		<text name="CreateNewSupplier" value="Tạo nhà cung cấp mới" />
+		<text name="Brands" value="Thương hiệu" />
+		<text name="CreateNewBrand" value="Tạo thương hiệu mới" />
+		<text name="ProductTypes" value="Loại sản phẩm" />
+		<text name="CreateNewProductType" value="Tạo loại sản phẩm mới" />
+		<text name="Products" value="Sản phẩm" />
+		<text name="CreateNewProduct" value="Tạo sản phẩm mới" />
+		<text name="Unit" value="Đơn vị" />
+		<text name="InvoiceNote" value="Ghi chú hóa đơn" />
+		<text name="ProductType" value="Loại sản phẩm" />
+		<text name="ProductCategory" value="Danh mục sản phẩm" />
+		<text name="Supplier" value="Nhà cung cấp" />
+		<text name="Brand" value="Thương hiệu" />
+		<text name="SelectBrand" value="Chọn thương hiệu" />
+		<text name="Price" value="Giá" />
+		<text name="Attachments" value="Tệp đính kèm" />
+		<text name="SelectProductCategory" value="Chọn danh mục sản phẩm" />
+		<text name="SelectSupplier" value="Chọn nhà cung cấp" />
+		<text name="SelectProductType" value="Chọn loại sản phẩm" />
 
 	</texts>
 </localizationDictionary>

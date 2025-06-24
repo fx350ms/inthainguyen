@@ -1,0 +1,75 @@
+@using InTN.Web.Models.Common.Modals
+@using InTN.Products.Dto
+@using InTN.Web.Models.Products
+@using InTN.Brands.Dto;
+@using InTN.ProductCategories.Dto
+@using InTN.ProductTypes.Dto
+@using InTN.Suppliers.Dto
+@* 
+ @model ProductEditPriceCombinationModel
+
+@await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("EditProductPriceCombination")))
+<form name="ProductEditPriceForm" role="form" class="form-horizontal" enctype="multipart/form-data">
+    <div class="modal-body">
+
+        <input type="hidden" name="ProductId" value="@Model.ProductId" />
+
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+ *@
+
+ @model InTN.Web.Models.Products.ProductEditPriceCombinationModel
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Thiết lập giá theo thuộc tính</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <!-- Chọn thuộc tính -->
+        <div class="form-inline mb-3">
+            <label class="mr-2">Thuộc tính:</label>
+            <select id="property-select" class="form-control mr-2">
+                <option value="">-- Chọn thuộc tính --</option>
+                @foreach (var prop in Model.ProductProperties)
+                {
+                    <option value="@prop.Id" data-name="@prop.Name">@prop.Name</option>
+                }
+            </select>
+            <button type="button" id="add-property-btn" class="btn btn-success">Thêm</button>
+        </div>
+
+        <!-- Danh sách thuộc tính + nhập giá trị -->
+        <div id="property-values-container" class="mb-4">
+            <!-- Từng thuộc tính sẽ được render động ở đây -->
+        </div>
+
+        <!-- Bảng tổ hợp -->
+        <div>
+            <h6 class="mb-2">Bảng tổ hợp và giá</h6>
+            <table class="table table-bordered table-sm" id="combination-table">
+                <thead>
+                    <tr id="combination-table-header">
+                        <!-- sẽ được render tự động -->
+                    </tr>
+                </thead>
+                <tbody id="combination-table-body">
+                    <!-- sẽ được render tự động -->
+                </tbody>
+            </table>
+        </div>
+
+        <input type="hidden" id="PriceCombination" name="PriceCombination" value="@Model.PriceCombination" />
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="save-combination-btn">Lưu</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+    </div>
+</div>
+
+ 

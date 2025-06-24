@@ -2,6 +2,7 @@ using Abp.Application.Services.Dto;
 using InTN.Brands;
 using InTN.Controllers;
 using InTN.ProductCategories;
+using InTN.ProductProperties;
 using InTN.Products;
 using InTN.Products.Dto;
 using InTN.ProductTypes;
@@ -20,13 +21,14 @@ namespace InTN.Web.Controllers
         private readonly IProductTypeAppService _productTypeService;
         private readonly ISupplierAppService _supplierService;
         private readonly IBrandAppService _brandService;
-
+        private readonly IProductPropertyAppService _productPropertyService;
 
         public ProductsController(IProductAppService productService,
             IProductCategoryAppService productCategoryService,
             IProductTypeAppService productTypeService,
             ISupplierAppService supplierService,
-            IBrandAppService brandService
+            IBrandAppService brandService,
+            IProductPropertyAppService productPropertyService
         )
         {
             _productService = productService;
@@ -34,7 +36,7 @@ namespace InTN.Web.Controllers
             _productTypeService = productTypeService;
             _supplierService = supplierService;
             _brandService = brandService;
-
+            _productPropertyService = productPropertyService;
         }
 
         public async Task<IActionResult> Index()
@@ -67,6 +69,17 @@ namespace InTN.Web.Controllers
                 Dto = new CreateProductDto()
 
             });
+        }
+
+        public async Task<ActionResult> EditPriceCombination(int id)
+        {
+            var product = await _productService.GetAsync(new EntityDto(id));
+            var model = new ProductEditPriceCombinationModel()
+            {
+                ProductId = product.Id,
+                ProductProperties = (await _productPropertyService.GetAllProductPropertiesAsync()),
+            };
+            return View( model);
         }
     }
 }
