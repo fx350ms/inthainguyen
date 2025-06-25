@@ -14,16 +14,15 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<Process> Processes { get; set; }
     public DbSet<ProcessStep> ProcessSteps { get; set; }
     public DbSet<ProcessHistory> ProcessHistories { get; set; }
-
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<IdentityCode> IdentityCodes { get; set; }
     public DbSet<Customer> Customers { get; set; }
-    public DbSet<OrderAttachment> OrderAttachments { get; set; }
+    public DbSet<OrderAttachment> OrderAttachments { get; set; } 
     public DbSet<OrderLog> OrderLogs { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<CustomerBalanceHistory> CustomerBalanceHistories { get; set; }
-
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<ProductProperty> ProductProperties { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }

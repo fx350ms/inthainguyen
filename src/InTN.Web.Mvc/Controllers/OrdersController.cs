@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
+using InTN.Brands;
 using InTN.Controllers;
 using InTN.Customers;
 using InTN.IdentityCodes;
@@ -6,6 +7,9 @@ using InTN.OrderAttachments;
 using InTN.OrderLogs;
 using InTN.Orders;
 using InTN.Orders.Dto;
+using InTN.ProductCategories;
+using InTN.ProductTypes;
+using InTN.Suppliers;
 using InTN.Web.Models.Orders;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -18,17 +22,32 @@ namespace InTN.Web.Controllers
         private readonly IOrderAppService _orderAppService;
         private readonly IOrderLogAppService _orderLogAppService;
         private readonly IOrderAttachmentAppService _orderAttachmentAppService;
+        private readonly IProductTypeAppService _productTypeAppService;
+
+        private readonly IProductCategoryAppService _productCategoryAppService;
+        private readonly ISupplierAppService _supplierAppService;
+        private readonly IBrandAppService _brandAppService;
 
         public OrdersController(IOrderAppService orderService,
-             IIdentityCodeAppService identityCodeAppService,
-             IOrderLogAppService orderLogAppService,
-                IOrderAttachmentAppService orderAttachmentAppService
+                    IIdentityCodeAppService identityCodeAppService,
+                    IOrderLogAppService orderLogAppService,
+                    IOrderAttachmentAppService orderAttachmentAppService,
+                    IProductTypeAppService productTypeAppService,
+                    IProductCategoryAppService productCategoryAppService,
+                    ISupplierAppService supplierAppService,
+                    IBrandAppService brandAppService
+
          )
         {
             _orderAppService = orderService;
             _identityCodeAppService = identityCodeAppService;
             _orderLogAppService = orderLogAppService;
             _orderAttachmentAppService = orderAttachmentAppService;
+            _productTypeAppService = productTypeAppService;
+            _productCategoryAppService = productCategoryAppService;
+            _supplierAppService = supplierAppService;
+            _brandAppService = brandAppService;
+
         }
 
         public async Task<IActionResult> Index()
@@ -39,12 +58,23 @@ namespace InTN.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var identityCode = await _identityCodeAppService.GenerateNewSequentialNumberAsync("DH");
-            var model = new CreateOrderDto
+            var model = new CreateOrderModel
             {
-                OrderCode = identityCode.Code,
-
+                CreateOrderDto = new CreateOrderDto()
+                { OrderCode = identityCode.Code },
+                ProductTypes = await _productTypeAppService.GetAllListAsync(),
+                ProductCategories = await _productCategoryAppService.GetAllListAsync(),
+                Suppliers = await _supplierAppService.GetAllListAsync(),
+                Brands = await _brandAppService.GetAllListAsync()
             };
+
             return View(model);
+
+            //var model = new CreateOrderDto
+            //{
+            //    OrderCode = identityCode.Code,
+            //};
+            //return View(model);
         }
 
 
@@ -113,7 +143,7 @@ namespace InTN.Web.Controllers
                 OrderCode = order.OrderCode,
                 TotalAmount = order.TotalAmount ?? 0,
                 TotalDeposit = order.TotalDeposit ?? 0,
-                PaymentStatus = order.PaymentStatus 
+                PaymentStatus = order.PaymentStatus
             };
             return View(model);
         }

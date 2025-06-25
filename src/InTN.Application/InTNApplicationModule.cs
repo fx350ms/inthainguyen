@@ -56,6 +56,8 @@ public class InTNApplicationModule : AbpModule
             cfg.CreateMap<Product, ProductWithImageDto>().ReverseMap();
             cfg.CreateMap<Product, CreateProductDto>().ReverseMap();
             cfg.CreateMap<ProductPriceCombination, ProductPriceCombinationDto>().ReverseMap();
+
+            cfg.CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
         });
     }
 

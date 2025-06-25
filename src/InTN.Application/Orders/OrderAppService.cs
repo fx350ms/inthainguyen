@@ -1,7 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Application.Services;
 using Abp.Domain.Repositories;
-
 using InTN.Orders.Dto;
 using InTN.Entities;
 using System.Threading.Tasks;
@@ -9,15 +8,12 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.IO;
-using System.Net.Mail;
 using Abp.Authorization;
 using InTN.Authorization;
-using NuGet.Protocol;
 using Abp.Json;
 using InTN.IdentityCodes;
 using InTN.Commons;
 using System.Collections.Generic;
-using Abp.AutoMapper;
 
 namespace InTN.Orders
 {

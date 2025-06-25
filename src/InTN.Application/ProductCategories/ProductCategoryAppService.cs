@@ -3,6 +3,8 @@ using Abp.Domain.Repositories;
 using InTN.ProductCategories.Dto;
 using InTN.Entities;
 using Abp.Application.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InTN.ProductCategories
 {
@@ -18,6 +20,13 @@ namespace InTN.ProductCategories
         public ProductCategoryAppService(IRepository<ProductCategory> repository)
            : base(repository)
         {
+        }
+
+        public async Task<List<ProductCategoryDto>> GetAllListAsync()
+        {
+            var data = await Repository.GetAllListAsync();
+            var result = ObjectMapper.Map<List<ProductCategoryDto>>(data);
+            return result;
         }
     }
 }
