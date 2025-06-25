@@ -14,5 +14,7 @@ namespace InTN.ProductPriceCombinations
         ProductPriceCombinationDto> // DTO cho cập nhật
     {
         Task<List<ProductPriceCombinationDto>> GetAllProductPriceCombinationsAsync();
+        Task SavePriceCombinations(SavePriceCombinationsDto input);
+        Task<List<PriceCombinationDto>> GetPriceCombinationsByProductIdAsync(int productId);
     }
 }

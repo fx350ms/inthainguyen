@@ -92,6 +92,7 @@
                     
                     <div class="card-body">
                         <div class="row">
+                            <input type="hidden" id="ProductId" value="@Model.ProductId" />
                             <div class="col-6">
                                 <h6 class="mb-2">Bảng thuộc tính</h6>
                                 <div id="property-values-container" class="row">
@@ -111,8 +112,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
-                            
                         </div>
                     </div>
                     @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
