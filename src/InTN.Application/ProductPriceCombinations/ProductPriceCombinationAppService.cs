@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NuGet.Protocol.Core.Types;
 using Newtonsoft.Json;
+using Abp.AutoMapper;
+using System.Net.WebSockets;
 
 namespace InTN.ProductPriceCombinations
 {
@@ -49,6 +51,16 @@ namespace InTN.ProductPriceCombinations
                 };
                 await Repository.InsertAsync(newItem);
             }
+        }
+
+        public async Task<List<PriceCombinationDto>> GetPriceCombinationsByProductIdAsync(int productId)
+        {
+            var item = await Repository.FirstOrDefaultAsync(x => x.ProductId == productId);
+            if (item != null && !string.IsNullOrEmpty(item.PriceCombination))
+            {
+                return JsonConvert.DeserializeObject<List<PriceCombinationDto>>(item.PriceCombination) ?? new List<PriceCombinationDto>();
+            }
+            return null;
         }
     }
 }
