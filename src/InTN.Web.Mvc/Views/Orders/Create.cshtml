@@ -1,10 +1,8 @@
 ﻿@using InTN
 @using InTN.Web.Models.Common.Modals
+@using InTN.Web.Models.Orders;
+@model CreateOrderModel
 
-@model InTN.Orders.Dto.CreateOrderDto
-@{
-
-}
 @section scripts
 {
     <environment names="Development">
@@ -14,7 +12,6 @@
     <environment names="Staging,Production">
         <script src="~/view-resources/Views/Orders/Create.min.js" asp-append-version="true"></script>
     </environment>
-
 }
 
 @section styles {
@@ -33,102 +30,209 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                @*      <h1>@L("CreateMyOrder"): <strong class="text-primary">@Model.Dto.OrderNumber</strong> </h1> *@
-                <h1>@L("Pages_CreateOrder"): <strong class="text-primary">@Model.OrderCode</strong></h1>
-            </div>
-            <div class="col-sm-6">
+                <h1>@L("Pages_CreateOrder"): <strong class="text-primary">@Model.CreateOrderDto.OrderCode</strong></h1>
             </div>
         </div>
     </div>
 </section>
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body" id="modal-create-order">
-
-                        @* @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("CreateNewCustomerAddress"))) *@
                         <form name="form-create-order" role="form" class="form-horizontal">
                             <div class="modal-body">
-
-                                <div class="tab-content mt-4 ">
-
-                                    <div role="tabpanel" class="tab-pane container active form-content">
-                                        
-                                        <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
-
-                                        <!-- IsCasualCustomer -->
-                                        <div class="form-group row ">
-                                            <label class="col-md-2 col-form-label">@L("CustomerType")</label>
-                                            <div class="col-md-4">
-                                                <select class="form-control select-customer">
-                                                    <option value="1"> @L("CasualCustomer") </option>
-                                                    <option value="2"> @L("LoyalCustomer") </option>
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">@L("CustomerInformation")</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label>@L("CustomerType")</label>
+                                                <select class="form-control select-customer" name="CustomerType">
+                                                    <option value="1">@L("CasualCustomer")</option>
+                                                    <option value="2">@L("LoyalCustomer")</option>
                                                 </select>
                                             </div>
-                                            <label class="col-md-2 col-form-label select-customer-group">@L("Customer")</label>
-                                            <div class="col-md-4 select-customer-group">
-                                                <select class="select2 select2-hidden-accessible select-customer-id" name="CustomerId" style="width: 100%;">
-                                                </select>
+                                            <div class="col-md-3 select-customer-group">
+                                                <label>@L("Customer")</label>
+                                                <select class="select2 select-customer-id form-control" name="CustomerId" style="width: 100%;"></select>
                                             </div>
+
                                         </div>
-
-                                        <!-- Full Name -->
-                                        <div class="form-group row required">
-                                            <label class="col-md-2 col-form-label">@L("CustomerName")</label>
-                                            <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <label>@L("CustomerName")</label>
                                                 <input type="text" class="form-control" name="CustomerName" required maxlength="255">
                                             </div>
-                                            <label class="col-md-2 col-form-label">@L("Phone")</label>
-                                            <div class="col-md-4">
-                                                <input type="text" class="form-control" name="CustomerPhone" required >
+                                            <div class="col-md-3">
+                                                <label>@L("Phone")</label>
+                                                <input type="text" class="form-control" name="CustomerPhone" required>
                                             </div>
-                                        </div>
-
-                                        <!-- Email -->
-                                        <div class="form-group row ">
-                                            <label class="col-md-2 col-form-label">@L("Email")</label>
-                                            <div class="col-md-10">
-                                                <input type="text" class="form-control" name="CustomerEmail"  >
-                                            </div>
-                                        </div>
-
-                                        <!-- Address -->
-                                        <div class="form-group row ">
-                                            <label class="col-md-2 col-form-label">@L("CustomerAddress")</label>
-                                            <div class="col-md-10">
-                                                <textarea class="form-control" id="Address" name="CustomerAddress" rows="3"  maxlength="500"></textarea>
-                                            </div>
-                                        </div>
-                                        <!-- Total Debt -->
-                                        <div class="form-group row debt-group" >
-                                            <label class="col-md-2 col-form-label">@L("TotalDebt")</label>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
+                                                <label>@L("TotalDebt")</label>
                                                 <input type="text" class="form-control" name="TotalDebt" readonly>
                                             </div>
-                                            <label class="col-md-2 col-form-label">@L("CreditLimit")</label>
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
+                                                <label>@L("CreditLimit")</label>
                                                 <input type="text" class="form-control" name="CreditLimit" readonly>
                                             </div>
-                                        </div>
-                                        <!-- Address -->
-                                        <div class="form-group row ">
-                                            <label class="col-md-2 col-form-label">@L("Note")</label>
-                                            <div class="col-md-10">
-                                                <textarea class="form-control" id="Note" name="Note" rows="3" ></textarea>
+                                            <div class="col-md-3">
+                                                <label>@L("Email")</label>
+                                                <input type="text" class="form-control" name="CustomerEmail">
                                             </div>
-                                        </div>
-
-                                        <!-- File -->
-                                        <div class="form-group row ">
-                                            <label class="col-md-2 col-form-label">@L("FileUrl")</label>
-                                            <div class="col-md-10">
-                                                <textarea class="form-control" id="FileUrl" name="FileUrl" rows="3" ></textarea>
+                                            <div class="col-md-6">
+                                                <label>@L("CustomerAddress")</label>
+                                                <input type="text" class="form-control" name="CustomerAddress" required>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <!-- Thông tin chi tiết đơn hàng -->
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">@L("OrderDetails")</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
 
+                                            <div class="col-md-3">
+                                                <label>@L("ProductCategory")</label>
+                                                <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
+                                                    <option value="-1">@L("SelectProductCategory")</option>
+                                                    @if (Model != null && Model.ProductCategories != null && Model.ProductCategories.Count > 0)
+                                                    {
+                                                        foreach (var category in Model.ProductCategories)
+                                                        {
+                                                            <option value="@category.Id">@category.Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label>@L("ProductType")</label>
+                                                <select class="select2 select-product-type-id target-product-id form-control" name="ProductTypeId" style="width: 100%;">
+                                                    <option value="-1">@L("SelectProductType")</option>
+                                                    @if (Model != null && Model.ProductTypes != null && Model.ProductTypes.Count > 0)
+                                                    {
+                                                        foreach (var type in Model.ProductTypes)
+                                                        {
+                                                            <option value="@type.Id">@type.Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label>@L("BrandName")</label>
+                                                <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
+                                                    <option value="-1">@L("SelectBrand")</option>
+                                                    @if (Model != null && Model.Brands != null && Model.Brands.Count > 0)
+                                                    {
+                                                        foreach (var brand in Model.Brands)
+                                                        {
+                                                            <option value="@brand.Id">@brand.Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>@L("SupplierName")</label>
+                                                <select class="select2 select-product-supplier-id target-product-id form-control" name="ProductSupplierId" style="width: 100%;">
+                                                    <option value="-1">@L("SelectSupplier")</option>
+                                                    @if (Model != null && Model.Suppliers != null && Model.Suppliers.Count > 0)
+                                                    {
+                                                        foreach (var supplier in Model.Suppliers)
+                                                        {
+                                                            <option value="@supplier.Id">@supplier.Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label>@L("ServiceName")</label>
+                                                <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                @*   <div class="row">
+                                    <div class="col-md-3">
+                                        <label>@L("ServiceName")</label>
+                                        <input type="text" class="form-control" name="ServiceName">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("Category")</label>
+                                        <input type="text" class="form-control" name="Category">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("Width")</label>
+                                        <input type="number" class="form-control" name="Width">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("Height")</label>
+                                        <input type="number" class="form-control" name="Height">
+                                    </div>
+                                </div> *@
+                                @* <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <label>@L("Quantity")</label>
+                                        <input type="number" class="form-control" name="Quantity">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("UnitPrice")</label>
+                                        <input type="number" class="form-control" name="UnitPrice">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("TotalPrice")</label>
+                                        <input type="number" class="form-control" name="TotalPrice" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("Note")</label>
+                                        <textarea class="form-control" name="Note" rows="3"></textarea>
+                                    </div>
+                                </div> *@
+
+                                <!-- Tổng kết thông tin về chi phí đơn hàng -->
+                                <h5 class="mt-4 mb-3">@L("OrderSummary")</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label>@L("TotalAmount")</label>
+                                        <input type="number" class="form-control" name="TotalAmount" readonly>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("TotalDeposit")</label>
+                                        <input type="number" class="form-control" name="TotalDeposit">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("DeliveryFee")</label>
+                                        <input type="number" class="form-control" name="DeliveryFee">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("VatRate")</label>
+                                        <input type="number" class="form-control" name="VatRate">
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-3">
+                                        <label>@L("DiscountAmount")</label>
+                                        <input type="number" class="form-control" name="DiscountAmount">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>@L("ExpectedDeliveryDate")</label>
+                                        <input type="date" class="form-control" name="ExpectedDeliveryDate">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>@L("OtherRequirements")</label>
+                                        <textarea class="form-control" name="OtherRequirements" rows="3"></textarea>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-between">

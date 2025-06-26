@@ -14,6 +14,7 @@ using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Abp.Linq.Extensions;
 using System.Collections.Generic;
+using InTN.Commons;
 
 namespace InTN.Products
 {
@@ -53,6 +54,7 @@ namespace InTN.Products
             return await CreateAsync(input);
         }
 
+
         public async Task<PagedResultDto<ProductDto>> GetProductsAsync(PagedProductResultRequestDto input)
         {
             var query = await Repository.GetAllAsync();
@@ -78,7 +80,7 @@ namespace InTN.Products
             }
             if (input.Status > 0)
             {
-                query = query.Where(p => (input.Status == (int)ProductStatus.Active && p.IsActive) 
+                query = query.Where(p => (input.Status == (int)ProductStatus.Active && p.IsActive)
                 || (input.Status == (int)ProductStatus.Active && !p.IsActive));
             }
             var totalCount = await query.CountAsync();
@@ -97,6 +99,39 @@ namespace InTN.Products
                 TotalCount = totalCount,
                 Items = productDtos
             };
+        }
+
+
+        [HttpGet]
+        public async Task<List<OptionItemDto>> FilterAndSearchProductAsync(FilterAndSearchProductRequestDto input)
+        {
+            var query = await Repository.GetAllAsync();
+            if (input.ProductTypeId.HasValue && input.ProductTypeId > 0)
+            {
+                query = query.Where(u => u.ProductTypeId.HasValue && u.ProductTypeId == input.ProductTypeId.Value);
+            }
+
+            if (input.ProductCategoryId.HasValue && input.ProductCategoryId > 0)
+            {
+                query = query.Where(u => u.ProductCategoryId.HasValue && u.ProductCategoryId == input.ProductCategoryId.Value);
+            }
+
+            if (input.SupplierId.HasValue && input.SupplierId > 0)
+            {
+                query = query.Where(u => u.SupplierId.HasValue && u.SupplierId == input.SupplierId.Value);
+            }
+
+            if (input.BrandId.HasValue && input.BrandId > 0)
+            {
+                query = query.Where(u => u.BrandId.HasValue && u.BrandId == input.BrandId.Value);
+            }
+            if (!string.IsNullOrEmpty(input.Keyword))
+            {
+                query = query.Where(u => u.Code.Contains(input.Keyword) || u.Name.Contains(input.Keyword));
+            }
+            var items = await query.Select(u => new OptionItemDto() { id = u.Id.ToString(), text = u.Name }).ToListAsync();
+            return items;
+
         }
     }
 }

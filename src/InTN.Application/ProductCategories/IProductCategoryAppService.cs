@@ -1,6 +1,8 @@
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using InTN.ProductCategories.Dto;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InTN.ProductCategories
 {
@@ -12,5 +14,6 @@ namespace InTN.ProductCategories
         ProductCategoryDto> // DTO cho cập nhật
     {
         // Các phương thức bổ sung nếu cần
+        Task<List<ProductCategoryDto>> GetAllListAsync();
     }
 }
