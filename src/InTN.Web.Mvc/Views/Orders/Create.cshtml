@@ -101,7 +101,7 @@
 
                                             <div class="col-md-3">
                                                 <label>@L("ProductCategory")</label>
-                                                <select class="select2 select-product-category-id form-control" name="ProductCategoryId" style="width: 100%;">
+                                                <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
                                                     <option value="-1">@L("SelectProductCategory")</option>
                                                     @if (Model != null && Model.ProductCategories != null && Model.ProductCategories.Count > 0)
                                                     {
@@ -115,7 +115,7 @@
 
                                             <div class="col-md-3">
                                                 <label>@L("ProductType")</label>
-                                                <select class="select2 select-product-type-id form-control" name="ProductTypeId" style="width: 100%;">
+                                                <select class="select2 select-product-type-id target-product-id form-control" name="ProductTypeId" style="width: 100%;">
                                                     <option value="-1">@L("SelectProductType")</option>
                                                     @if (Model != null && Model.ProductTypes != null && Model.ProductTypes.Count > 0)
                                                     {
@@ -129,7 +129,7 @@
 
                                             <div class="col-md-3">
                                                 <label>@L("BrandName")</label>
-                                                <select class="select2 select-product-category-id form-control" name="ProductCategoryId" style="width: 100%;">
+                                                <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
                                                     <option value="-1">@L("SelectBrand")</option>
                                                     @if (Model != null && Model.Brands != null && Model.Brands.Count > 0)
                                                     {
@@ -142,7 +142,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label>@L("SupplierName")</label>
-                                                <select class="select2 select-product-supplier-id form-control" name="ProductSupplierId" style="width: 100%;">
+                                                <select class="select2 select-product-supplier-id target-product-id form-control" name="ProductSupplierId" style="width: 100%;">
                                                     <option value="-1">@L("SelectSupplier")</option>
                                                     @if (Model != null && Model.Suppliers != null && Model.Suppliers.Count > 0)
                                                     {

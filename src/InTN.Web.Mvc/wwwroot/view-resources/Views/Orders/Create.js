@@ -53,11 +53,10 @@
         }
     });
 
-
-
+   
     $('select[name="CustomerId"').select2({
         ajax: {
-            delay: 1000, // wait 1000 milliseconds before triggering the request
+            delay: 1500, // wait 1000 milliseconds before triggering the request
             url: abp.appPath + 'api/services/app/Customer/GetCustomerListForSelect',
             dataType: 'json',
             processResults: function (data) {
@@ -70,11 +69,11 @@
     }).addClass('form-control');
 
     $('.select2').select2();
-
-   
+     
 
     $('.select-product-id').select2({
         ajax: {
+            delay: 1500,
             url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct', 
             data: function (params) {
                 var query = {
