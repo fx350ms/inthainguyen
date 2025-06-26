@@ -1,0 +1,37 @@
+@using InTN.ProductNotes
+@using InTN.ProductNotes.Dto
+@using InTN.Products.Dto
+
+@model ProductNoteDto
+
+<div class="modal-header">
+    <h5 class="modal-title">@L("EditNote")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<form id="ProductNoteEditForm" class="form-horizontal">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="modal-body">
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("Note")</label>
+            <div class="col-md-9">
+                <textarea class="form-control" name="Note">@Model.Note</textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("ParentNote")</label>
+            <div class="col-md-9">
+                <select class="form-control select2" name="ParentId">
+                    <option value="">-- @L("SelectParentNote") --</option>
+                   
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">@L("Cancel")</button>
+        <button type="submit" class="btn btn-primary save-button">@L("Save")</button>
+    </div>
+</form>

@@ -1,0 +1,32 @@
+﻿@using InTN.Authorization
+
+ 
+<div class="abp-advanced-search">
+    <!-- Nút mở rộng/thu gọn -->
+    <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#ProductNoteFilterCollapse">
+        <i class="fas fa-filter"></i> Bộ lọc nâng cao
+    </button>
+ 
+    <div class="collapse" id="ProductNoteFilterCollapse">
+        <form id="ProductNoteSearchForm" class="form-horizontal">
+            <div class="form-row">
+                
+                <!-- Trạng thái -->
+                <div class="col-md-6">
+                    <label for="TransactionDate">Từ khóa</label>
+                    <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("Search")" />
+                </div>
+            </div>
+
+            <!-- Căn phải nút tìm kiếm -->
+            <div class="form-row mt-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-2 btn-search">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
