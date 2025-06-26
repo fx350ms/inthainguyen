@@ -31,6 +31,9 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<Product> Products { get; set; }
     public DbSet<FileUpload> FileUploads { get; set; }
     public DbSet<ProductPriceCombination> ProductPriceCombinations { get; set; }
+
+    public DbSet<ProductNote> ProductNotes { get; set; }
+
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)
     {
