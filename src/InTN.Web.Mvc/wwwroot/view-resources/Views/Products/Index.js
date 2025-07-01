@@ -51,11 +51,13 @@
             {
                 targets: 4,
                 data: 'price',
+                className: 'text-right',
                 sortable: false,
             },
             {
                 targets: 5,
                 data: 'cost',
+                className: 'text-right',
                 sortable: false,
             },
             {

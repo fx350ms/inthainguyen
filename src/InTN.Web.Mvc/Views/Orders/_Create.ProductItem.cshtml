@@ -1,0 +1,83 @@
+﻿@using InTN
+@using InTN.Web.Models.Common.Modals
+@using InTN.Web.Models.Orders;
+@model CreateOrderModel
+<div class="row">
+    <div class="col-md-2">
+        <label>@L("ProductCategory")</label>
+        <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
+            <option value="-1">@L("SelectProductCategory")</option>
+            @if (Model != null && Model.ProductCategories != null && Model.ProductCategories.Count > 0)
+            {
+                foreach (var category in Model.ProductCategories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>@L("ProductType")</label>
+        <select class="select2 select-product-type-id target-product-id form-control" name="ProductTypeId" style="width: 100%;">
+            <option value="-1">@L("SelectProductType")</option>
+            @if (Model != null && Model.ProductTypes != null && Model.ProductTypes.Count > 0)
+            {
+                foreach (var type in Model.ProductTypes)
+                {
+                    <option value="@type.Id">@type.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>@L("BrandName")</label>
+        <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
+            <option value="-1">@L("SelectBrand")</option>
+            @if (Model != null && Model.Brands != null && Model.Brands.Count > 0)
+            {
+                foreach (var brand in Model.Brands)
+                {
+                    <option value="@brand.Id">@brand.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>@L("SupplierName")</label>
+        <select class="select2 select-product-supplier-id target-product-id form-control" name="ProductSupplierId" style="width: 100%;">
+            <option value="-1">@L("SelectSupplier")</option>
+            @if (Model != null && Model.Suppliers != null && Model.Suppliers.Count > 0)
+            {
+                foreach (var supplier in Model.Suppliers)
+                {
+                    <option value="@supplier.Id">@supplier.Name</option>
+                }
+            }
+        </select>
+
+    </div>
+    <div class="col-md-2">
+        <label>@L("ServiceName")</label>
+        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+    </div>
+    <div>
+    </div>
+    <div class="col-md-3">
+        <label>@L("Quantity")</label>
+        <input type="number" class="form-control" name="Quantity" readonly>
+    </div>
+
+    <div class="col-md-3">
+        <label>@L("Note1")</label>
+        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+    </div>
+    <div class="col-md-3">
+        <label>@L("Note2")</label>
+        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+    </div>
+    <div class="col-md-3">
+        <label>@L("Note3")</label>
+        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+    </div>
+</div>
+

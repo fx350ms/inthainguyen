@@ -31,4 +31,12 @@ public class HomeController : InTNControllerBase
         model.StatisticSummaryByDate = await _statisticReportingAppService.GetTotalOrdersCustomersDebtByDateAsync();
         return View(model);
     }
+
+
+    public async Task<IActionResult> Import()
+    {
+
+
+        return Ok();
+    }
 }
