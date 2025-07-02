@@ -651,6 +651,21 @@
 		<text name="SelectSupplier" value="Chọn nhà cung cấp" />
 		<text name="SelectProductType" value="Chọn loại sản phẩm" />
 		<text name="ProductPriceCombination" value="Bảng giá sản phẩm" />
-		
+		<text name="ServiceProductName" value="Tên sản phẩm dịch vụ" />
+		<text name="OrderDetails" value="Chi tiết đơn hàng" />
+		<text name="Duplicate" value="Nhân bản" />
+		<text name="BrandName" value="Tên thương hiệu" />
+		<text name="SupplierName" value="Tên nhà cung cấp" />
+		<text name="ServiceName" value="Tên dịch vụ" />
+		<text name="Quantity" value="Số lượng" />
+		<text name="Note1" value="Ghi chú 1" />
+		<text name="Note2" value="Ghi chú 2" />
+		<text name="Note3" value="Ghi chú 3" />
+		<text name="DeliveryFee" value="Phí giao hàng" />
+		<text name="VatRate" value="Thuế VAT" />
+		<text name="DiscountAmount" value="Số tiền giảm giá" />
+		<text name="ExpectedDeliveryDate" value="Ngày giao dự kiến" />
+		<text name="OtherRequirements" value="Yêu cầu khác" />
+
 	</texts>
 </localizationDictionary>

@@ -43,12 +43,5 @@ namespace InTN.Orders.Dto
         public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>(); // Danh sách chi tiết đơn hàng
     }
 
-    //public class OrderDetailDto
-    //{
-    //    public int ProductId { get; set; }
-    //    public string ProductName { get; set; } = string.Empty;
-    //    public int Quantity { get; set; }
-    //    public decimal UnitPrice { get; set; }
-    //    public decimal TotalPrice { get; set; }
-    //}
+   
 }

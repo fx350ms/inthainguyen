@@ -15,6 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Abp.Linq.Extensions;
 using System.Collections.Generic;
 using InTN.Commons;
+using InTN.ProductPriceCombinations.Dto;
+using Abp;
+using Newtonsoft.Json;
 
 namespace InTN.Products
 {
@@ -132,5 +135,19 @@ namespace InTN.Products
 
         }
 
+
+        public async Task<List<PropertyWithValuesDto>> GetProductPropertiesAsync(int productId)
+        {
+            var product = await GetAsync(new EntityDto<int>(productId));
+            if (product == null)
+            {
+                throw new AbpException($"Product with ID {productId} not found.");
+            }
+
+            var properties = JsonConvert.DeserializeObject<List<PropertyWithValuesDto>>(product.Properties) ?? new List<PropertyWithValuesDto>();
+
+            return properties;
+
+        }
     }
 }

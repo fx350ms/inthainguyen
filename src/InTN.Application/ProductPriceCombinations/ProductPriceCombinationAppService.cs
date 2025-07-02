@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Abp;
+using System;
+using System.Linq;
+using System.Net.WebSockets;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace InTN.ProductPriceCombinations
 {
@@ -23,7 +27,7 @@ namespace InTN.ProductPriceCombinations
         private readonly IRepository<Product> _productRepository;
 
         public ProductPriceCombinationAppService(IRepository<ProductPriceCombination> repository,
-            IRepository<Product> productRepository) 
+            IRepository<Product> productRepository)
             : base(repository)
         {
             _productRepository = productRepository;
@@ -65,7 +69,7 @@ namespace InTN.ProductPriceCombinations
                 };
                 await Repository.InsertAsync(newItem);
             }
-            
+
 
 
         }
@@ -78,6 +82,47 @@ namespace InTN.ProductPriceCombinations
                 return JsonConvert.DeserializeObject<List<PriceCombinationDto>>(item.PriceCombination) ?? new List<PriceCombinationDto>();
             }
             return null;
+        }
+
+
+        public async Task<decimal> CalculatePriceAsync(int productId, List<PropertyWithSelectedValueDto> selectedProperties)
+        {
+            var product = await _productRepository.GetAsync(productId);
+            if (product == null)
+            {
+                throw new Exception("Product not found");
+            }
+
+            // Logic tính giá dựa trên thuộc tính
+            decimal basePrice = 0;
+
+            var productProperties = JsonConvert.DeserializeObject<List<PropertyWithValuesDto>>(product.Properties) ?? new List<PropertyWithValuesDto>();
+            //if (productProperties.Count != selectedProperties.Count)
+            //{
+            //   return product.Price ?? 0; // Trả về giá gốc nếu số lượng thuộc tính không khớp
+            //}
+
+            var priceCombinations = await GetPriceCombinationsByProductIdAsync(productId);
+
+            foreach (var selectedProperty in selectedProperties)
+            {
+                var id = selectedProperty.PropertyId;
+                var value = selectedProperty.Value;
+                priceCombinations = priceCombinations
+                    .Where(u => u.Combinations.Any(v => v.PropertyId == id && v.Value == value)).ToList();
+            }
+            if (priceCombinations != null && priceCombinations.Count > 0)
+            {
+                // Nếu có các kết hợp giá, lấy giá của kết hợp đầu tiên
+                basePrice = priceCombinations.First().Price;
+            }
+            else
+            {
+                // Nếu không có kết hợp nào, sử dụng giá gốc của sản phẩm
+                basePrice = product.Price ?? 0;
+            }
+
+            return basePrice;
         }
     }
 }

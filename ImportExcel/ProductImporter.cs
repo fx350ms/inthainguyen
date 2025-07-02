@@ -52,7 +52,7 @@ namespace ImportExcel
                         Description = row.Description,
                         InvoiceNote = row.InvoiceNote,
                         FileUploadIds = imageIds.Count > 0 ? System.Text.Json.JsonSerializer.Serialize(imageIds) : null,
-                        Price = null,
+                        Price = price,
                         IsActive = true
                     };
                 }
@@ -210,7 +210,7 @@ namespace ImportExcel
             var properties = combinationWithPrices
                 .SelectMany(c => c.Combinations)
                 .GroupBy(c => c.PropertyId)
-                .Select(g => new
+                .Select(g => new 
                 {
                     PropertyId = g.Key,
                     PropertyName = g.First().PropertyName,

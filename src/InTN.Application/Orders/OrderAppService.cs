@@ -45,15 +45,14 @@ namespace InTN.Orders
             _identityCodeAppService = identityCodeRepository;
         }
 
-
         /// <summary>
-        /// /
+        /// 
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        [AbpAuthorize(PermissionNames.Fn_Orders_CreateQuotation)]
+       // [AbpAuthorize(PermissionNames.Fn_Orders_CreateQuotation)]
         [HttpPost]
         public async Task<Order> CreateNewAsync(CreateOrderDto input)
         {
@@ -82,6 +81,8 @@ namespace InTN.Orders
 
             return order;
         }
+
+
 
         [HttpPut]
         public async Task CreateQuotationAsync([FromForm] OrderQuotationUploadDto input)
