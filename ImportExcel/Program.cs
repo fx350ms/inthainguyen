@@ -1,66 +1,8 @@
-﻿//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Extensions.Hosting;
-//using InTN.EntityFrameworkCore;
-//using Abp.Domain.Repositories;
-//using InTN.Entities;
-
-//namespace ImportExcel
-//{
-//    internal class Program
-//    {
-//        static void Main(string[] args)
-//        {
-//            Console.WriteLine("Start Begin");
-
-//            // Tạo host để cấu hình dịch vụ và đọc cấu hình
-//            var host = Host.CreateDefaultBuilder(args)
-//                .ConfigureAppConfiguration((context, config) =>
-//                {
-//                    // Đảm bảo đường dẫn file appsettings.json chính xác
-//                    var basePath = AppContext.BaseDirectory;
-//                    config.SetBasePath(basePath);
-//                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-//                })
-//                .ConfigureServices((context, services) =>
-//                {
-//                    // Đọc chuỗi kết nối từ appsettings.json
-//                    var connectionString = context.Configuration.GetConnectionString("Default");
-
-//                    // Đăng ký DbContext
-//                    services.AddDbContext<InTNDbContext>(options =>
-//                        options.UseSqlServer(connectionString));
-//                })
-//                .Build();
-
-//            // Sử dụng DbContext
-//            using var scope = host.Services.CreateScope();
-//            var dbContext = scope.ServiceProvider.GetRequiredService<InTNDbContext>();
-
-//            // Kiểm tra kết nối cơ sở dữ liệu
-//            try
-//            {
-
-
-//                // dbContext.Database.EnsureCreated(); // Đảm bảo cơ sở dữ liệu đã được tạo
-//                Console.WriteLine("Kết nối cơ sở dữ liệu thành công!");
-
-//                var products = dbContext.Products.ToList(); // Thực hiện truy vấn đơn giản để kiểm tra kết nối
-//                Console.Clear();
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine($"Lỗi kết nối cơ sở dữ liệu: {ex.Message}");
-//            }
-//        }
-//    }
-//}
+﻿
 
 
 // Required NuGet: DocumentFormat.OpenXml (install via NuGet)
- 
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -97,7 +39,7 @@ public class Program
             Console.WriteLine("Kết nối cơ sở dữ liệu thành công!");
 
             // Đường dẫn file Excel
-            var filePath = Path.Combine(AppContext.BaseDirectory, "Products.xlsx");
+            var filePath = Path.Combine(AppContext.BaseDirectory, "products.xlsx");
 
             if (!File.Exists(filePath))
             {
@@ -120,6 +62,8 @@ public class Program
             var importer = new ProductImporter(dbContext);
             await importer.ImportAsync(rows);
 
+          //  importer.CreatePropertyMatrix("LOẠI:Decal Nhựa Trắng/ trong|CÁN MÀNG:K màng|SỐ LƯỢNG:1-6 tờ");
+
             Console.WriteLine("Hoàn tất import sản phẩm.");
         }
         catch (Exception ex)
@@ -128,6 +72,3 @@ public class Program
         }
     }
 }
-
-// (ExcelReader, ExcelProductRow và ProductImporter được giữ nguyên như trước...)
-

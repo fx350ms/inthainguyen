@@ -23,6 +23,16 @@
         .select2-selection__arrow {
             top: 5px !important;
         }
+
+        .order-item {
+            border-width: 1px;
+            border-style: dotted;
+            border-radius: 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            border-color: #007bff;
+            margin-bottom:10px;
+        }
     </style>
 }
 
@@ -50,7 +60,7 @@
 
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row ">
                                     <div class="col-md-3">
                                         <label>@L("CustomerType")</label>
                                         <select class="form-control select-customer" name="CustomerType">
@@ -96,12 +106,12 @@
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">@L("OrderDetails")</h3>
-                                <button type="button" class="btn btn-success float-right" id="add-item-button">
+                                <button type="button" class="btn btn-success float-right btn-sm" id="add-item-button">
                                     <i class="fa fa-plus"></i> @L("AddItem")
                                 </button>
                             </div>
                             <div class="card-body" id="order-detail-list">
-                                <div class="row">
+                                <div class="row order-item">
                                     <div class="col-12 text-right">
                                         <button type="button" class="btn btn-danger btn-sm" id="delete-item-button">
                                             X
@@ -164,7 +174,7 @@
                                         <label>@L("ServiceName")</label>
                                         <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
                                     </div>
-                                    <div>
+                                    <div class="property-list">
                                     </div>
                                     <div class="col-md-2">
                                         <label>@L("Quantity")</label>
@@ -172,17 +182,21 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label>@L("Note1")</label>
-                                        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+                                        <select class="select2 select-note-1 form-control" name="ProductId" style="width: 100%;"></select>
                                     </div>
                                     <div class="col-md-2">
                                         <label>@L("Note2")</label>
-                                        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+                                        <select class="select2 select-note-2 form-control" name="ProductId" style="width: 100%;"></select>
                                     </div>
                                     <div class="col-md-3">
                                         <label>@L("Note3")</label>
-                                        <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
+                                        <select class="select2 select-note-3 form-control" name="ProductId" style="width: 100%;"></select>
                                     </div>
-
+                                    <div class="col-12 text-right">
+                                        <button type="button" class="btn btn-success btn-sm clone-item-button">
+                                           <i class="fas fa-clone"></i> @L("Duplicate")
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

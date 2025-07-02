@@ -1,7 +1,7 @@
 ﻿(function ($) {
 
     var _orderService = abp.services.app.order,
-        _productPriceCombinations = abp.services.app.productPriceCombinations,
+       
         l = abp.localization.getSource('pbt'),
         _$modal = $('#OrderCreateModal'),
         _$form = _$modal.find('form'),
@@ -545,9 +545,7 @@
 
     $('#.select-product-id').on('select2:select', function (e) {
         var data = e.params.data;
-        debugger;
-
-
+        
     });
 
 })(jQuery);

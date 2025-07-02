@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace InTN.ProductPriceCombinations.Dto
 {
@@ -6,11 +6,12 @@ namespace InTN.ProductPriceCombinations.Dto
     {
         public int ProductId { get; set; }
         public List<PriceCombinationDto> PriceCombinations { get; set; }
+        public List<PropertyWithValuesDto> Properties { get; set; } // Danh sách các thuộc tính của sản phẩm 
     }
 
     public class PriceCombinationDto
     {
-        public List<CombinationItemDto> Combination { get; set; }
+        public List<CombinationItemDto> Combinations { get; set; }
         public decimal Price { get; set; }
     }
 
@@ -19,5 +20,12 @@ namespace InTN.ProductPriceCombinations.Dto
         public int PropertyId { get; set; }
         public string PropertyName { get; set; }
         public string Value { get; set; }
+    }
+
+    public class PropertyWithValuesDto
+    {
+        public int PropertyId { get; set; }
+        public string PropertyName { get; set; }
+        public List<string> Values { get; set; } // Danh sách các giá trị của thuộc tính
     }
 }

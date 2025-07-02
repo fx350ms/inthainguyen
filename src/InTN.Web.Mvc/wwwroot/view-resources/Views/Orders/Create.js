@@ -2,6 +2,9 @@
 (function ($) {
     const _orderService = abp.services.app.order,
         _productService = abp.services.app.product,
+        _productPriceCombinations = abp.services.app.productPriceCombinations,
+        _productNotes = abp.services.app.productNotes,
+
         l = abp.localization.getSource('pbt'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
@@ -69,31 +72,37 @@
     }).addClass('form-control');
 
     $('.select2').select2();
-     
+    $('.select-product-id').on('select2:select', function (e) {
+        var data = e.params.data;
 
-    $('.select-product-id').select2({
-        ajax: {
-            delay: 1500,
-            url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct', 
-            data: function (params) {
-                var query = {
-                    keyword: params.term,
-                    productTypeId: $('select[name="ProductTypeId"]').val(), // Loại sản phẩm
-                    productCategoryId: $('select[name="ProductCategoryId"]').val(), // Danh mục sản phẩm
-                    supplierId: $('select[name="ProductSupplierId"]').val(), // Nhà cung cấp
-                    brandId: $('select[name="BrandId"]').val(), // Thương hiệu
-                }
-                // Query parameters will be ?search=[term]&type=public
-                return query;
-            },
-            processResults: function (data) {
-                // Transforms the top-level key of the response object from 'items' to 'results'
-                
-                return {
-                    results: data.result
-                };
-            }
-        }
+        // Lấy danh sách property tương ứng với sản phẩm.
+        // Lấy danh sách ghi chú tương ứng với sản phẩm
+        console.log(data);
     });
+   // $('.select-product-id').select2().
+    //$('.select-product-id').select2({
+    //    ajax: {
+    //        delay: 1500,
+    //        url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct', 
+    //        data: function (params) {
+    //            var query = {
+    //                keyword: params.term,
+    //                productTypeId: $('select[name="ProductTypeId"]').val(), // Loại sản phẩm
+    //                productCategoryId: $('select[name="ProductCategoryId"]').val(), // Danh mục sản phẩm
+    //                supplierId: $('select[name="ProductSupplierId"]').val(), // Nhà cung cấp
+    //                brandId: $('select[name="BrandId"]').val(), // Thương hiệu
+    //            }
+    //            // Query parameters will be ?search=[term]&type=public
+    //            return query;
+    //        },
+    //        processResults: function (data) {
+    //            // Transforms the top-level key of the response object from 'items' to 'results'
+                
+    //            return {
+    //                results: data.result
+    //            };
+    //        }
+    //    }
+    //});
 
 })(jQuery);

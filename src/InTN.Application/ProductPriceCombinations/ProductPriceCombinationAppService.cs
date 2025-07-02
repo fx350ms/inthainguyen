@@ -5,10 +5,8 @@ using InTN.ProductPriceCombinations.Dto;
 using InTN.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NuGet.Protocol.Core.Types;
 using Newtonsoft.Json;
-using Abp.AutoMapper;
-using System.Net.WebSockets;
+using Abp;
 
 namespace InTN.ProductPriceCombinations
 {
@@ -21,9 +19,17 @@ namespace InTN.ProductPriceCombinations
         ProductPriceCombinationDto>, // DTO cho cập nhật
         IProductPriceCombinationAppService
     {
-        public ProductPriceCombinationAppService(IRepository<ProductPriceCombination> repository) : base(repository)
+
+        private readonly IRepository<Product> _productRepository;
+
+        public ProductPriceCombinationAppService(IRepository<ProductPriceCombination> repository,
+            IRepository<Product> productRepository) 
+            : base(repository)
         {
+            _productRepository = productRepository;
         }
+
+
 
         public async Task<List<ProductPriceCombinationDto>> GetAllProductPriceCombinationsAsync()
         {
@@ -31,9 +37,17 @@ namespace InTN.ProductPriceCombinations
             return ObjectMapper.Map<List<ProductPriceCombinationDto>>(productPriceCombinations);
         }
 
-
         public async Task SavePriceCombinations(SavePriceCombinationsDto input)
         {
+            var product = await _productRepository.GetAsync(input.ProductId);
+            if (product == null)
+            {
+                throw new AbpException($"Product with ID {input.ProductId} not found.");
+            }
+
+            product.Properties = JsonConvert.SerializeObject(input.Properties);
+            await _productRepository.UpdateAsync(product);
+
             var itemExisted = await Repository.FirstOrDefaultAsync(x => x.ProductId == input.ProductId);
             if (itemExisted != null)
             {
@@ -51,6 +65,9 @@ namespace InTN.ProductPriceCombinations
                 };
                 await Repository.InsertAsync(newItem);
             }
+            
+
+
         }
 
         public async Task<List<PriceCombinationDto>> GetPriceCombinationsByProductIdAsync(int productId)

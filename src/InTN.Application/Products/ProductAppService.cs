@@ -27,21 +27,19 @@ namespace InTN.Products
         ProductDto>,           // DTO cho cập nhật
         IProductAppService      // Interface
     {
-        private readonly IRepository<Product> _productRepository;
         private readonly IFileUploadAppService _fileUploadAppService;
         public ProductAppService(IRepository<Product> repository,
             IFileUploadAppService fileUploadAppService  // Thêm dịch vụ FileUpload nếu cần thiết, có thể để null nếu không sử dụng trong service này
             )
             : base(repository)
         {
-            _productRepository = repository;
             _fileUploadAppService = fileUploadAppService; // Khởi tạo dịch vụ FileUpload
 
         }
 
         public async Task<ProductDto> GetProductDetailsAsync(int id)
         {
-            var product = await _productRepository.GetAsync(id);
+            var product = await Repository.GetAsync(id);
             var productDto = ObjectMapper.Map<ProductDto>(product);
             return productDto;
         }
