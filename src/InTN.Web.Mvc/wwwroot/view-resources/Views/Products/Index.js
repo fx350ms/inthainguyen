@@ -1,10 +1,9 @@
 ﻿(function ($) {
     var _productService = abp.services.app.product,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#ProductCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#ProductsTable');
-
     var _$productsTable = _$table.DataTable({
         paging: true,
         serverSide: true,

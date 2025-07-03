@@ -9,7 +9,7 @@ namespace InTN.ProductNotes.Dto
 {
     public class PagedProductNoteResultRequestDto : PagedResultRequestDto
     {
-        public int? ProductId { get; set; }
+        public int? ProductCategoryId { get; set; }
         public int? ParentId{ get; set; }
         public string Keyword { get; set; } = string.Empty; // Từ khóa tìm kiếm trong ghi chú
     }

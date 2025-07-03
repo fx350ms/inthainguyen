@@ -2,6 +2,10 @@
     ViewBag.Title = L("ProductNotes");
 }
 
+@using InTN.Web.Models.ProductNotes
+
+@model ProductNoteIndexViewModel
+
 @section scripts
 {
     <environment names="Development">
@@ -54,7 +58,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-12">
-                                @await Html.PartialAsync("~/Views/ProductNotes/Index.AdvancedSearch.cshtml")
+                                @await Html.PartialAsync("~/Views/ProductNotes/Index.AdvancedSearch.cshtml",Model )
                             </div>
                         </div>
 
@@ -67,6 +71,7 @@
                                         <th></th>
                                         <th>@L("Note")</th>
                                         <th>@L("ParentNote")</th>
+                                        <th>@L("ProductCategory")</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -81,15 +86,8 @@
     </div>
 </section>
 
-@await Html.PartialAsync("~/Views/ProductNotes/_CreateModal.cshtml" );
-@* 
-<div class="modal fade" id="ProductNoteCreateModal" tabindex="-1" role="dialog" aria-labelledby="ProductNoteCreateModalLabel" data-backdrop="static">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            @await Html.PartialAsync("~/Views/ProductNotes/_CreateModal.cshtml")
-        </div>
-    </div>
-</div> *@
+@await Html.PartialAsync("~/Views/ProductNotes/_CreateModal.cshtml", new ProductNoteCreateOrEditViewModel(){ ProductCategories = Model.ProductCategories }  );
+ 
 
 <div class="modal fade" id="ProductNoteEditModal" tabindex="-1" role="dialog" aria-labelledby="ProductNoteEditModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">

@@ -1,6 +1,6 @@
 (function ($) {
     var _supplierService = abp.services.app.supplier,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#SupplierEditModal'),
         _$form = _$modal.find('form');
 

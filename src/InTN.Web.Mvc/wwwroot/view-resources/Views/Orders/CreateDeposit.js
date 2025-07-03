@@ -1,7 +1,7 @@
 ﻿
 (function ($) {
     const _orderService = abp.services.app.order,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
 

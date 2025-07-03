@@ -1,6 +1,6 @@
 ﻿(function ($) {
     var _productNoteService = abp.services.app.productNote,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#ProductNoteCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#ProductNotesTable');
@@ -41,11 +41,16 @@
             {
                 targets: 2,
                 sortable: false,
-                data: 'parentNote',
+                data: 'parentId',
+            },
+            {
+                targets: 3,
+                sortable: false,
+                data: 'productCategoryName',
             },
 
             {
-                targets: 3,
+                targets: 4,
                 data: null,
                 sortable: false,
                 width: 20,
@@ -138,46 +143,31 @@
     });
 
      
-    $('.select-product-id').select2({
-        ajax: {
-            delay: 1500,
-            url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct',
-            data: function (params) {
-                var query = {
-                    keyword: params.term,
-                }
-                // Query parameters will be ?search=[term]&type=public
-                return query;
-            },
-            processResults: function (data) {
-                return {
-                    results: data.result
-                };
+    $('.select-category-id').select2().on('select2:select', function (e) {
+        
+        var categoryId = e.params.data.id;
+        $('.select-parent-note').empty() .append(
+            $('<option>', {
+                value : '',
+                text: l('SelectParentNote')
+            })
+        );
+        _productNoteService.getNotesByProductCategoryId(categoryId).done(function (data) {
+            if (data && Array.isArray(data)) {
+                data.forEach(function (note) {
+                    $('.select-parent-note').append(
+                        $('<option>', {
+                            value: note.id,
+                            text: note.note
+                        })
+                    );
+                });
             }
-        }
-    }).on('select2:select', function (e) {
-        loadParentNotes();
-    });
-
-    function loadParentNotes() {
-        $('.select-parent-note').select2({
-            ajax: {
-                delay: 1500,
-                url: abp.appPath + 'api/services/app/ProductNote/FilterAndSearchProductNote',
-                data: function (params) {
-                    var query = {
-                        keyword: params.term,
-                        productId: $('.select-product-id').val() // Lấy giá trị ProductId đã chọn
-                    }
-                    return query;
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.result
-                    };
-                }
-            }
+            // Optionally, trigger change event if needed
+            $('.select-parent-note').trigger('change');
         });
-    }
+         
+    });
+     
 
 })(jQuery);

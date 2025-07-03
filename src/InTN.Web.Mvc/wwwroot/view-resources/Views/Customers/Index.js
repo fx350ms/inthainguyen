@@ -1,7 +1,7 @@
 ﻿(function ($) {
 
     var _customerService = abp.services.app.customer,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#CustomerCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#CustomersTable');

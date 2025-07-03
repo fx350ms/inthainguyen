@@ -1,7 +1,7 @@
 ﻿(function ($) {
 
     var _transactionService = abp.services.app.transaction,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#TransactionCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#TransactionsTable');

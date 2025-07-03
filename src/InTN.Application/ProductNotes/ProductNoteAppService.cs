@@ -1,8 +1,9 @@
-using Abp.Application.Services;
+﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using InTN.Commons;
 using InTN.Entities;
+using InTN.ProductCategories.Dto;
 using InTN.ProductNotes.Dto;
 using InTN.Products.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,15 @@ namespace InTN.ProductNotes
     public class ProductNoteAppService : AsyncCrudAppService<
         ProductNote, ProductNoteDto, int, PagedResultRequestDto, ProductNoteDto, ProductNoteDto>, IProductNoteAppService
     {
-        private readonly IRepository<ProductNote> _repository;
-
-        public ProductNoteAppService(IRepository<ProductNote> repository) : base(repository)
+        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
+        public ProductNoteAppService(IRepository<ProductNote> repository,
+            IRepository<ProductCategory> productCategoryRepository,
+            IRepository<Product> productRepository
+            ) : base(repository)
         {
-            _repository = repository;
+            _productRepository = productRepository;
+            _productCategoryRepository = productCategoryRepository;
         }
 
         public override Task<ProductNoteDto> CreateAsync(ProductNoteDto input)
@@ -33,9 +38,9 @@ namespace InTN.ProductNotes
         public async Task<PagedResultDto<ProductNoteDto>> GetDataAsync(PagedProductNoteResultRequestDto input)
         {
             var query = await Repository.GetAllAsync();
-            if (input.ProductId.HasValue && input.ProductId > 0)
+            if (input.ProductCategoryId.HasValue && input.ProductCategoryId > 0)
             {
-                query = query.Where(u => u.ProductId == input.ProductId);
+                query = query.Where(u => u.ProductCategoryId == input.ProductCategoryId);
             }
 
             if (input.ParentId.HasValue && input.ParentId > 0)
@@ -47,25 +52,47 @@ namespace InTN.ProductNotes
                 query = query.Where(u => u.Note.Contains(input.Keyword));
             }
             var totalCount = await query.CountAsync();
+
             var items = await query
-                // .Include(x => x.Parent)
-                .OrderByDescending(u => u.Id)
-                .Skip(input.SkipCount)
-                .Take(input.MaxResultCount)
-                .ToListAsync();
+
+             .OrderByDescending(u => u.Id)
+             .Skip(input.SkipCount)
+             .Take(input.MaxResultCount)
+             .ToListAsync();
+
+            // Map the items to ProductNoteDto and include the ProductCategoryName
+
+            var categoryIds = items.Select(x => x.ProductCategoryId).Distinct().ToList();
+
+            var categories = await _productCategoryRepository.GetAllListAsync(x => categoryIds.Contains(x.Id));
+
+            var data = ObjectMapper.Map<List<ProductNoteDto>>(items);
+
+            foreach (var item in data)
+            {
+                var category = categories.FirstOrDefault(x => x.Id == item.ProductCategoryId);
+                var categoryDto = ObjectMapper.Map<ProductCategoryDto>(category);
+                item.ProductCategory = categoryDto;
+                item.ProductCategoryName = categoryDto?.Name ?? string.Empty;
+            }
             return new PagedResultDto<ProductNoteDto>()
             {
                 TotalCount = totalCount,
-                Items = ObjectMapper.Map<List<ProductNoteDto>>(items)
+                Items = data
             };
+
         }
 
-        public async Task<List<ProductNoteDto>> GetNotesByProductIdAsync(int productId)
+        public async Task<List<ProductNoteDto>> GetNotesByProductIdAsync(int productId, bool onlyParent = false)
         {
-            var notes = await _repository.GetAllListAsync(x => x.ProductId == productId);
-            return ObjectMapper.Map<List<ProductNoteDto>>(notes);
+            var product = await _productRepository.GetAsync(productId);
+            if (product != null)
+            {
+                var notes = await Repository.GetAllListAsync(x => x.ProductCategoryId == product.ProductCategoryId && (onlyParent && (!x.ParentId.HasValue || x.ParentId == 0)));
+                return ObjectMapper.Map<List<ProductNoteDto>>(notes);
+            }
+            return null;
         }
-
 
         public async Task<List<ProductNote>> GetAllListAsync()
         {
@@ -78,9 +105,9 @@ namespace InTN.ProductNotes
         public async Task<List<OptionItemDto>> FilterAndSearchProductNoteAsync(FilterandSearchProductNoteRequestDto input)
         {
             var query = await Repository.GetAllAsync();
-            if (input.ProductId > 0)
+            if (input.ProductCategoryId.HasValue && input.ProductCategoryId > 0)
             {
-                query = query.Where(u => u.ProductId > 0 && u.ProductId == input.ProductId);
+                query = query.Where(u => u.ProductCategoryId > 0 && u.ProductCategoryId == input.ProductCategoryId);
             }
 
             if (!string.IsNullOrEmpty(input.Keyword))
@@ -90,5 +117,18 @@ namespace InTN.ProductNotes
             var items = await query.Select(u => new OptionItemDto() { id = u.Id.ToString(), text = u.Note }).ToListAsync();
             return items;
         }
+
+        public async Task<List<ProductNoteDto>> GetNotesByProductCategoryIdAsync(int categoryId)
+        {
+            var notes = await Repository.GetAllListAsync(x => x.ProductCategoryId == categoryId);
+            return ObjectMapper.Map<List<ProductNoteDto>>(notes);
+        }
+
+        public async Task<List<ProductNoteDto>> GetNotesByParentAsync(int parentId)
+        {
+            var notes = await Repository.GetAllListAsync(x => x.ParentId == parentId);
+            return ObjectMapper.Map<List<ProductNoteDto>>(notes);
+        }
+
     }
 }

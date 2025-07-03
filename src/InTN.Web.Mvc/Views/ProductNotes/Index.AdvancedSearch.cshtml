@@ -1,21 +1,41 @@
 ﻿@using InTN.Authorization
 
- 
+@using InTN.Web.Models.ProductNotes
+
+@model ProductNoteIndexViewModel
+
 <div class="abp-advanced-search">
     <!-- Nút mở rộng/thu gọn -->
     <button class="btn btn-outline-primary mb-2" type="button" data-toggle="collapse" data-target="#ProductNoteFilterCollapse">
         <i class="fas fa-filter"></i> Bộ lọc nâng cao
     </button>
- 
+
     <div class="collapse" id="ProductNoteFilterCollapse">
         <form id="ProductNoteSearchForm" class="form-horizontal">
             <div class="form-row">
-                
+
                 <!-- Trạng thái -->
-                <div class="col-md-6">
+                <div class="col-md-3">
+                    <label for="ProductCategoryId">@L("ProductCategoryId")</label>
+                    <select class="form-control select-category-id select2  " style="min-width:350px" id="ProductCategoryId" name="ProductCategoryId" required>
+                        <option value="">-- @L("SelectProductCategory") --</option>
+                        @if (Model != null && Model.ProductCategories != null && Model.ProductCategories.Count > 0)
+                        {
+                            foreach (var category in Model.ProductCategories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        })
+                    </select>
+                </div>
+
+                <!-- Trạng thái -->
+                <div class="col-md-3">
                     <label for="TransactionDate">Từ khóa</label>
                     <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("Search")" />
                 </div>
+
+
             </div>
 
             <!-- Căn phải nút tìm kiếm -->

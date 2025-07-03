@@ -1,12 +1,12 @@
 ﻿(function ($) {
 
     var _orderService = abp.services.app.order,
-       
-        l = abp.localization.getSource('pbt'),
+     
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#OrderCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#OrdersTable');
-
+     
     const orderStatusDescriptions = {
         1: { text: 'Tiếp nhận yêu cầu', color: '#0000FF' }, // Blue
         2: { text: 'Đã báo giá', color: '#800080' }, // Purple

@@ -60,9 +60,10 @@ public class Program
             Console.WriteLine($"Tổng số dòng đọc được: {rows.Count}");
 
             var importer = new ProductImporter(dbContext);
-            await importer.ImportAsync(rows);
+            // await importer.ImportAsync(rows);
+            await importer.ImportNoteAsync(rows);
 
-          //  importer.CreatePropertyMatrix("LOẠI:Decal Nhựa Trắng/ trong|CÁN MÀNG:K màng|SỐ LƯỢNG:1-6 tờ");
+            //  importer.CreatePropertyMatrix("LOẠI:Decal Nhựa Trắng/ trong|CÁN MÀNG:K màng|SỐ LƯỢNG:1-6 tờ");
 
             Console.WriteLine("Hoàn tất import sản phẩm.");
         }
