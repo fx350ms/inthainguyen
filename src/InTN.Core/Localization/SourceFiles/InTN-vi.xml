@@ -666,6 +666,7 @@
 		<text name="DiscountAmount" value="Số tiền giảm giá" />
 		<text name="ExpectedDeliveryDate" value="Ngày giao dự kiến" />
 		<text name="OtherRequirements" value="Yêu cầu khác" />
-
+		<text name="TotalPrice" value="Tổng tiền" />
+		<text name="TotalProductPrice" value="Tổng tiền sản phẩm" />
 	</texts>
 </localizationDictionary>

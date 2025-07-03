@@ -58,11 +58,9 @@
 
                 <div class="" id="modal-create-order">
                     <form name="form-create-order" role="form" class="form-horizontal">
-
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">@L("CustomerInformation")</h3>
-
                             </div>
                             <div class="card-body">
                                 <div class="row ">
@@ -111,99 +109,56 @@
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">@L("OrderDetails")</h3>
-                                <button type="button" class="btn btn-success float-right btn-sm" id="add-item-button">
+                                <button type="button" class="btn btn-success float-right btn-sm btn-add-order-item"  >
                                     <i class="fa fa-plus"></i> @L("AddItem")
                                 </button>
                             </div>
                             <div class="card-body" id="order-detail-list">
                                 <div class="row order-item">
                                     <div class="col-12 text-right">
-                                        <button type="button" class="btn btn-danger btn-sm" id="delete-item-button">
+                                        <button type="button" class="btn btn-danger btn-sm delete-item-button"  >
                                             X
                                         </button>
                                     </div>
                                     <div class="col-12 row">
-                                        <div class="control-item col-md-2">
-                                            <label>@L("ProductCategory")</label>
-                                            <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
-                                                <option value="-1">@L("SelectProductCategory")</option>
-                                                @if (Model != null && Model.ProductCategories != null && Model.ProductCategories.Count > 0)
-                                                {
-                                                    foreach (var category in Model.ProductCategories)
-                                                    {
-                                                        <option value="@category.Id">@category.Name</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("ProductType")</label>
-                                            <select class="select2 select-product-type-id target-product-id form-control" name="ProductTypeId" style="width: 100%;">
-                                                <option value="-1">@L("SelectProductType")</option>
-                                                @if (Model != null && Model.ProductTypes != null && Model.ProductTypes.Count > 0)
-                                                {
-                                                    foreach (var type in Model.ProductTypes)
-                                                    {
-                                                        <option value="@type.Id">@type.Name</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("BrandName")</label>
-                                            <select class="select2 select-product-category-id target-product-id form-control" name="ProductCategoryId" style="width: 100%;">
-                                                <option value="-1">@L("SelectBrand")</option>
-                                                @if (Model != null && Model.Brands != null && Model.Brands.Count > 0)
-                                                {
-                                                    foreach (var brand in Model.Brands)
-                                                    {
-                                                        <option value="@brand.Id">@brand.Name</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("SupplierName")</label>
-                                            <select class="select2 select-product-supplier-id target-product-id form-control" name="ProductSupplierId" style="width: 100%;">
-                                                <option value="-1">@L("SelectSupplier")</option>
-                                                @if (Model != null && Model.Suppliers != null && Model.Suppliers.Count > 0)
-                                                {
-                                                    foreach (var supplier in Model.Suppliers)
-                                                    {
-                                                        <option value="@supplier.Id">@supplier.Name</option>
-                                                    }
-                                                }
-                                            </select>
-                                        </div>
+                                        
                                         <div class="control-item col-md-4">
                                             <label>@L("ServiceProductName")</label>
                                             <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
                                         </div>
-                                        <div class="property-list col-12 row">
+                                        <div class="property-list col-8 row">
                                             
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Price")</label>
-                                            <input type="text" class="form-control unit-price text-right" name="Price" value="0" readonly>
+                                            <input type="number" class="form-control unit-price text-right" name="Price" value="0" readonly>
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Quantity")</label>
                                             <input type="number" min="1" value="1" step="1" class="form-control text-right" name="Quantity">
                                         </div>
+                                        <div class="control-item col-md-2">
+                                            <label>@L("TotalProductPrice")</label>
+                                            <input type="number" min="1" value="1" step="1" class="form-control text-right" name="TotalProductPrice" readonly>
+                                        </div>
                                     </div>
-
                                     <div class="col-12 row">
                                         <div class="col-md-2">
                                             <label>@L("Note1")</label>
-                                            <select class="select2 select-note-1 form-control" name="ProductId" style="width: 100%;"></select>
+                                            <select class="select2 select-note-1 form-control" name="Note1" style="width: 100%;"></select>
                                         </div>
                                         <div class="col-md-2">
                                             <label>@L("Note2")</label>
-                                            <select class="select2 select-note-2 form-control" name="ProductId" style="width: 100%;"></select>
+                                            <select class="select2 select-note-2 form-control" name="Note2" style="width: 100%;"></select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label>@L("Note3")</label>
-                                            <select class="select2 select-note-3 form-control" name="ProductId" style="width: 100%;"></select>
+                                            <select class="select2 select-note-3 form-control" name="Note3" style="width: 100%;"></select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>@L("OtherNote")</label>
+                                            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" />
                                         </div>
                                     </div>
                                     <div class="col-12 text-right">
@@ -254,7 +209,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>

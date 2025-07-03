@@ -79,7 +79,7 @@
         selectOnClose: false,
 
         ajax: {
-            delay: 1500,
+            delay: 500,
             url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct',
             data: function (params) {
                 var query = {
@@ -111,11 +111,11 @@
                 $propertyList.empty(); // Clear existing properties
                 properties.forEach(function (property) {
                     var $propertyDiv = $('<div>')
-                        .addClass('col-md-2') // Sử dụng col-md-2 để chia cột
+                        .addClass('col-md-2 control-item') // Sử dụng col-md-2 để chia cột
                         .append($('<label>').text(property.propertyName)) // Thêm label cho thuộc tính
                         .append(
                             $('<select>')
-                                .addClass('form-control product-property') // Sử dụng select2 và form-control
+                                .addClass('form-control product-property ') // Sử dụng select2 và form-control
                                 .attr('name', 'Property_' + property.propertyId)
                                 .attr('property_name', property.propertyName)
                                 .attr('property_id', property.propertyId)
@@ -162,7 +162,7 @@
 
         const $properties = $row.find('.product-property'); // Tìm tất cả các thuộc tính trong hàng
 
-        
+
         const selectedProperties = []; // Lưu các thuộc tính đã chọn
 
         // Duyệt qua tất cả các thuộc tính của sản phẩm
@@ -180,12 +180,115 @@
         // Gọi API để tính giá sản phẩm dựa trên thuộc tính đã chọn
         _productPriceCombinations.calculatePrice(productId, selectedProperties).done(function (price) {
             // Hiển thị giá sản phẩm trên một đơn vị tính
-            console.log(price);
-            $row.find('.unit-price').val(formatThousand( price)); // Cập nhật giá vào ô "Unit Price"
+            $row.find('.unit-price').val(formatThousand(price)); // Cập nhật giá vào ô "Unit Price"
+            CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
         }).fail(function () {
             abp.notify.error('@L("FailedToCalculatePrice")'); // Hiển thị lỗi nếu không tính được giá
         });
-
     }
+
+    function CalculateTotalPrice($row) {
+        const unitPrice = parseFloat($row.find('.unit-price').val().replace('.', '')) || 0; // Lấy giá sản phẩm
+        const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
+
+        const totalProductPrice = unitPrice * quantity; // Tính thành tiền
+        $row.find('input[name="TotalProductPrice"]').val(formatThousand(totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"
+
+        CalculateOrderSummary(); // Cập nhật tổng tiền đơn hàng
+    }
+
+    function CalculateOrderSummary() {
+        let totalAmount = 0;
+
+        // Duyệt qua tất cả các hàng sản phẩm để tính tổng tiền
+        $('#order-detail-list .order-item').each(function () {
+            const totalPrice = parseFloat($(this).find('input[name="TotalPrice"]').val().replace(/,/g, '')) || 0;
+            totalAmount += totalPrice;
+        });
+
+        // Cập nhật tổng tiền vào ô "TotalAmount"
+        $('input[name="TotalAmount"]').val(formatThousand(totalAmount));
+    }
+
+    $(document).on('input', 'input[name="Quantity"], .unit-price', function () {
+        const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
+        CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
+    });
+
+    // Xử lý khi thay đổi thuộc tính sản phẩm
+    $(document).on('change', '.product-property', function () {
+        const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
+        GetProductPrice($row); // Tính giá sản phẩm dựa trên thuộc tính
+        CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
+    });
+    // Xử lý xóa item
+    $(document).on('click', '.delete-item-button', function () {
+        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
+        $orderItem.remove(); // Xóa thẻ div cha
+        // Cập nhật hiển thị nút xóa sau khi xóa item
+        UpdateDeleteButtonVisibility();
+    });
+
+    // Xử lý clone item
+    $(document).on('click', '.clone-item-button', function () {
+        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
+        const $clonedItem = $orderItem.clone(); // Clone thẻ div cha
+
+        // Reset các giá trị trong item clone
+        $clonedItem.find('input').val(''); // Xóa giá trị trong các ô input
+        $clonedItem.find('.unit-price').val('0'); // Reset giá trị unit price
+        $clonedItem.find('.total-price').val('0'); // Reset giá trị total price
+        $clonedItem.find('.quantity').val('1'); // Reset giá trị quantity
+
+        $orderItem.after($clonedItem); // Dán item clone ngay dưới item hiện tại
+
+
+        // Cập nhật hiển thị nút xóa sau khi clone item
+        UpdateDeleteButtonVisibility();
+    });
+
+    // Xử lý thêm item mới
+    $(document).on('click', '.btn-add-order-item', function () {
+        const $newItem = $('#order-detail-list .order-item:first').clone(); // Clone item đầu tiên làm mẫu
+
+        // Reset các giá trị trong item mới
+        $newItem.find('input').val(''); // Xóa giá trị trong các ô input
+        $newItem.find('.unit-price').val('0'); // Reset giá trị unit price
+        $newItem.find('.total-price').val('0'); // Reset giá trị total price
+        $newItem.find('.quantity').val('1'); // Reset giá trị quantity
+
+        $('#order-detail-list').append($newItem); // Thêm item mới vào cuối danh sách
+
+
+        // Cập nhật hiển thị nút xóa sau khi clone item
+        UpdateDeleteButtonVisibility();
+    });
+
+    // Cải tiến: Tự động tính toán tổng tiền khi thay đổi số lượng hoặc giá sản phẩm
+    $(document).on('input', '.quantity, .unit-price', function () {
+        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
+        const unitPrice = parseFloat($orderItem.find('.unit-price').val()) || 0; // Lấy giá sản phẩm
+        const quantity = parseInt($orderItem.find('.quantity').val()) || 0; // Lấy số lượng sản phẩm
+
+        const totalPrice = unitPrice * quantity; // Tính thành tiền
+        $orderItem.find('.total-price').val(totalPrice.toFixed(2)); // Cập nhật giá trị vào ô "TotalPrice"
+    });
+
+    // Hàm kiểm tra số lượng item và hiển thị/ẩn nút xóa
+    function UpdateDeleteButtonVisibility() {
+        const $orderItems = $('#order-detail-list .order-item'); // Lấy tất cả các item
+        const itemCount = $orderItems.length; // Đếm số lượng item
+
+        if (itemCount <= 1) {
+            // Nếu chỉ còn 1 item, ẩn nút xóa
+            $orderItems.find('.delete-item-button').hide();
+        } else {
+            // Nếu có từ 2 item trở lên, hiển thị nút xóa
+            $orderItems.find('.delete-item-button').show();
+        }
+    }
+    
+    // Cập nhật hiển thị nút xóa khi trang được load
+    UpdateDeleteButtonVisibility();
 
 })(jQuery);
