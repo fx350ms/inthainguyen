@@ -83,16 +83,7 @@ namespace InTN.ProductNotes
 
         }
 
-        public async Task<List<ProductNoteDto>> GetNotesByProductIdAsync(int productId, bool onlyParent = false)
-        {
-            var product = await _productRepository.GetAsync(productId);
-            if (product != null)
-            {
-                var notes = await Repository.GetAllListAsync(x => x.ProductCategoryId == product.ProductCategoryId && (onlyParent && (!x.ParentId.HasValue || x.ParentId == 0)));
-                return ObjectMapper.Map<List<ProductNoteDto>>(notes);
-            }
-            return null;
-        }
+       
 
         public async Task<List<ProductNote>> GetAllListAsync()
         {
@@ -124,10 +115,47 @@ namespace InTN.ProductNotes
             return ObjectMapper.Map<List<ProductNoteDto>>(notes);
         }
 
+
+        /// <summary>
+        /// Đang dùng ở view tạo đơn hàng mới
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="onlyParent"></param>
+        /// <returns></returns>
+        public async Task<List<ProductNoteDto>> GetNotesByProductIdAsync(int productId, bool onlyParent = false)
+        {
+            var product = await _productRepository.GetAsync(productId);
+            if (product != null)
+            {
+
+                var query = (await Repository.GetAllAsync())
+                    .Where(x => x.ProductCategoryId == product.ProductCategoryId);
+                if (onlyParent)
+                {
+                    query = query.Where(x => !x.ParentId.HasValue || x.ParentId == 0);
+                }
+                var notes = await query.Select(x => new ProductNoteDto
+                {
+                    Id = x.Id,
+                    Note = x.Note,
+                }).ToListAsync();
+                return notes;
+            }
+            return null;
+        }
+
         public async Task<List<ProductNoteDto>> GetNotesByParentAsync(int parentId)
         {
-            var notes = await Repository.GetAllListAsync(x => x.ParentId == parentId);
-            return ObjectMapper.Map<List<ProductNoteDto>>(notes);
+            var query = ( await Repository.GetAllAsync())
+                .Where(x => x.ParentId == parentId);
+            var notes = await query.Select(x => new ProductNoteDto
+            {
+                Id = x.Id,
+                Note = x.Note,
+            }).ToListAsync();
+
+            return notes;
+            //  return ObjectMapper.Map<List<ProductNoteDto>>(notes);
         }
 
     }

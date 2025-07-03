@@ -162,20 +162,54 @@
             $orderItem.remove();
             UpdateDeleteButtonVisibility();
         });
+
+
+
+        //$($item).on('change', '[data-next]', function () {
+        //    debugger;
+        //    const selectedNoteId = $(this).val();
+        //    if (selectedNoteId) {
+        //        var next = $(this).attr('data-next');
+        //        var $next = $item.find('[data-next="' + next + '"]');
+        //        _productNotes.getNotesByParent(selectedNoteId).done(function (notes) {
+
+        //            debugger;
+
+        //            //    $row.find('.note-content').val(note.note); // Hiển thị nội dung ghi chú vào ô input
+        //            $next.empty(); // Clear existing options
+        //            $next.append($('<option>').val('').text(l('SelectNote'))); // Add default option
+        //            if (Array.isArray(notes) && notes.length > 0) {
+        //                notes.forEach(function (note) {
+        //                    $next.append($('<option>').val(note.id).text(note.note));
+        //                });
+        //            }
+        //            $next.trigger('change'); // Refresh select2 if used
+
+        //        });
+        //    } else {
+        //        //$row.find('.note-content').val(''); // Xóa nội dung ghi chú nếu không có lựa chọn
+        //    }
+        //});
+
     }
 
     function LoadProductNotes($row, productId) {
-        _productNotes.getNotesByProductId(productId).done(function (notes) {
+        _productNotes.getNotesByProductId(productId, true).done(function (notes) {
+          
             const $select = $row.find('.select-note-1');
             $select.empty(); // Clear existing options
             $select.append($('<option>').val('').text(l('SelectNote'))); // Add default option
             if (Array.isArray(notes) && notes.length > 0) {
                 notes.forEach(function (note) {
-                    $select.append($('<option>').val(note.id).text(note.noteText));
+                    $select.append($('<option>').val(note.id).text(note.note));
                 });
             }
             $select.trigger('change'); // Refresh select2 if used
+
         });
+
+     
+
     }
 
     function CalculateOrderSummary() {
