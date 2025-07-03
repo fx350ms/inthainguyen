@@ -21,6 +21,33 @@
         renderPropertyInput(selected, name);
     });
 
+  //  loadProductPriceTable();
+
+    //function loadProductPriceTable() {
+    //    const productId = $('#ProductId').val();
+    //    if (productId && productId > 0) {
+
+    //        // Gọi API để lấy bảng giá sản phẩm
+    //        _productPriceCombinationService.getPriceCombinationsByProductId(productId).done(function (data) {
+    //            const $tableBody = $('#product-price-table tbody');
+    //            $tableBody.empty(); // Xóa dữ liệu cũ (nếu có)
+
+    //            // Duyệt qua danh sách bảng giá và render vào bảng
+    //            data.forEach(function (c) {
+    //                debugger;
+    //                const combinationItems = c.combinations.map(item => `${item.propertyName}: ${item.value}`).join('<br>');
+    //                const row = `
+    //                <tr>
+    //                    <td>${combinationItems}</td>
+    //                    <td>${c.price}</td>
+    //                </tr>`;
+    //                $tableBody.append(row);
+    //            });
+    //        }).fail(function () {
+    //            abp.notify.error('@L("FailedToLoadProductPrices")');
+    //        });
+    //    }
+    //}
 
     function renderPropertyInput(propertyId, propertyName) {
         const id = `property-${propertyId}`;
@@ -69,7 +96,7 @@
         combinations.forEach((combo, index) => {
             let row = '<tr>';
             combo.forEach(c => row += `<td>${c.value}</td>`);
-            row += `<td><input width="200" type="number" value="0" class="form-control price-input" data-combo='${JSON.stringify(combo)}' /></td>`;
+            row += `<td><input width="200" type="text" value="0" class="form-control price-input mask-number text-right" data-combo='${JSON.stringify(combo)}' /></td>`;
             row += '</tr>';
             bodyHtml += row;
         });
@@ -140,6 +167,8 @@
     $('.save-button').click(function () {
         const result = [];
 
+        const properties = [];
+
         // Lấy dữ liệu từ bảng tổ hợp
         $('#combination-table-body tr').each(function () {
             const inputs = $(this).find('.price-input');
@@ -152,18 +181,26 @@
                 });
             }
         });
+        // Lấy dữ liệu thuộc tính
+        Object.values(addedProperties).forEach(prop => {
+            properties.push({
+                PropertyId: prop.id,
+                PropertyName: prop.name,
+                Values: prop.values
+            });
+        });
 
         // Tạo object để gửi đến Service
         const data = {
             ProductId: $('#ProductId').val(), // ID sản phẩm
-            PriceCombinations: result // Danh sách tổ hợp giá
+            PriceCombinations: result, // Danh sách tổ hợp giá
+            Properties: properties // Thuộc tính của sản phẩ
         };
 
         _productPriceCombinationService.savePriceCombinations(data)
             .done(function () {
                 abp.notify.success(l('SavedSuccessfully'));
                 // Đóng modal nếu cần
-
             })
             .fail(function (error) { });
     });
@@ -176,7 +213,7 @@
 
                 // Step 1: Khôi phục thuộc tính và giá trị
                 data.forEach((item) => {
-                    item.combination.forEach(({ propertyId, propertyName, value }) => {
+                    item.combinations.forEach(({ propertyId, propertyName, value }) => {
                         if (!addedProperties[propertyId]) {
                             addedProperties[propertyId] = { id: propertyId, name: propertyName, values: [] };
                             renderPropertyInput(propertyId, propertyName);
@@ -196,21 +233,25 @@
 
                 // Step 3: Gán lại giá đã lưu cho từng tổ hợp
                 $('#combination-table-body tr').each(function () {
+                    
                     const input = $(this).find('.price-input');
                     const currentCombo = JSON.parse(input.attr('data-combo'));
 
                     // Tìm tổ hợp tương ứng trong data đã load
                     const found = data.find(d =>
-                        d.combination.length === currentCombo.length &&
-                        d.combination.every(c1 => currentCombo.some(c2 => c1.propertyId == c2.propId && c1.value === c2.value))
+                        d.combinations.length === currentCombo.length &&
+                        d.combinations.every(c1 => currentCombo.some(c2 => c1.propertyId == c2.propId && c1.value === c2.value))
                     );
 
                     if (found) {
-                        input.val(found.price);
+                        input.val(formatThousand( found.price));
                     }
                 });
             });
+            $('.mask-number').maskNumber({ integer: true, thousands: '.' });
         }
+
+       
     }
 
     Init();

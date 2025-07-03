@@ -69,13 +69,14 @@ namespace InTN.Web.Controllers
             };
 
             return View(model);
-
-            //var model = new CreateOrderDto
-            //{
-            //    OrderCode = identityCode.Code,
-            //};
-            //return View(model);
         }
+
+
+        public async Task<IActionResult> CreateItemDetail()
+        {
+            return PartialView("_Create.ProductItem");
+        }
+
 
 
         public async Task<IActionResult> CreateQuotation(int id)

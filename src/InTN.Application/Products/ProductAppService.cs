@@ -15,6 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Abp.Linq.Extensions;
 using System.Collections.Generic;
 using InTN.Commons;
+using InTN.ProductPriceCombinations.Dto;
+using Abp;
+using Newtonsoft.Json;
 
 namespace InTN.Products
 {
@@ -27,21 +30,19 @@ namespace InTN.Products
         ProductDto>,           // DTO cho cập nhật
         IProductAppService      // Interface
     {
-        private readonly IRepository<Product> _productRepository;
         private readonly IFileUploadAppService _fileUploadAppService;
         public ProductAppService(IRepository<Product> repository,
             IFileUploadAppService fileUploadAppService  // Thêm dịch vụ FileUpload nếu cần thiết, có thể để null nếu không sử dụng trong service này
             )
             : base(repository)
         {
-            _productRepository = repository;
             _fileUploadAppService = fileUploadAppService; // Khởi tạo dịch vụ FileUpload
 
         }
 
         public async Task<ProductDto> GetProductDetailsAsync(int id)
         {
-            var product = await _productRepository.GetAsync(id);
+            var product = await Repository.GetAsync(id);
             var productDto = ObjectMapper.Map<ProductDto>(product);
             return productDto;
         }
@@ -131,6 +132,21 @@ namespace InTN.Products
             }
             var items = await query.Select(u => new OptionItemDto() { id = u.Id.ToString(), text = u.Name }).ToListAsync();
             return items;
+
+        }
+
+
+        public async Task<List<PropertyWithValuesDto>> GetProductPropertiesAsync(int productId)
+        {
+            var product = await GetAsync(new EntityDto<int>(productId));
+            if (product == null)
+            {
+                throw new AbpException($"Product with ID {productId} not found.");
+            }
+
+            var properties = JsonConvert.DeserializeObject<List<PropertyWithValuesDto>>(product.Properties) ?? new List<PropertyWithValuesDto>();
+
+            return properties;
 
         }
     }

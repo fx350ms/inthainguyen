@@ -1,6 +1,7 @@
 ﻿(function ($) {
 
     var _orderService = abp.services.app.order,
+       
         l = abp.localization.getSource('pbt'),
         _$modal = $('#OrderCreateModal'),
         _$form = _$modal.find('form'),
@@ -148,7 +149,7 @@
                 data: 'paymentStatus',
                 className: 'text-center',
                 render: (data, type, row, meta) => {
-                   
+
                     // Lấy mô tả và màu sắc của orderStatus từ đối tượng ánh xạ
                     const status = orderPaymentStatusDescriptions[row.paymentStatus];
 
@@ -230,11 +231,11 @@
                             `       <i class="far fa-check-circle"></i> Hoàn thành` +
                             '   </a>' : '',
 
-                        row.status === 14 && (row.paymentStatus === 0 || row.paymentStatus === 1)  ?
+                        row.status === 14 && (row.paymentStatus === 0 || row.paymentStatus === 1) ?
                             `   <a type="button" class="dropdown-item bg-success " data-order-id="${row.id}" href="/Orders/Payment/${row.id}" data-order-code="${row.orderCode}"  title="Thanh toán" data-toggle="tooltip">` +
                             `       <i class="far fa-check-circle"></i> Thanh toán` +
                             '   </a>' +
-                                `   <a type="button" class="dropdown-item bg-info order-debt"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Chuyển công nợ" data-toggle="tooltip">` +
+                            `   <a type="button" class="dropdown-item bg-info order-debt"  data-order-id="${row.id}" data-order-code="${row.orderCode}"  title="Chuyển công nợ" data-toggle="tooltip">` +
                             `       <i class="far fa-credit-card"></i> Chuyển công nợ` +
                             '   </a>'
 
@@ -462,7 +463,7 @@
             }
         );
     });
-   
+
 
     function deleteOrders(orderId, orderName) {
         abp.message.confirm(
@@ -541,5 +542,10 @@
         }
 
     }).addClass('form-control');
+
+    $('#.select-product-id').on('select2:select', function (e) {
+        var data = e.params.data;
+        
+    });
 
 })(jQuery);

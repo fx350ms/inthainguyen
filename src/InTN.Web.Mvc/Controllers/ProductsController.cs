@@ -80,21 +80,20 @@ namespace InTN.Web.Controllers
         public async Task<ActionResult> EditPriceCombination(int id)
         {
             var product = await _productService.GetAsync(new EntityDto(id));
-            if(product == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-           // var productPriceCombination = await _productPriceCombinationService.GetPriceCombinationsByProductIdAsync(id); 
 
             var model = new ProductEditPriceCombinationModel()
             {
                 ProductId = product.Id,
                 ProductName = product.Name,
                 ProductProperties = (await _productPropertyService.GetAllProductPropertiesAsync()),
-             ///   PriceCombinations = productPriceCombination,
+              //  PriceCombinations = productPriceCombination,
             };
-            return View( model);
+            return View(model);
         }
     }
 }
