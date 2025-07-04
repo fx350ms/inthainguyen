@@ -2,16 +2,13 @@
 @using InTN.Web.Models.Common.Modals
 @using InTN.Web.Models.Orders;
 @model CreateOrderModel
-
-
 <div class="row order-item">
     <div class="col-12 text-right">
-        <button type="button" class="btn btn-danger btn-sm" id="delete-item-button">
+        <button type="button" class="btn btn-danger btn-sm delete-item-button">
             X
         </button>
     </div>
     <div class="col-12 row">
-
         <div class="control-item col-md-4">
             <label>@L("ServiceProductName")</label>
             <select class="select2 select-product-id form-control" name="ProductId" style="width: 100%;"></select>
@@ -20,36 +17,25 @@
         </div>
         <div class="control-item col-md-2">
             <label>@L("Price")</label>
-            <input type="number" class="form-control unit-price text-right" name="Price" value="0" readonly>
+            <input type="number" class="form-control unit-price text-right unit-price" name="Price" value="0" readonly>
         </div>
         <div class="control-item col-md-2">
             <label>@L("Quantity")</label>
-            <input type="number" min="1" value="1" step="1" class="form-control text-right" name="Quantity">
+            <input type="number" min="1" value="1" step="1" class="form-control quantity text-right" name="Quantity">
         </div>
         <div class="control-item col-md-2">
-            <label>@L("TotalPrice")</label>
-            <input type="number" min="1" value="1" step="1" class="form-control text-right" name="TotalPrice" readonly>
+            <label>@L("TotalProductPrice")</label>
+            <input type="number" min="1" value="1" step="1" class="form-control total-product-price text-right" name="TotalProductPrice" readonly>
         </div>
     </div>
-    <div class="col-12 row">
-        <div class="col-md-2">
-            <label>@L("Note1")</label>
-            <select class="select2 select-note-1 form-control" name="Note1" style="width: 100%;"></select>
-        </div>
-        <div class="col-md-2">
-            <label>@L("Note2")</label>
-            <select class="select2 select-note-2 form-control" name="Note2" style="width: 100%;"></select>
-        </div>
-        <div class="col-md-2">
-            <label>@L("Note3")</label>
-            <select class="select2 select-note-3 form-control" name="Note3" style="width: 100%;"></select>
-        </div>
 
+    <div class="col-12 row note-list">
         <div class="col-md-4">
             <label>@L("OtherNote")</label>
             <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" />
         </div>
     </div>
+     
     <div class="col-12 text-right">
         <button type="button" class="btn btn-success btn-sm clone-item-button">
             <i class="fas fa-clone"></i> @L("Duplicate")

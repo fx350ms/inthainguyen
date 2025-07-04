@@ -9,6 +9,6 @@ namespace InTN.ProductNotes.Dto
     public class FilterandSearchProductNoteRequestDto
     {
         public string Keyword { get; set; } = string.Empty; // Từ khoá tìm kiếm
-        public int ProductId { get; set; }
+        public int? ProductCategoryId { get; set; }
     }
 }

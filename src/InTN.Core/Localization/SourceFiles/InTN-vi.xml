@@ -668,5 +668,16 @@
 		<text name="OtherRequirements" value="Yêu cầu khác" />
 		<text name="TotalPrice" value="Tổng tiền" />
 		<text name="TotalProductPrice" value="Tổng tiền sản phẩm" />
+		
+		<text name="OrderSummary" value="Tóm tắt đơn hàng" />
+		<text name="OtherNote" value="Ghi chú khác" />
+		<text name="AddItem" value="Thêm mục" />
+		<text name="SelectProduct" value="Lựa chọn dịch vụ sản phẩm" />
+		<text name="ProductNotes" value="Ghi chú sản phẩm" />
+		<text name="CreateNewProductNote" value="Tạo ghi chú sản phẩm mới" />
+		<text name="ProductCategoryId" value="ID danh mục sản phẩm" />
+		<text name="ParentNote" value="Ghi chú cha" />
+		<text name="SelectParentNote" value="Chọn ghi chú cha" />
+		<text name="SelectNote" value="Chọn ghi chú" />
 	</texts>
 </localizationDictionary>

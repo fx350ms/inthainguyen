@@ -1,7 +1,7 @@
 (function ($) {
     var _productService = abp.services.app.product,
         _productPriceCombinationService = abp.services.app.productPriceCombination,
-        l = abp.localization.getSource('pbt');
+        l = abp.localization.getSource('InTN');
 
     let addedProperties = {}; // { [propertyId]: { name: string, values: [] } }
     $('#property-select').select2({

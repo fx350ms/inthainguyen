@@ -1,6 +1,6 @@
 ﻿(function ($) {
     var _orderService = abp.services.app.order,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#OrderEditModal'),
         _$form = _$modal.find('form');
 

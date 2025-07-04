@@ -5,6 +5,7 @@ using InTN.Entities;
 using Abp.Application.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace InTN.ProductCategories
 {
@@ -24,7 +25,7 @@ namespace InTN.ProductCategories
 
         public async Task<List<ProductCategoryDto>> GetAllListAsync()
         {
-            var data = await Repository.GetAllListAsync();
+            var data = (await Repository.GetAllListAsync()).OrderBy(u => u.Name);
             var result = ObjectMapper.Map<List<ProductCategoryDto>>(data);
             return result;
         }

@@ -8,7 +8,7 @@
         _$formAddress = _$modal.find('form'),
         _$waybillModal = $('#WaybillCreateModal'),
         _$waybillCreateForm = _$waybillModal.find('form'),
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$form = $('#form-create-my-order');
     
 

@@ -1,6 +1,6 @@
 (function ($) {
     var _productTypeService = abp.services.app.productType,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#ProductTypeCreateModal'),
         _$form = _$modal.find('form'),
         _$table = $('#ProductTypesTable');

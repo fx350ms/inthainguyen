@@ -1,6 +1,6 @@
 (function ($) {
     var _productPropertyService = abp.services.app.productProperty,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#ProductPropertyEditModal'),
         _$form = _$modal.find('form');
 

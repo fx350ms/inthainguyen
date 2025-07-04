@@ -1,6 +1,6 @@
 (function ($) {
     var _brandService = abp.services.app.brand,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#BrandEditModal'),
         _$form = _$modal.find('form');
 

@@ -58,7 +58,7 @@ namespace ImportExcel
                 }
 
                 combinations = await CreatePropertyMatrix(row.Properties);
-              
+
                 if (combinations != null && combinations.Count > 0)
                 {
                     combinationWithPrices.Add(new CombinationWithPrice
@@ -118,11 +118,11 @@ namespace ImportExcel
                 result.Add(item);
             }
 
-     
+
             return result;
         }
 
-         
+
 
         private async Task<int> GetOrCreateProductTypeAsync(string name)
         {
@@ -210,7 +210,7 @@ namespace ImportExcel
             var properties = combinationWithPrices
                 .SelectMany(c => c.Combinations)
                 .GroupBy(c => c.PropertyId)
-                .Select(g => new 
+                .Select(g => new
                 {
                     PropertyId = g.Key,
                     PropertyName = g.First().PropertyName,
@@ -234,6 +234,71 @@ namespace ImportExcel
             await _db.SaveChangesAsync();
         }
 
+        public async Task ImportNoteAsync(List<ExcelProductRow> rows)
+        {
+            var allCategories = await _db.ProductCategories.AsNoTracking().ToListAsync();
+            var categoryDict = allCategories.ToDictionary(x => x.Name.Trim().ToLower(), x => x);
 
+            var existingNotes = await _db.ProductNotes
+                .Select(x => new { x.ProductCategoryId, x.Note })
+                .ToListAsync();
+            var existingSet = new HashSet<string>(existingNotes.Select(x => $"{x.ProductCategoryId}|{x.Note.Trim()}"));
+
+            var newNotes = new List<ProductNote>();
+
+            foreach (var row in rows)
+            {
+                if (string.IsNullOrWhiteSpace(row.ProductCategory) || string.IsNullOrWhiteSpace(row.InvoiceNote))
+                    continue;
+
+                var lastCategoryName = row.ProductCategory.Split('>', '/', '|').Last().Trim().ToLower();
+
+                if (!categoryDict.TryGetValue(lastCategoryName, out var category))
+                    continue;
+
+                var notes = row.InvoiceNote
+                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(n => n.Trim())
+                    .Where(n => n.StartsWith("-"))
+                    .Select(n => n.TrimStart('-').Trim())
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .ToList();
+
+                int? parentId = null;
+                foreach (var note in notes)
+                {
+                    var key = $"{category.Id}|{note}";
+                    if (existingSet.Contains(key))
+                    {
+                        // Nếu đã tồn tại thì bỏ qua nhưng vẫn cập nhật parentId nếu cần
+                        var existingNote = await _db.ProductNotes
+                            .Where(x => x.ProductCategoryId == category.Id && x.Note == note)
+                            .FirstOrDefaultAsync();
+                        if (existingNote != null)
+                            parentId = existingNote.Id;
+                        continue;
+                    }
+
+                    var productNote = new ProductNote
+                    {
+                        ProductCategoryId = category.Id,
+                        Note = note,
+                        ParentId = parentId
+                    };
+
+                    await _db.ProductNotes.AddAsync(productNote);
+                    await _db.SaveChangesAsync();
+
+                    existingSet.Add(key);
+                    parentId = productNote.Id; // cập nhật để làm cha của ghi chú tiếp theo
+                }
+            }
+
+            if (newNotes.Any())
+            {
+                _db.ProductNotes.AddRange(newNotes);
+                await _db.SaveChangesAsync();
+            }
+        }
     }
 }

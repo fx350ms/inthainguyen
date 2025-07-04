@@ -18,7 +18,7 @@
 
 
     var _orderService = abp.services.app.order,
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$table = $('#OrdersTable');
 
     const orderStatusDescriptions = {

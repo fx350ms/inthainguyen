@@ -1,11 +1,10 @@
-﻿
-(function ($) {
+﻿(function ($) {
     const _orderService = abp.services.app.order,
         _productService = abp.services.app.product,
         _productPriceCombinations = abp.services.app.productPriceCombination,
-        _productNotes = abp.services.app.productNotes,
+        _productNotes = abp.services.app.productNote,
 
-        l = abp.localization.getSource('pbt'),
+        l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
 
@@ -56,10 +55,9 @@
         }
     });
 
-
     $('select[name="CustomerId"').select2({
         ajax: {
-            delay: 1500, // wait 1000 milliseconds before triggering the request
+            delay: 500, // wait 1000 milliseconds before triggering the request
             url: abp.appPath + 'api/services/app/Customer/GetCustomerListForSelect',
             dataType: 'json',
             processResults: function (data) {
@@ -73,41 +71,35 @@
 
     $('.select2').select2();
 
-    $('.select-product-id').select2({
-        allowClear: false,
-        closeOnSelect: false,
-        selectOnClose: false,
+    /// new update
 
-        ajax: {
-            delay: 500,
-            url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct',
-            data: function (params) {
-                var query = {
-                    keyword: params.term,
-                    productTypeId: $('select[name="ProductTypeId"]').val(), // Loại sản phẩm
-                    productCategoryId: $('select[name="ProductCategoryId"]').val(), // Danh mục sản phẩm
-                    supplierId: $('select[name="ProductSupplierId"]').val(), // Nhà cung cấp
-                    brandId: $('select[name="BrandId"]').val(), // Thương hiệu
+    function InitializeOrderItem($item) {
+        // Khởi tạo lại select2 cho select-product
+        $item.find('.select-product-id').select2({
+            placeholder: l("SelectProduct"),
+            ajax: {
+                url: abp.appPath + 'api/services/app/Product/FilterAndSearchProduct',
+                data: function (params) {
+                    return {
+                        keyword: params.term,
+                        //productTypeId: $('select[name="ProductTypeId"]').val(),
+                        //productCategoryId: $('select[name="ProductCategoryId"]').val(),
+                        //supplierId: $('select[name="ProductSupplierId"]').val(),
+                        //brandId: $('select[name="BrandId"]').val()
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.result
+                    };
                 }
-                // Query parameters will be ?search=[term]&type=public
-                return query;
-            },
-            processResults: function (data) {
-                // Transforms the top-level key of the response object from 'items' to 'results'
-
-                return {
-                    results: data.result
-                };
             }
-        }
-    })
-        .on('select2:select', function (e) {
+        }).on('select2:select', function (e) {
             var data = e.params.data;
-
             // Lấy danh sách property tương ứng với sản phẩm
             var productId = data.id;
             _productService.getProductProperties(productId).done(function (properties) {
-                var $propertyList = $('.property-list');
+                var $propertyList = $row.find('.property-list');
                 $propertyList.empty(); // Clear existing properties
                 properties.forEach(function (property) {
                     var $propertyDiv = $('<div>')
@@ -135,15 +127,168 @@
                 ChangePropertyValue();
             });
             const $row = $(this).closest('.order-item');  // Tìm hàng chứa sản phẩm
+
             GetProductPrice($row);
+            LoadProductNotes($row, productId); // Tải ghi chú sản phẩm khi chọn sản phẩm)
+
+            InitializeProductNotes($row, productId); // Khởi tạo ghi chú sản phẩm
         });
 
-    function ChangePropertyValue() {
-        $(document).on('change', '.product-property', function (a, b, c) {
-            // Lấy thông tin sản phẩm và thuộc tính
-            const $row = $(this).closest('.order-item');  // Tìm hàng chứa sản phẩm
-            GetProductPrice($row);
+        // Reset các giá trị trong item
+        $item.find('input').val(''); // Xóa giá trị trong các ô input
+        $item.find('.unit-price').val('0'); // Reset giá trị unit price
+        $item.find('.total-product-price').val('0'); // Reset giá trị total product price
+        $item.find('.quantity').val('1'); // Reset giá trị quantity
+
+        // Cập nhật hiển thị nút xóa
+        UpdateDeleteButtonVisibility();
+
+        // Xử lý sự kiện thay đổi thuộc tính sản phẩm
+        $item.find('.product-property').off('change').on('change', function () {
+            const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
+            GetProductPrice($row); // Tính giá sản phẩm dựa trên thuộc tính
+            CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
         });
+
+        // Xử lý sự kiện thay đổi số lượng hoặc giá sản phẩm
+        $item.find('input[name="Quantity"], .unit-price').off('input').on('input', function () {
+            const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
+            CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
+        });
+
+        // Bổ sung logic tìm button xóa để xóa item
+        $item.find('.delete-item-button').off('click').on('click', function () {
+            const $orderItem = $(this).closest('.order-item');
+            $orderItem.remove();
+            UpdateDeleteButtonVisibility();
+        });
+    }
+
+    function InitializeProductNotes($row, productId, level) {
+        // Gọi API để lấy danh sách ghi chú cha
+        _productNotes.getNotesByProductId(productId, true).done(function (notes) {
+
+            const $noteList = $row.find('.note-list');
+
+            $noteList.find('.note-item').remove();
+
+            if (Array.isArray(notes) && notes.length > 0) {
+
+                level = level || 1;
+                const $noteSelect = $('<select>')
+                    .addClass('form-control select-note')
+                    .attr('name', 'Note_0')
+                    .attr('data-level', level)
+                    .append($('<option>').val('').text(l('SelectNote')));
+
+
+                notes.forEach(function (note) {
+                    $noteSelect.append($('<option>').val(note.id).text(note.note));
+                });
+
+                const $noteDiv = $('<div>')
+                    .addClass('control-item col-md-2 note-item') // Hiển thị ghi chú trong cột
+                    .append($('<label>').text(l('Note') + ' ' + level)) // Hiển thị tên ghi chú
+                    .append($noteSelect);
+                $noteList.prepend($noteDiv);
+
+                $($noteSelect).change(function ($this) {
+                    LoadChildNotes($noteDiv, $noteSelect, level);
+                });
+            }
+
+        });
+    }
+
+    function LoadChildNotes($parentDiv,  $parentNoteSelect, level) {
+       
+        const parentId = $parentNoteSelect.val(); // Lấy ID ghi chú cha được chọn
+        
+        if (!parentId) {
+            return; // Nếu không có parentId, không cần xử lý
+        }
+
+       
+        $parentNoteSelect.closest('.note-item').nextAll('.note-item').remove();
+        // Gọi API để lấy danh sách ghi chú con
+        _productNotes.getNotesByParent(parentId).done(function (notes) {
+            
+            if (Array.isArray(notes) && notes.length > 0) {
+                const $row = $parentNoteSelect.closest('.order-item'); // Tìm hàng chứa sản phẩm
+
+               // const $noteList = $row.find('.note-list'); // Tìm danh sách ghi chú
+
+                level = level + 1; // Tăng cấp độ ghi chú
+
+                // Tạo select mới cho ghi chú con
+                const $childNoteSelect = $('<select>')
+                    .addClass('form-control select-note')
+                    .attr('name', `Note_${level}`)
+                    .attr('data-level', level)
+                    .append($('<option>').val('').text(l('SelectNote'))); // Thêm tùy chọn mặc định
+
+                // Thêm các ghi chú con vào select
+                notes.forEach(function (note) {
+                    $childNoteSelect.append($('<option>').val(note.id).text(note.note));
+                });
+
+                // Tạo div chứa ghi chú con
+                const $noteDiv = $('<div>')
+                    .addClass('control-item col-md-2 note-item') // Hiển thị ghi chú trong cột
+                    .append($('<label>').text(l('Note') + ' ' + level)) // Hiển thị tên ghi chú
+                    .append($childNoteSelect);
+
+                // Thêm ghi chú con vào danh sách
+                $parentDiv.after($noteDiv);
+
+               
+                // Gắn sự kiện thay đổi cho ghi chú con
+                $childNoteSelect.off('change').on('change', function () {
+                    var $div = $(this).closest('.order-item');
+                    LoadChildNotes($noteDiv, $(this), level); // Tiếp tục hiển thị ghi chú con tiếp theo
+                });
+            }
+        }).fail(function () {
+            abp.notify.error(l('FailedToLoadNotes')); // Hiển thị lỗi nếu không lấy được dữ liệu
+        });
+    }
+     
+
+    function LoadProductNotes($row, productId) {
+        _productNotes.getNotesByProductId(productId, true).done(function (notes) {
+            const $select = $row.find('.select-note-1');
+            $select.empty(); // Clear existing options
+            $select.append($('<option>').val('').text(l('SelectNote'))); // Add default option
+            if (Array.isArray(notes) && notes.length > 0) {
+                notes.forEach(function (note) {
+                    $select.append($('<option>').val(note.id).text(note.note));
+                });
+            }
+            $select.trigger('change'); // Refresh select2 if used
+        });
+    }
+
+    function CalculateOrderSummary() {
+        let totalAmount = 0;
+
+        // Duyệt qua tất cả các hàng sản phẩm để tính tổng tiền
+        $('#order-detail-list .order-item').each(function () {
+            const totalPrice = parseFloat($(this).find('input[name="TotalPrice"]').val()) || 0;
+            totalAmount += totalPrice;
+        });
+
+        // Cập nhật tổng tiền vào ô "TotalAmount"
+        $('input[name="TotalAmount"]').val(formatThousand(totalAmount));
+    }
+
+    function CalculateTotalPrice($row) {
+        const unitPrice = parseFloat($row.find('.unit-price').val().replace('.', '')) || 0; // Lấy giá sản phẩm
+        const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
+
+        const totalProductPrice = unitPrice * quantity; // Tính thành tiền
+        $row.find('input[name="TotalProductPrice"]').val(formatThousand(totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"
+
+        CalculateOrderSummary(); // Cập nhật tổng tiền đơn hàng
     }
 
     function GetProductPrice($row) {
@@ -187,92 +332,15 @@
         });
     }
 
-    function CalculateTotalPrice($row) {
-        const unitPrice = parseFloat($row.find('.unit-price').val().replace('.', '')) || 0; // Lấy giá sản phẩm
-        const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
 
-        const totalProductPrice = unitPrice * quantity; // Tính thành tiền
-        $row.find('input[name="TotalProductPrice"]').val(formatThousand(totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"
-
-        CalculateOrderSummary(); // Cập nhật tổng tiền đơn hàng
-    }
-
-    function CalculateOrderSummary() {
-        let totalAmount = 0;
-
-        // Duyệt qua tất cả các hàng sản phẩm để tính tổng tiền
-        $('#order-detail-list .order-item').each(function () {
-            const totalPrice = parseFloat($(this).find('input[name="TotalPrice"]').val().replace(/,/g, '')) || 0;
-            totalAmount += totalPrice;
+    function ChangePropertyValue() {
+        $(document).on('change', '.product-property', function (a, b, c) {
+            // Lấy thông tin sản phẩm và thuộc tính
+            const $row = $(this).closest('.order-item');  // Tìm hàng chứa sản phẩm
+            GetProductPrice($row);
         });
-
-        // Cập nhật tổng tiền vào ô "TotalAmount"
-        $('input[name="TotalAmount"]').val(formatThousand(totalAmount));
     }
 
-    $(document).on('input', 'input[name="Quantity"], .unit-price', function () {
-        const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
-        CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
-    });
-
-    // Xử lý khi thay đổi thuộc tính sản phẩm
-    $(document).on('change', '.product-property', function () {
-        const $row = $(this).closest('.order-item'); // Tìm hàng chứa sản phẩm
-        GetProductPrice($row); // Tính giá sản phẩm dựa trên thuộc tính
-        CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
-    });
-    // Xử lý xóa item
-    $(document).on('click', '.delete-item-button', function () {
-        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
-        $orderItem.remove(); // Xóa thẻ div cha
-        // Cập nhật hiển thị nút xóa sau khi xóa item
-        UpdateDeleteButtonVisibility();
-    });
-
-    // Xử lý clone item
-    $(document).on('click', '.clone-item-button', function () {
-        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
-        const $clonedItem = $orderItem.clone(); // Clone thẻ div cha
-
-        // Reset các giá trị trong item clone
-        $clonedItem.find('input').val(''); // Xóa giá trị trong các ô input
-        $clonedItem.find('.unit-price').val('0'); // Reset giá trị unit price
-        $clonedItem.find('.total-price').val('0'); // Reset giá trị total price
-        $clonedItem.find('.quantity').val('1'); // Reset giá trị quantity
-
-        $orderItem.after($clonedItem); // Dán item clone ngay dưới item hiện tại
-
-
-        // Cập nhật hiển thị nút xóa sau khi clone item
-        UpdateDeleteButtonVisibility();
-    });
-
-    // Xử lý thêm item mới
-    $(document).on('click', '.btn-add-order-item', function () {
-        const $newItem = $('#order-detail-list .order-item:first').clone(); // Clone item đầu tiên làm mẫu
-
-        // Reset các giá trị trong item mới
-        $newItem.find('input').val(''); // Xóa giá trị trong các ô input
-        $newItem.find('.unit-price').val('0'); // Reset giá trị unit price
-        $newItem.find('.total-price').val('0'); // Reset giá trị total price
-        $newItem.find('.quantity').val('1'); // Reset giá trị quantity
-
-        $('#order-detail-list').append($newItem); // Thêm item mới vào cuối danh sách
-
-
-        // Cập nhật hiển thị nút xóa sau khi clone item
-        UpdateDeleteButtonVisibility();
-    });
-
-    // Cải tiến: Tự động tính toán tổng tiền khi thay đổi số lượng hoặc giá sản phẩm
-    $(document).on('input', '.quantity, .unit-price', function () {
-        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
-        const unitPrice = parseFloat($orderItem.find('.unit-price').val()) || 0; // Lấy giá sản phẩm
-        const quantity = parseInt($orderItem.find('.quantity').val()) || 0; // Lấy số lượng sản phẩm
-
-        const totalPrice = unitPrice * quantity; // Tính thành tiền
-        $orderItem.find('.total-price').val(totalPrice.toFixed(2)); // Cập nhật giá trị vào ô "TotalPrice"
-    });
 
     // Hàm kiểm tra số lượng item và hiển thị/ẩn nút xóa
     function UpdateDeleteButtonVisibility() {
@@ -287,8 +355,72 @@
             $orderItems.find('.delete-item-button').show();
         }
     }
-    
-    // Cập nhật hiển thị nút xóa khi trang được load
+
+
+
+    // Xử lý xóa item
+    $(document).on('click', '.delete-item-button', function () {
+        const $orderItem = $(this).closest('.order-item'); // Tìm thẻ div cha có class là order-item
+        $orderItem.remove(); // Xóa thẻ div cha
+
+        // Cập nhật hiển thị nút xóa sau khi xóa item
+        UpdateDeleteButtonVisibility();
+    });
+
+    // Xử lý clone item
+    $(document).on('click', '.clone-item-button', function () {
+
+        // Gọi API để lấy item mẫu
+        fetchOrderItemTemplate(function (html) {
+            $('#order-detail-list').append(html); // Thêm item mới vào cuối danh sách
+
+            var $newItem = $('#order-detail-list').children().last();
+
+            InitializeOrderItem($newItem);
+            UpdateDeleteButtonVisibility();
+        });
+
+    });
+
+    // Xử lý thêm item mới
+    $(document).on('click', '.btn-add-order-item', function () {
+        // Gọi API để lấy item mẫu
+        fetchOrderItemTemplate(function (html) {
+
+            $('#order-detail-list').append(html); // Thêm item mới vào cuối danh sách
+
+            var $newItem = $('#order-detail-list').children().last();
+            // Gọi hàm InitializeOrderItem để khởi tạo lại các thuộc tính và control cho item mới
+            InitializeOrderItem($newItem);
+
+            UpdateDeleteButtonVisibility();
+        });
+
+        //const $newItem = $('#order-detail-list .order-item:first').clone(); // Clone item đầu tiên làm mẫu
+
+    });
+
+
+    // Gọi API để lấy item mẫu
+    function fetchOrderItemTemplate(callback) {
+        $.ajax({
+            url: "/Orders/CreateItemDetail",
+            type: "GET",
+            dataType: "html",
+            success: function (html) {
+                if (typeof callback === "function") {
+                    callback(html);
+                }
+            },
+            error: function () {
+                abp.notify.error(l("FailedToLoadOrderItemTemplate"));
+            }
+        });
+    }
+
     UpdateDeleteButtonVisibility();
 
+    InitializeOrderItem($('#order-detail-list .order-item:first'));
+
+    $('.mask-number').maskNumber({ integer: true, thousands: '.' });
 })(jQuery);
