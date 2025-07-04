@@ -3,11 +3,11 @@
         _productService = abp.services.app.product,
         _productPriceCombinations = abp.services.app.productPriceCombination,
         _productNotes = abp.services.app.productNote,
-  
+
         l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
-    
+
     $('.save-button').on('click', (e) => {
         e.preventDefault();
 
@@ -57,7 +57,7 @@
 
     $('select[name="CustomerId"').select2({
         ajax: {
-            delay: 1500, // wait 1000 milliseconds before triggering the request
+            delay: 500, // wait 1000 milliseconds before triggering the request
             url: abp.appPath + 'api/services/app/Customer/GetCustomerListForSelect',
             dataType: 'json',
             processResults: function (data) {
@@ -96,7 +96,6 @@
             }
         }).on('select2:select', function (e) {
             var data = e.params.data;
-
             // Lấy danh sách property tương ứng với sản phẩm
             var productId = data.id;
             _productService.getProductProperties(productId).done(function (properties) {
@@ -128,11 +127,12 @@
                 ChangePropertyValue();
             });
             const $row = $(this).closest('.order-item');  // Tìm hàng chứa sản phẩm
-            GetProductPrice($row);
 
+            GetProductPrice($row);
             LoadProductNotes($row, productId); // Tải ghi chú sản phẩm khi chọn sản phẩm)
+
+            InitializeProductNotes($row, productId); // Khởi tạo ghi chú sản phẩm
         });
-            
 
         // Reset các giá trị trong item
         $item.find('input').val(''); // Xóa giá trị trong các ô input
@@ -162,40 +162,100 @@
             $orderItem.remove();
             UpdateDeleteButtonVisibility();
         });
-
-
-
-        //$($item).on('change', '[data-next]', function () {
-        //    debugger;
-        //    const selectedNoteId = $(this).val();
-        //    if (selectedNoteId) {
-        //        var next = $(this).attr('data-next');
-        //        var $next = $item.find('[data-next="' + next + '"]');
-        //        _productNotes.getNotesByParent(selectedNoteId).done(function (notes) {
-
-        //            debugger;
-
-        //            //    $row.find('.note-content').val(note.note); // Hiển thị nội dung ghi chú vào ô input
-        //            $next.empty(); // Clear existing options
-        //            $next.append($('<option>').val('').text(l('SelectNote'))); // Add default option
-        //            if (Array.isArray(notes) && notes.length > 0) {
-        //                notes.forEach(function (note) {
-        //                    $next.append($('<option>').val(note.id).text(note.note));
-        //                });
-        //            }
-        //            $next.trigger('change'); // Refresh select2 if used
-
-        //        });
-        //    } else {
-        //        //$row.find('.note-content').val(''); // Xóa nội dung ghi chú nếu không có lựa chọn
-        //    }
-        //});
-
     }
+
+    function InitializeProductNotes($row, productId, level) {
+        // Gọi API để lấy danh sách ghi chú cha
+        _productNotes.getNotesByProductId(productId, true).done(function (notes) {
+
+            const $noteList = $row.find('.note-list');
+
+            $noteList.find('.note-item').remove();
+
+            if (Array.isArray(notes) && notes.length > 0) {
+
+                level = level || 1;
+                const $noteSelect = $('<select>')
+                    .addClass('form-control select-note')
+                    .attr('name', 'Note_0')
+                    .attr('data-level', level)
+                    .append($('<option>').val('').text(l('SelectNote')));
+
+
+                notes.forEach(function (note) {
+                    $noteSelect.append($('<option>').val(note.id).text(note.note));
+                });
+
+                const $noteDiv = $('<div>')
+                    .addClass('control-item col-md-2 note-item') // Hiển thị ghi chú trong cột
+                    .append($('<label>').text(l('Note') + ' ' + level)) // Hiển thị tên ghi chú
+                    .append($noteSelect);
+                $noteList.prepend($noteDiv);
+
+                $($noteSelect).change(function ($this) {
+                    LoadChildNotes($noteDiv, $noteSelect, level);
+                });
+            }
+
+        });
+    }
+
+    function LoadChildNotes($parentDiv,  $parentNoteSelect, level) {
+       
+        const parentId = $parentNoteSelect.val(); // Lấy ID ghi chú cha được chọn
+        
+        if (!parentId) {
+            return; // Nếu không có parentId, không cần xử lý
+        }
+
+       
+        $parentNoteSelect.closest('.note-item').nextAll('.note-item').remove();
+        // Gọi API để lấy danh sách ghi chú con
+        _productNotes.getNotesByParent(parentId).done(function (notes) {
+            
+            if (Array.isArray(notes) && notes.length > 0) {
+                const $row = $parentNoteSelect.closest('.order-item'); // Tìm hàng chứa sản phẩm
+
+               // const $noteList = $row.find('.note-list'); // Tìm danh sách ghi chú
+
+                level = level + 1; // Tăng cấp độ ghi chú
+
+                // Tạo select mới cho ghi chú con
+                const $childNoteSelect = $('<select>')
+                    .addClass('form-control select-note')
+                    .attr('name', `Note_${level}`)
+                    .attr('data-level', level)
+                    .append($('<option>').val('').text(l('SelectNote'))); // Thêm tùy chọn mặc định
+
+                // Thêm các ghi chú con vào select
+                notes.forEach(function (note) {
+                    $childNoteSelect.append($('<option>').val(note.id).text(note.note));
+                });
+
+                // Tạo div chứa ghi chú con
+                const $noteDiv = $('<div>')
+                    .addClass('control-item col-md-2 note-item') // Hiển thị ghi chú trong cột
+                    .append($('<label>').text(l('Note') + ' ' + level)) // Hiển thị tên ghi chú
+                    .append($childNoteSelect);
+
+                // Thêm ghi chú con vào danh sách
+                $parentDiv.after($noteDiv);
+
+               
+                // Gắn sự kiện thay đổi cho ghi chú con
+                $childNoteSelect.off('change').on('change', function () {
+                    var $div = $(this).closest('.order-item');
+                    LoadChildNotes($noteDiv, $(this), level); // Tiếp tục hiển thị ghi chú con tiếp theo
+                });
+            }
+        }).fail(function () {
+            abp.notify.error(l('FailedToLoadNotes')); // Hiển thị lỗi nếu không lấy được dữ liệu
+        });
+    }
+     
 
     function LoadProductNotes($row, productId) {
         _productNotes.getNotesByProductId(productId, true).done(function (notes) {
-          
             const $select = $row.find('.select-note-1');
             $select.empty(); // Clear existing options
             $select.append($('<option>').val('').text(l('SelectNote'))); // Add default option
@@ -205,11 +265,7 @@
                 });
             }
             $select.trigger('change'); // Refresh select2 if used
-
         });
-
-     
-
     }
 
     function CalculateOrderSummary() {
@@ -318,8 +374,8 @@
         fetchOrderItemTemplate(function (html) {
             $('#order-detail-list').append(html); // Thêm item mới vào cuối danh sách
 
-            var $newItem = $('#order-detail-list').children().last(); 
-            
+            var $newItem = $('#order-detail-list').children().last();
+
             InitializeOrderItem($newItem);
             UpdateDeleteButtonVisibility();
         });
@@ -333,13 +389,13 @@
 
             $('#order-detail-list').append(html); // Thêm item mới vào cuối danh sách
 
-            var $newItem = $('#order-detail-list').children().last(); 
+            var $newItem = $('#order-detail-list').children().last();
             // Gọi hàm InitializeOrderItem để khởi tạo lại các thuộc tính và control cho item mới
             InitializeOrderItem($newItem);
 
             UpdateDeleteButtonVisibility();
         });
-         
+
         //const $newItem = $('#order-detail-list .order-item:first').clone(); // Clone item đầu tiên làm mẫu
 
     });
@@ -366,4 +422,5 @@
 
     InitializeOrderItem($('#order-detail-list .order-item:first'));
 
+    $('.mask-number').maskNumber({ integer: true, thousands: '.' });
 })(jQuery);

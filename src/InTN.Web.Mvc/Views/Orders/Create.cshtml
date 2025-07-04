@@ -71,7 +71,7 @@
                                             <option value="2">@L("LoyalCustomer")</option>
                                         </select>
                                     </div>
-                                    <div class="control-item col-md-3 select-customer-group " >
+                                    <div class="control-item col-md-3 select-customer-group" style="display: none;">
                                         <label>@L("Customer")</label>
                                         <select class="select2 select-customer-id form-control" name="CustomerId" style="width: 100%;"></select>
                                     </div>
@@ -80,11 +80,11 @@
                                 <div class="row">
                                     <div class="control-item col-md-3">
                                         <label>@L("CustomerName")</label>
-                                        <input type="text" class="form-control" name="CustomerName" required maxlength="255">
+                                        <input type="text" class="form-control" name="CustomerName" placeholder="@L("EnterName")" required maxlength="255">
                                     </div>
                                     <div class="control-item col-md-3">
                                         <label>@L("Phone")</label>
-                                        <input type="text" class="form-control" name="CustomerPhone" required>
+                                        <input type="text" class="form-control" name="CustomerPhone" placeholder="@L("EnterPhone")" required>
                                     </div>
                                     <div class="control-item col-md-3">
                                         <label>@L("TotalDebt")</label>
@@ -96,11 +96,11 @@
                                     </div>
                                     <div class="control-item col-md-3">
                                         <label>@L("Email")</label>
-                                        <input type="text" class="form-control" name="CustomerEmail">
+                                        <input type="text" class="form-control" name="CustomerEmail" placeholder="@L("EnterEmail")">
                                     </div>
                                     <div class="control-item col-md-6">
                                         <label>@L("CustomerAddress")</label>
-                                        <input type="text" class="form-control" name="CustomerAddress" required>
+                                        <input type="text" class="form-control" name="CustomerAddress" placeholder="@L("EnterAddress")" required>
                                     </div>
                                 </div>
                             </div>
@@ -140,25 +140,13 @@
                                             <input type="number" min="1" value="1" step="1" class="form-control total-product-price text-right" name="TotalProductPrice" readonly>
                                         </div>
                                     </div>
-                                     
-                                    <div class="col-12 row">
-                                        <div class="col-md-2">
-                                            <label>@L("Note1")</label>
-                                            <select class=" select-note-1 form-control" name="Note1" data-next="Note2" style="width: 100%;"></select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label>@L("Note2")</label>
-                                            <select class=" select-note-2 form-control" name="Note2" data-next="Note3" style="width: 100%;"></select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label>@L("Note3")</label>
-                                            <select class=" select-note-3 form-control" name="Note3" style="width: 100%;"></select>
-                                        </div>
 
+                                    <div class="col-12 row note-list">
                                         <div class="col-md-4">
                                             <label>@L("OtherNote")</label>
-                                            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" />
+                                            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("InputHere")" />
                                         </div>
+
                                     </div>
                                     <div class="col-12 text-right">
                                         <button type="button" class="btn btn-success btn-sm clone-item-button">
@@ -176,26 +164,60 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <label>@L("TotalAmount")</label>
-                                        <input type="number" class="form-control" name="TotalAmount" readonly>
+
+                                    <!--Tổng tiền sản phẩm (chi tiết đơn)-->
+                                    <div class="col-md-2">
+                                        <label>@L("TotalProductAmount")</label>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalProductAmount" readonly>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <!--Tổng tiền đặt cọc-->
+                                    <div class="col-md-2">
                                         <label>@L("TotalDeposit")</label>
-                                        <input type="number" class="form-control" name="TotalDeposit">
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalDeposit">
                                     </div>
-                                    <div class="col-md-3">
+                                    <!--Phí vận chuyển-->
+                                    <div class="col-md-2">
                                         <label>@L("DeliveryFee")</label>
-                                        <input type="number" class="form-control" name="DeliveryFee">
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="DeliveryFee">
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>@L("VatRate")</label>
-                                        <input type="number" class="form-control" name="VatRate">
+                                    <!--Thuế VAT-->
+                                    <div class="col-md-2">
+                                        <label>@L("VatRate")%</label>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="VatRate">
                                     </div>
-                                    <div class="col-md-3">
+
+                                    <!--Tiền thuế VAT-->
+                                    <div class="col-md-2">
+                                        <label>@L("VATAmount")</label>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="VatAmount">
+                                    </div>
+                                    <!--Tổng tiền chiếu khấu/ giảm giá-->
+                                    <div class="col-md-2">
                                         <label>@L("DiscountAmount")</label>
-                                        <input type="number" class="form-control" name="DiscountAmount">
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="DiscountAmount">
+                                    </div>
+
+                                    <!--Tổng tiền đơn hàng-->  
+                                    <div class="col-md-2">
+                                        <label>@L("TotalAmount")</label>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalOrderAmount" readonly>
+                                    </div>
+
+                                    <!--Tổng số tiền khách phải trả-->
+                               
+                                    <div class="col-md-2">
+                                        <label>@L("TotalCustomerPay")</label>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalCustomerPay" readonly>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label>@L("OrderStatus")</label>
+                                         <select class="form-control">
+                                            <option value="@((int)@OrderStatus.ReceivedRequest)" selected >@OrderStatus.ReceivedRequest.GetDescription()</option>
+                                            <option value="@((int)@OrderStatus.New)">@OrderStatus.New.GetDescription()</option>
+                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label>@L("ExpectedDeliveryDate")</label>
@@ -203,7 +225,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label>@L("OtherRequirements")</label>
-                                        <textarea class="form-control" name="OtherRequirements" rows="3"></textarea>
+                                        <textarea class="form-control" name="OtherRequirements" rows="2"></textarea>
                                     </div>
                                 </div>
                             </div>

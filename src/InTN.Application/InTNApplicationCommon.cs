@@ -4,6 +4,9 @@ namespace InTN;
 
 public enum OrderStatus
 {
+    [Description("Mới")]
+    New= 0, // Tiếp nhận yêu cầu  
+
     [Description("Tiếp nhận yêu cầu")]
     ReceivedRequest = 1, // Tiếp nhận yêu cầu  
 
