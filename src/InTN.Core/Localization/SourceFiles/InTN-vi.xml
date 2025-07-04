@@ -679,5 +679,19 @@
 		<text name="ParentNote" value="Ghi chú cha" />
 		<text name="SelectParentNote" value="Chọn ghi chú cha" />
 		<text name="SelectNote" value="Chọn ghi chú" />
+		<text name="RequireTestSample" value="Yêu cầu mẫu thử" />
+		<text name="ExportInvoice" value="Xuất hóa đơn" />
+		<text name="StoreSample" value="Lưu mẫu" />
+		<text name="VATAmount" value="Số tiền VAT" />
+		<text name="TotalProductAmount" value="Tổng tiền sản phẩm" />
+		<text name="TotalCustomerPay" value="Tổng tiền khách thanh toán" />
+		<text name="OrderStatus" value="Trạng thái đơn hàng" />
+
+		<text name="EnterNote" value="Nhập ghi chú" />
+		<text name="EnterName" value="Nhập tên" />
+		<text name="EnterPhone" value="Nhập số điện thoại" />
+		<text name="EnterEmail" value="Nhập email" />
+		<text name="EnterAddress" value="Nhập địa chỉ" />
+
 	</texts>
 </localizationDictionary>

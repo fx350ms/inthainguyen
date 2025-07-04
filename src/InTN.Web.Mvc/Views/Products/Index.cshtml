@@ -192,7 +192,7 @@
     </div>
 </section>
 
-@await Html.PartialAsync("~/Views/Products/_CreateModal.cshtml", new ProductCreateModel()
+@await Html.PartialAsync("~/Views/Products/_CreateModal.cshtml", new CreateProductViewModel()
 {
     Brands = Model.Brands,
     ProductCategories = Model.ProductCategories,

@@ -66,7 +66,7 @@
                                 <div class="row ">
                                     <div class="control-item col-md-3">
                                         <label>@L("CustomerType")</label>
-                                        <select class="form-control select-customer" name="CustomerType">
+                                        <select class="form-control select-customer-type" name="CustomerType">
                                             <option value="1">@L("CasualCustomer")</option>
                                             <option value="2">@L("LoyalCustomer")</option>
                                         </select>
@@ -129,22 +129,22 @@
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Price")</label>
-                                            <input type="number" class="form-control unit-price text-right unit-price" name="Price" value="0" readonly>
+                                            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0" readonly>
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Quantity")</label>
-                                            <input type="number" min="1" value="1" step="1" class="form-control quantity text-right" name="Quantity">
+                                            <input type="text" value="1" class="form-control quantity text-right mask-number" name="Quantity">
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("TotalProductPrice")</label>
-                                            <input type="number" min="1" value="1" step="1" class="form-control total-product-price text-right" name="TotalProductPrice" readonly>
+                                            <input type="text" value="0" class="form-control total-product-price text-right mask-number" name="TotalProductPrice" readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-12 row note-list">
                                         <div class="col-md-4">
                                             <label>@L("OtherNote")</label>
-                                            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("InputHere")" />
+                                            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("EnterNote")" />
                                         </div>
 
                                     </div>
@@ -198,31 +198,66 @@
                                         <input type="text" class="form-control text-right mask-number" value="0" name="DiscountAmount">
                                     </div>
 
-                                    <!--Tổng tiền đơn hàng-->  
+                                    <!--Tổng tiền đơn hàng-->
                                     <div class="col-md-2">
                                         <label>@L("TotalAmount")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalOrderAmount" readonly>
+                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalAmount" readonly>
                                     </div>
 
                                     <!--Tổng số tiền khách phải trả-->
-                               
+
                                     <div class="col-md-2">
                                         <label>@L("TotalCustomerPay")</label>
                                         <input type="text" class="form-control text-right mask-number" value="0" name="TotalCustomerPay" readonly>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <label>@L("OrderStatus")</label>
-                                         <select class="form-control">
-                                            <option value="@((int)@OrderStatus.ReceivedRequest)" selected >@OrderStatus.ReceivedRequest.GetDescription()</option>
-                                            <option value="@((int)@OrderStatus.New)">@OrderStatus.New.GetDescription()</option>
-                                         </select>
+
+                                    <div class="col-md-2">
+                                        <label>@L("ShippingMethod")</label>
+                                        <select class="form-control">
+                                            <option value="@((int)@ShippingMethod.CompanyDelivery)">@ShippingMethod.CompanyDelivery.GetDescription()</option>
+                                            <option value="@((int)@ShippingMethod.CustomerPickup)">@ShippingMethod.CustomerPickup.GetDescription()</option>
+                                            <option value="@((int)@ShippingMethod.ServiceDelivery)" selected>@ShippingMethod.ServiceDelivery.GetDescription()</option>
+                                        </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
+                                        <label>@L("OrderStatus")</label>
+                                        <select class="form-control">
+                                            <option value="@((int)@OrderStatus.ReceivedRequest)" selected>@OrderStatus.ReceivedRequest.GetDescription()</option>
+                                            <option value="@((int)@OrderStatus.New)">@OrderStatus.New.GetDescription()</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
                                         <label>@L("ExpectedDeliveryDate")</label>
                                         <input type="date" class="form-control" name="ExpectedDeliveryDate">
                                     </div>
+                                    <div class="row col-md-6 mt-3">
+                                        <!-- Checkbox: Yêu cầu test mẫu -->
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="IsRequireTestSample" name="IsRequireTestSample">
+                                                <label class="form-check-label" for="IsRequireTestSample">@L("RequireTestSample")</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Checkbox: Xuất hóa đơn -->
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="IsExportInvoice" name="IsExportInvoice">
+                                                <label class="form-check-label" for="IsExportInvoice">@L("ExportInvoice")</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Checkbox: Lưu mẫu -->
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="IsStoreSample" name="IsStoreSample">
+                                                <label class="form-check-label" for="IsStoreSample">@L("StoreSample")</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-6">
                                         <label>@L("OtherRequirements")</label>
                                         <textarea class="form-control" name="OtherRequirements" rows="2"></textarea>

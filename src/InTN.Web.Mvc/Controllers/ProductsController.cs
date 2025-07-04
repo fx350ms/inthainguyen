@@ -66,7 +66,7 @@ namespace InTN.Web.Controllers
 
         public async Task<ActionResult> CreateModal()
         {
-            return PartialView("_CreateModal", new ProductCreateModel()
+            return PartialView("_CreateModal", new CreateProductViewModel()
             {
                 Brands = (await _brandService.GetAllAsync(new PagedResultRequestDto())).Items.ToList(),
                 ProductCategories = (await _productCategoryService.GetAllAsync(new PagedResultRequestDto())).Items.ToList(),

@@ -2,6 +2,7 @@
 @using InTN.Web.Models.Common.Modals
 @using InTN.Web.Models.Orders;
 @model CreateOrderModel
+
 <div class="row order-item">
     <div class="col-12 text-right">
         <button type="button" class="btn btn-danger btn-sm delete-item-button">
@@ -17,25 +18,25 @@
         </div>
         <div class="control-item col-md-2">
             <label>@L("Price")</label>
-            <input type="number" class="form-control unit-price text-right unit-price" name="Price" value="0" readonly>
+            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0" readonly>
         </div>
         <div class="control-item col-md-2">
             <label>@L("Quantity")</label>
-            <input type="number" min="1" value="1" step="1" class="form-control quantity text-right" name="Quantity">
+            <input type="text" value="1" class="form-control quantity text-right mask-number" name="Quantity">
         </div>
         <div class="control-item col-md-2">
             <label>@L("TotalProductPrice")</label>
-            <input type="number" min="1" value="1" step="1" class="form-control total-product-price text-right" name="TotalProductPrice" readonly>
+            <input type="text" value="0" class="form-control total-product-price text-right mask-number" name="TotalProductPrice" readonly>
         </div>
     </div>
 
     <div class="col-12 row note-list">
         <div class="col-md-4">
             <label>@L("OtherNote")</label>
-            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" />
+            <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("EnterNote")" />
         </div>
+
     </div>
-     
     <div class="col-12 text-right">
         <button type="button" class="btn btn-success btn-sm clone-item-button">
             <i class="fas fa-clone"></i> @L("Duplicate")
