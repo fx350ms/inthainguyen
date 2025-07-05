@@ -1,0 +1,96 @@
+﻿
+@{
+    var uniqueDropzoneId = "myDropzone_" + Guid.NewGuid().ToString("N");
+    var uploadUrl = Url.Action("UploadSingleFile", "FileUpload"); // Thay thế "YourController" bằng tên Controller của bạn
+}
+<div class="dropzone" id="@uniqueDropzoneId">
+    <div class="dz-message">
+        <span>@L("DragAndDropFilesHereOrClickToUpload")</span>
+    </div>
+</div>
+<input type="hidden" name="FileId" />
+<div class="d-grid gap-2 mt-3">
+    <button type="button" class="btn btn-success" id="btnUpload_@uniqueDropzoneId">
+        <i class="fas fa-upload me-2"></i> ("UploadSelectedFiles")
+    </button>
+</div>
+@section scripts
+{
+    <script type="text/javascript">
+        // Tắt auto-discovery của Dropzone để kiểm soát khởi tạo
+        Dropzone.autoDiscover = false;
+
+        $(function () { // Tương đương với $(document).ready(function() { ... });
+            var dropzoneInstance;
+            var fileIdInput = $('#FileIdInput'); // Lấy tham chiếu đến input hidden FileId
+
+            // Khởi tạo Dropzone
+            dropzoneInstance = new Dropzone("#@uniqueDropzoneId", {
+                url: "@uploadUrl", // URL upload từ Razor
+                paramName: "file", // Tên tham số file mà server sẽ nhận
+                maxFilesize: 5, // MB
+                acceptedFiles: "image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Các loại file chấp nhận
+                addRemoveLinks: true, // Hiển thị link xóa file
+                dictRemoveFile: "RemoveFile",
+                dictDefaultMessage: "DragAndDropFilesHereOrClickToUpload",
+                dictFileTooBig: "FileTooBig",
+                dictInvalidFileType: "InvalidFileType",
+                dictResponseError: "ServerError",
+                dictCancelUpload: "CancelUpload",
+                dictUploadCanceled: "UploadCanceled",
+                dictCancelUploadConfirmation: "CancelUploadConfirmation",
+                dictMaxFilesExceeded: "MaxFilesExceeded",
+                maxFiles: 1, // Chỉ cho phép tải lên 1 file duy nhất
+                autoProcessQueue: true, // Rất quan trọng: Không tự động upload khi file được thêm vào
+                uploadMultiple: false, // Chỉ upload một file mỗi lần
+
+                init: function () {
+                    var dz = this;
+
+                    // Xử lý khi có file được thêm vào
+                    this.on("addedfile", function (file) {
+                        // Nếu đã có file, xóa nó trước khi thêm file mới (do maxFiles: 1)
+                        if (dz.files.length > 1) {
+                            dz.removeFile(dz.files[0]);
+                        }
+                        // Xóa giá trị FileId cũ khi có file mới được thêm
+                        fileIdInput.val('');
+                    });
+
+                    // Xử lý nút "Tải Lên"
+                    $('#btnUpload_@uniqueDropzoneId').on('click', function () {
+                        if (dz.getQueuedFiles().length > 0) {
+                            dz.processQueue(); // Bắt đầu quá trình tải lên
+                        } else {
+
+                        }
+                    });
+
+                    // Xử lý sự kiện thành công
+                    this.on("success", function (file, response) {
+                        if (response.success) {
+
+                            console.log("FileId nhận được: " + response);
+                        } else {
+
+                        }
+                    });
+
+                    // Xử lý sự kiện lỗi
+                    this.on("error", function (file, message) {
+
+                        // Nếu muốn giữ file lỗi lại để người dùng xem: dz.removeFile(file);
+                    });
+
+                    // Xử lý khi file bị xóa khỏi Dropzone (trước khi upload hoặc sau khi upload nhưng muốn xóa)
+                    this.on("removedfile", function(file) {
+
+                        // Luôn đảm bảo xóa FileId nếu file bị xóa khỏi Dropzone
+                        fileIdInput.val('');
+                    });
+                }
+            });
+        });
+    </script>
+
+}

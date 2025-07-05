@@ -27,12 +27,12 @@ namespace InTN.FileUploads
             _fileUploadRepository = repository;
         }
 
-        public async Task<List<int>> UploadMultiFilesAndGetIdsAsync(List<IFormFile> Attachments)
+        public async Task<List<int>> UploadMultiFilesAndGetIdsAsync(List<IFormFile> Files)
         {
             var listIds = new List<int>();
-            if (Attachments != null && Attachments.Count > 0)
+            if (Files != null && Files.Count > 0)
             {
-                foreach (var file in Attachments)
+                foreach (var file in Files)
                 {
 
                     using (var memoryStream = new MemoryStream())
@@ -65,12 +65,12 @@ namespace InTN.FileUploads
             return listIds;
         }
 
-        public async Task<int> UploadFileAndGetIdsAsync(List<IFormFile> Attachments)
+        public async Task<int> UploadFileAndGetIdsAsync(List<IFormFile> Files)
         {
             var listIds = new List<int>();
-            if (Attachments != null && Attachments.Count > 0)
+            if (Files != null && Files.Count > 0)
             {
-                var file = Attachments[0];
+                var file = Files[0];
                 using (var memoryStream = new MemoryStream())
                 {
                     await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
@@ -150,5 +150,42 @@ namespace InTN.FileUploads
             var fileUploadDto = ObjectMapper.Map<FileUploadDto>(fileUpload);
             return fileUploadDto;
         }
+
+
+        [HttpPost]
+        public async Task<List<int>> UploadFilesAndGetIdsAsync([FromForm] UploadFileOnScriptDto input)
+        {
+            var listIds = new List<int>();
+            if (input.Files != null && input.Files.Count > 0)
+            {
+                var file = input.Files[0];
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
+
+                    var attachment = new CreateFileUploadDto
+                    {
+                        FileName = file.FileName,
+                        FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                        FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                        FileSize = file.Length
+                    };
+
+                    try
+                    {
+                        var fileUpload = CreateAsync(attachment);
+                        listIds.Add(fileUpload.Id); // Thêm ID của file đã upload vào danh sách
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Logger.Error("Error uploading file: " + file.FileName, ex);
+                    }
+                }
+            }
+
+            return listIds; // Trả về 0 nếu không có file nào được upload
+        }
+
+
     }
 }

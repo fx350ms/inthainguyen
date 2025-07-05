@@ -65,7 +65,7 @@
         });
     });
 
-    $("div#myId").dropzone({ url: "/file/post" });
+
 
     //$('.select-customer-type').change(function () {
     //    const isCasualCustomer = $(this).val() === "1";
@@ -220,8 +220,8 @@
                 $item.find('.group-upload-file').show();
                 $item.find('.group-file-url').hide();
 
-                InitDropzone($item);
-
+                //  InitDropzone($item);
+                InitUploadzone($item);
             } else if (selectedFileType === 'url') {
                 // Hiển thị nhóm nhập URL, ẩn nhóm upload file
                 $item.find('.group-upload-file').hide();
@@ -232,6 +232,40 @@
 
     }
 
+    function InitUploadzone($item) {
+        $item.find('.file-upload').on('change', function (event) {
+             
+            var formData = new FormData();
+            var files = this.files;
+            if (files.length === 0) {
+                console.log('Chưa có file nào được chọn.');
+                return; // Dừng lại nếu không có file
+            }
+            // Thêm tệp vào FormData
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Files', files[i]);
+            }
+
+            $.ajax({
+                url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function () {
+                   
+                },
+                error: function () {
+                     
+                },
+                complete: function () {
+                    abp.ui.clearBusy(_$form);
+                }
+            });
+        });
+    }
+
+
     function InitDropzone($item) {
         const dzone = $item.find('.dropzone');
 
@@ -239,8 +273,11 @@
             console.error('Không tìm thấy phần tử Dropzone.');
             return;
         }
+
         const dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
             url: abp.appPath + 'api/services/app/FileUpload/UploadAndGetInfo', // URL API để xử lý upload file
+            //  url: abp.appPath + 'FileUpload/UploadSingleFile', // URL API để xử lý upload file
+            paramName: "file",
             method: "post",
             maxFiles: 1, // Giới hạn số lượng file
             maxFilesize: 5, // Giới hạn kích thước file (MB)
