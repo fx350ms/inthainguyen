@@ -68,6 +68,14 @@ namespace InTN.Orders
                 throw new ArgumentException("Order code cannot be null or empty", nameof(input.OrderCode));
             }
 
+            if(input.NewCustomer)
+            {
+
+
+            }    
+
+
+
             input.OrderDate = DateTime.Now; // Set the current date and time as the order date
             input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
