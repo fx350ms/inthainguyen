@@ -3,11 +3,12 @@
         _productService = abp.services.app.product,
         _productPriceCombinations = abp.services.app.productPriceCombination,
         _productNotes = abp.services.app.productNote,
-
+        _customerService = abp.services.app.customer,
+        _fileUploadService = abp.services.app.fileUpload,
         l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
-
+    Dropzone.autoDiscover = false;
     $('.save-button').on('click', (e) => {
         e.preventDefault();
 
@@ -64,19 +65,20 @@
         });
     });
 
+    $("div#myId").dropzone({ url: "/file/post" });
 
-    $('.select-customer-type').change(function () {
-        const isCasualCustomer = $(this).val() === "1";
-        if (isCasualCustomer) {
-            $('.select-customer-group').hide();
-            $('input[name="CustomerName"], input[name="CustomerPhone"], input[name="CustomerEmail"], textarea[name="CustomerAddress"]').val('');
-            $('input[name="TotalDebt"], input[name="CreditLimit"]').val('0'); // Clear TotalDebt and CreditLimit
-            $('.debt-group').hide();
-        } else {
-            $('.debt-group').show();
-            $('.select-customer-group').show();
-        }
-    }).trigger('change'); // Trigger change on page load to set initial state
+    //$('.select-customer-type').change(function () {
+    //    const isCasualCustomer = $(this).val() === "1";
+    //    if (isCasualCustomer) {
+    //        $('.select-customer-group').hide();
+    //        $('input[name="CustomerName"], input[name="CustomerPhone"], input[name="CustomerEmail"], textarea[name="CustomerAddress"]').val('');
+    //        $('input[name="TotalDebt"], input[name="CreditLimit"]').val('0'); // Clear TotalDebt and CreditLimit
+    //        $('.debt-group').hide();
+    //    } else {
+    //        $('.debt-group').show();
+    //        $('.select-customer-group').show();
+    //    }
+    //}).trigger('change'); // Trigger change on page load to set initial state
 
 
     $('.select-customer-id').select2({
@@ -89,13 +91,15 @@
                     results: data.result
                 };
             }
-        }
+        },
+        tags: true
     }).on('select2:select', function (e) {
+
         var data = e.params.data;
         // Lấy danh sách property tương ứng với sản phẩm
         var customerId = data.id;
-        var _customerService = abp.services.app.customer;
-        if (customerId) {
+
+        if (customerId && isNaN(customerId) && customerId != data.text) {
             // Simulate fetching customer data (replace with actual AJAX call if needed)
             _customerService.get({ id: customerId }).done(function (customerData) {
                 $('input[name="CustomerName"]').val(customerData.name);
@@ -105,6 +109,9 @@
                 $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
                 $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
             });
+        }
+        else {
+            $('input[name="NewCustomer"]').val(true);
         }
     });
 
@@ -201,7 +208,68 @@
             $orderItem.remove();
             UpdateDeleteButtonVisibility();
         });
+
+
+        $item.find('input[name="FileType"]').off('change').on('change', function () {
+
+            // Get the value of the currently selected radio button
+            var selectedFileType = $(this).attr('data-value');
+
+            if (selectedFileType === 'upload') {
+                // Hiển thị nhóm upload file, ẩn nhóm nhập URL
+                $item.find('.group-upload-file').show();
+                $item.find('.group-file-url').hide();
+
+                InitDropzone($item);
+
+            } else if (selectedFileType === 'url') {
+                // Hiển thị nhóm nhập URL, ẩn nhóm upload file
+                $item.find('.group-upload-file').hide();
+                $item.find('.group-file-url').show();
+            }
+        });
+
+
     }
+
+    function InitDropzone($item) {
+        const dzone = $item.find('.dropzone');
+
+        if (dzone.length === 0) {
+            console.error('Không tìm thấy phần tử Dropzone.');
+            return;
+        }
+        const dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
+            url: abp.appPath + 'api/services/app/FileUpload/UploadAndGetInfo', // URL API để xử lý upload file
+            method: "post",
+            maxFiles: 1, // Giới hạn số lượng file
+            maxFilesize: 5, // Giới hạn kích thước file (MB)
+            acceptedFiles: ".jpg,.jpeg,.png,.pdf,.doc,.docx", // Các loại file được chấp nhận
+            addRemoveLinks: true, // Hiển thị nút xóa file
+            dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
+            dictRemoveFile: l('RemoveFile'),
+            //headers: {
+            //    "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val() // Token CSRF nếu cần
+            //},
+            success: function (file, response) {
+                // Xử lý khi upload thành công
+                $item.find('input[name="FileId"]').val(response.fileId); // Lưu ID file vào input hidden
+                abp.notify.success(l('FileUploadedSuccessfully'));
+            },
+            error: function (file, errorMessage) {
+                // Xử lý khi upload thất bại
+                abp.notify.error(l('FailedToUploadFile'));
+            },
+            removedfile: function (file) {
+                // Xử lý khi xóa file
+                $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
+                abp.notify.info(l('FileRemoved'));
+                file.previewElement.remove();
+            }
+        });
+
+    }
+
 
     function InitializeProductNotes($row, productId, level) {
         // Gọi API để lấy danh sách ghi chú cha
@@ -283,7 +351,6 @@
 
                 // Gắn sự kiện thay đổi cho ghi chú con
                 $childNoteSelect.off('change').on('change', function () {
-                    var $div = $(this).closest('.order-item');
                     LoadChildNotes($noteDiv, $(this), level); // Tiếp tục hiển thị ghi chú con tiếp theo
                 });
             }
@@ -307,19 +374,52 @@
         });
     }
 
+    $('.select-date').daterangepicker(
+        {
+            "singleDatePicker": true,
+            locale: { cancelLabel: 'Clear' }
+        }
+    );
+
+    $(document).on('input', 'input[name="TotalDeposit"], input[name="DeliveryFee"], input[name="VatRate"], input[name="DiscountAmount"]', function () {
+        CalculateOrderSummary(); // Gọi hàm tính toán tổng tiền đơn hàng
+    });
+
+
     function CalculateOrderSummary() {
-        let TotalProductPrice = 0;
+
+
+        let TotalProductPrice = 0; // Tổng tiền sản phẩm
+        let totalDeposit = parseFloat(($('input[name="TotalDeposit"]').val() || '0').replaceAll('.', '')); // Tổng tiền đặt cọc
+        let deliveryFee = parseFloat(($('input[name="DeliveryFee"]').val() || '0').replaceAll('.', '')); // Phí vận chuyển
+        let vatRate = parseFloat(($('input[name="VatRate"]').val() || '0').replaceAll('.', '')); // % VAT
+        let discountAmount = parseFloat(($('input[name="DiscountAmount"]').val() || '0').replaceAll('.', '')); // Tiền giảm giá
+
+
         // Duyệt qua tất cả các hàng sản phẩm để tính tổng tiền
         $('#order-detail-list .order-item').each(function () {
             var price = ($(this).find('input[name="TotalProductPrice"]').val() || '0').replaceAll('.', '');
             const totalPrice = parseFloat(price);
             TotalProductPrice += totalPrice;
+
         });
 
         // Cập nhật tổng tiền vào ô "TotalProductAmount" của phần tổng kết đơn hàng
-        $('input[name="TotalProductAmount"]').val(formatThousand(TotalProductPrice));
+        //    $('input[name="TotalProductAmount"]').val(formatThousand(TotalProductPrice));
 
-         // Thêm logic để tính tổng tiền đơn hàng   
+        // Thêm logic để tính tổng tiền đơn hàng   
+
+        // Tính tiền thuế VAT
+        const vatAmount = (TotalProductPrice * vatRate) / 100;
+
+        // Tính tổng tiền đơn hàng
+        const totalAmount = TotalProductPrice + deliveryFee + vatAmount - discountAmount;
+
+        // Cập nhật giá trị vào các ô nhập liệu
+        $('input[name="TotalProductAmount"]').val(formatThousand(TotalProductPrice)); // Tổng tiền sản phẩm
+        $('input[name="VatAmount"]').val(formatThousand(vatAmount)); // Tiền thuế VAT
+        $('input[name="TotalAmount"]').val(formatThousand(totalAmount)); // Tổng tiền đơn hàng
+        $('input[name="TotalCustomerPay"]').val(formatThousand(totalAmount - totalDeposit)); // Tổng tiền khách phải trả
     }
 
     function CalculateTotalPrice($row) {
@@ -328,7 +428,7 @@
         const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
 
         const totalProductPrice = unitPrice * quantity; // Tính thành tiền
-        $row.find('input[name="TotalProductPrice"]').val(formatThousand( totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"
+        $row.find('input[name="TotalProductPrice"]').val(formatThousand(totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"
 
         CalculateOrderSummary(); // Cập nhật tổng tiền đơn hàng
     }

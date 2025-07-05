@@ -165,7 +165,7 @@
     });
 
     $('.save-button').click(function () {
-        const result = [];
+        const combinations = [];
 
         const properties = [];
 
@@ -175,8 +175,8 @@
             if (inputs.length > 0) {
                 const price = parseFloat(inputs.val()) || 0; // Lấy giá trị giá bán
                 const combo = JSON.parse(inputs.attr('data-combo')); // Lấy tổ hợp thuộc tính
-                result.push({
-                    Combination: combo.map(c => ({ PropertyId: c.propId, PropertyName: c.propName, Value: c.value })),
+                combinations.push({
+                    Combinations: combo.map(c => ({ PropertyId: c.propId, PropertyName: c.propName, Value: c.value })),
                     Price: price
                 });
             }
@@ -193,7 +193,7 @@
         // Tạo object để gửi đến Service
         const data = {
             ProductId: $('#ProductId').val(), // ID sản phẩm
-            PriceCombinations: result, // Danh sách tổ hợp giá
+            PriceCombinations: combinations, // Danh sách tổ hợp giá
             Properties: properties // Thuộc tính của sản phẩ
         };
 

@@ -692,6 +692,11 @@
 		<text name="EnterPhone" value="Nhập số điện thoại" />
 		<text name="EnterEmail" value="Nhập email" />
 		<text name="EnterAddress" value="Nhập địa chỉ" />
-
+		<text name="TotalOrderAmount" value="Tổng tiền đơn" />
+		
+		<text name="RequireDesign" value="Yêu cầu thiết kế" />
+		<text name="YES" value="Có" />
+		<text name="NO" value="Không" />
+		
 	</texts>
 </localizationDictionary>

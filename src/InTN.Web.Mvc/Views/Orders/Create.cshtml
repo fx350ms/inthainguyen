@@ -57,42 +57,34 @@
             <div class="col-12">
 
                 <div class="" id="modal-create-order">
-                    <form name="form-create-order" role="form" class="form-horizontal">
+                    <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">@L("CustomerInformation")</h3>
                             </div>
                             <div class="card-body">
                                 <div class="row ">
-                                    <div class="control-item col-md-3">
-                                        <label>@L("CustomerType")</label>
-                                        <select class="form-control select-customer-type" name="CustomerType">
-                                            <option value="1">@L("CasualCustomer")</option>
-                                            <option value="2">@L("LoyalCustomer")</option>
-                                        </select>
-                                    </div>
-                                    <div class="control-item col-md-3 select-customer-group" style="display: none;">
+                                    <input type="hidden" name="NewCustomer" value="false" />
+                                    <div class="control-item col-md-3 select-customer-group">
                                         <label>@L("Customer")</label>
                                         <select class="select2 select-customer-id form-control" name="CustomerId" style="width: 100%;"></select>
                                     </div>
-
-                                </div>
-                                <div class="row">
-                                    <div class="control-item col-md-3">
-                                        <label>@L("CustomerName")</label>
-                                        <input type="text" class="form-control" name="CustomerName" placeholder="@L("EnterName")" required maxlength="255">
-                                    </div>
-                                    <div class="control-item col-md-3">
+                                    <div class="control-item col-md-2">
                                         <label>@L("Phone")</label>
-                                        <input type="text" class="form-control" name="CustomerPhone" placeholder="@L("EnterPhone")" required>
+                                        <input type="text" class="form-control" name="CustomerPhone" placeholder="@L("EnterPhone")">
                                     </div>
-                                    <div class="control-item col-md-3">
+                                    <div class="control-item col-md-2">
                                         <label>@L("TotalDebt")</label>
-                                        <input type="text" class="form-control text-right" name="TotalDebt" readonly>
+                                        <input type="text" class="form-control text-right" name="TotalDebt" value="0">
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label>@L("CreditLimit")</label>
-                                        <input type="text" class="form-control text-right" name="CreditLimit" readonly>
+                                        <input type="text" class="form-control text-right" name="CreditLimit" value="0">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>@L("TotalOrderAmount")</label>
+                                        <input type="text" class="form-control text-right" name="TotalOrderAmount" value="0" readonly>
                                     </div>
                                     <div class="control-item col-md-3">
                                         <label>@L("Email")</label>
@@ -103,6 +95,7 @@
                                         <input type="text" class="form-control" name="CustomerAddress" placeholder="@L("EnterAddress")" required>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                         <!-- Thông tin chi tiết đơn hàng -->
@@ -129,7 +122,7 @@
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Price")</label>
-                                            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0" readonly>
+                                            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0">
                                         </div>
                                         <div class="control-item col-md-2">
                                             <label>@L("Quantity")</label>
@@ -141,12 +134,42 @@
                                         </div>
                                     </div>
 
+                                    <!-- Upload-->
+                                    <div class="col-12 row">
+                                        <div class="control-item col-md-2">
+                                            <label>@L("Attachment")</label>
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="FileType" data-value="upload" value="upload">
+                                                    <label class="form-check-label">@L("UploadFile")</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="FileType" data-value="url" value="url" checked>
+                                                    <label class="form-check-label">@L("FileUrl")</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-10 group-upload-file" style="display: none;">
+                                          
+                                            <div class="dropzone">
+                                                <div class="dz-message">
+                                                    <span>@L("DragAndDropFilesHereOrClickToUpload")</span>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="FileId" />
+                                        </div>
+                                        <div class="form-group col-md-10 group-file-url">
+                                            <input type="text" class="form-control" name="AttachmentUrl1" placeholder="@L("EnterFileUrl")" />
+                                        </div>
+                                    </div>
+
+
                                     <div class="col-12 row note-list">
                                         <div class="col-md-4">
                                             <label>@L("OtherNote")</label>
                                             <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("EnterNote")" />
                                         </div>
-
                                     </div>
                                     <div class="col-12 text-right">
                                         <button type="button" class="btn btn-success btn-sm clone-item-button">
@@ -210,6 +233,9 @@
                                         <label>@L("TotalCustomerPay")</label>
                                         <input type="text" class="form-control text-right mask-number" value="0" name="TotalCustomerPay" readonly>
                                     </div>
+
+
+
                                 </div>
                                 <div class="row">
 
@@ -230,30 +256,38 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label>@L("ExpectedDeliveryDate")</label>
-                                        <input type="date" class="form-control" name="ExpectedDeliveryDate">
+                                        <input class="form-control select-date" name="ExpectedDeliveryDate">
                                     </div>
-                                    <div class="row col-md-6 mt-3">
-                                        <!-- Checkbox: Yêu cầu test mẫu -->
-                                        <div class="col-md-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="IsRequireTestSample" name="IsRequireTestSample">
-                                                <label class="form-check-label" for="IsRequireTestSample">@L("RequireTestSample")</label>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-3">
 
-                                        <!-- Checkbox: Xuất hóa đơn -->
-                                        <div class="col-md-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="IsExportInvoice" name="IsExportInvoice">
-                                                <label class="form-check-label" for="IsExportInvoice">@L("ExportInvoice")</label>
+                                                <label>@L("RequireDesign")</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="IsRequireDesign">
+                                                    <label class="form-check-label" for="IsRequireDesign">@L("YES")</label>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <!-- Checkbox: Lưu mẫu -->
-                                        <div class="col-md-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="IsStoreSample" name="IsStoreSample">
-                                                <label class="form-check-label" for="IsStoreSample">@L("StoreSample")</label>
+                                            <div class="col-md-3">
+                                                <label>@L("RequireTestSample")</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="IsRequireTestSample">
+                                                    <label class="form-check-label" for="IsRequireTestSample">@L("YES")</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>@L("ExportInvoice")</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="IsExportInvoice">
+                                                    <label class="form-check-label" for="IsExportInvoice">@L("YES")</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>@L("StoreSample")</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" name="IsStoreSample">
+                                                    <label class="form-check-label" for="IsStoreSample">@L("YES")</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
