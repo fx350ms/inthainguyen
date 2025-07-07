@@ -18,7 +18,7 @@
         </div>
         <div class="control-item col-md-2">
             <label>@L("Price")</label>
-            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0" >
+            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0">
         </div>
         <div class="control-item col-md-2">
             <label>@L("Quantity")</label>
@@ -30,12 +30,44 @@
         </div>
     </div>
 
+    <!-- Upload-->
+    <div class="col-12 row">
+        <div class="control-item col-md-2">
+            <label>@L("Attachment")</label>
+            <div class="form-group">
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="FileType" data-value="url" value="url" checked>
+                    <label class="form-check-label">@L("FileUrl")</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="FileType" data-value="upload" value="upload">
+                    <label class="form-check-label">@L("UploadFile")</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-10 group-upload-file" style="display: none;">
+            @*  <input type="hidden" name="FileId" /> 
+                                            <input type="file" class="form-control file-upload"  /> *@
+            <div class="dropzone">
+                <div class="dz-message">
+                    <span>@L("DragAndDropFilesHereOrClickToUpload")</span>
+                </div>
+            </div>
+            <input type="hidden" name="FileId" />
+        </div>
+        <div class="form-group col-md-10 group-file-url">
+            <input type="text" class="form-control" name="AttachmentUrl1" placeholder="@L("EnterFileUrl")" />
+        </div>
+    </div>
+
+
     <div class="col-12 row note-list">
         <div class="col-md-4">
             <label>@L("OtherNote")</label>
             <input class=" select-note-3 form-control" name="OtherNote" style="width: 100%;" placeholder="@L("EnterNote")" />
         </div>
-
     </div>
     <div class="col-12 text-right">
         <button type="button" class="btn btn-success btn-sm clone-item-button">

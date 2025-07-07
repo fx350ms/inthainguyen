@@ -15,43 +15,62 @@
         if (!_$form.valid()) {
             return;
         }
+         
         var order = _$form.serializeFormToObject();
+        
+        order.CreditLimit = order.CreditLimit.replaceAll('.', '');
+        order.DeliveryFee = order.DeliveryFee.replaceAll('.', '');
+        order.DiscountAmount = order.DiscountAmount.replaceAll('.', '');
+        order.Price = order.Price.replaceAll('.', '');
+        order.Quantity = order.Quantity.replaceAll('.', '');
+        order.TotalAmount = order.TotalAmount.replaceAll('.', '');
+        order.TotalCustomerPay = order.TotalCustomerPay.replaceAll('.', '');
+        order.TotalDebt = order.TotalDebt.replaceAll('.', '');
+        order.TotalDeposit = order.TotalDeposit.replaceAll('.', '');
+        order.TotalOrderAmount = order.TotalOrderAmount.replaceAll('.', '');
+        order.TotalProductAmount = order.TotalProductAmount.replaceAll('.', '');
+        order.TotalProductPrice = order.TotalProductPrice.replaceAll('.', '');
+        order.VatAmount = order.VatAmount.replaceAll('.', '');
+        order.VatRate = order.VatRate.replaceAll('.', '');
+        if (order.NewCustomer) {
+            order.CustomerId = 0;
+        }
+        //order.OrderDetails = [];
+        ///// Add logic here
+        //// Duyệt qua tất cả các .order-item để chuẩn bị dữ liệu cho OrderDetails
+        //$('#order-detail-list .order-item').each(function () {
+        //    const $item = $(this);
+        //    const orderItem = {
+        //        ProductId: $item.find('select[name="ProductId"]').val(),
+        //        ProductName: $item.find('select[name="ProductId"] option:selected').text(),
+        //        UnitPrice: parseFloat($item.find('input[name="Price"]').val()) || 0,
+        //        Quantity: parseInt($item.find('input[name="Quantity"]').val()) || 0,
+        //        TotalProductPrice: parseFloat($item.find('input[name="TotalProductPrice"]').val()) || 0,
+        //        Note: $item.find('input[name="OtherNote"]').val(),
+        //        Properties: [], // Danh sách thuộc tính sản phẩm
+        //        NoteIds: [] // Danh sách ID ghi chú
+        //    };
 
-        /// Add logic here
-        // Duyệt qua tất cả các .order-item để chuẩn bị dữ liệu cho OrderDetails
-        $('#order-detail-list .order-item').each(function () {
-            const $item = $(this);
-            const orderItem = {
-                ProductId: $item.find('select[name="ProductId"]').val(),
-                ProductName: $item.find('select[name="ProductId"] option:selected').text(),
-                UnitPrice: parseFloat($item.find('input[name="Price"]').val()) || 0,
-                Quantity: parseInt($item.find('input[name="Quantity"]').val()) || 0,
-                TotalProductPrice: parseFloat($item.find('input[name="TotalProductPrice"]').val()) || 0,
-                Note: $item.find('input[name="OtherNote"]').val(),
-                Properties: [], // Danh sách thuộc tính sản phẩm
-                NoteIds: [] // Danh sách ID ghi chú
-            };
+        //    // Duyệt qua tất cả các thuộc tính sản phẩm
+        //    $item.find('.product-property').each(function () {
+        //        const $property = $(this);
+        //        orderItem.Properties.push({
+        //            PropertyId: $property.attr('property_id'),
+        //            PropertyName: $property.attr('property_name'),
+        //            Value: $property.val()
+        //        });
+        //    });
 
-            // Duyệt qua tất cả các thuộc tính sản phẩm
-            $item.find('.product-property').each(function () {
-                const $property = $(this);
-                orderItem.Properties.push({
-                    PropertyId: $property.attr('property_id'),
-                    PropertyName: $property.attr('property_name'),
-                    Value: $property.val()
-                });
-            });
+        //    // Duyệt qua tất cả các ghi chú sản phẩm
+        //    $item.find('.select-note').each(function () {
+        //        const noteId = $(this).val();
+        //        if (noteId) {
+        //            orderItem.NoteIds.push(parseInt(noteId));
+        //        }
+        //    });
 
-            // Duyệt qua tất cả các ghi chú sản phẩm
-            $item.find('.select-note').each(function () {
-                const noteId = $(this).val();
-                if (noteId) {
-                    orderItem.NoteIds.push(parseInt(noteId));
-                }
-            });
-
-            order.OrderDetails.push(orderItem); // Thêm chi tiết đơn hàng vào danh sách
-        });
+        //    order.OrderDetails.push(orderItem); // Thêm chi tiết đơn hàng vào danh sách
+        //});
 
         // Gửi dữ liệu đến API
         abp.ui.setBusy(); // Hiển thị trạng thái loading
@@ -64,21 +83,6 @@
         }).always(function () {
         });
     });
-
-
-
-    //$('.select-customer-type').change(function () {
-    //    const isCasualCustomer = $(this).val() === "1";
-    //    if (isCasualCustomer) {
-    //        $('.select-customer-group').hide();
-    //        $('input[name="CustomerName"], input[name="CustomerPhone"], input[name="CustomerEmail"], textarea[name="CustomerAddress"]').val('');
-    //        $('input[name="TotalDebt"], input[name="CreditLimit"]').val('0'); // Clear TotalDebt and CreditLimit
-    //        $('.debt-group').hide();
-    //    } else {
-    //        $('.debt-group').show();
-    //        $('.select-customer-group').show();
-    //    }
-    //}).trigger('change'); // Trigger change on page load to set initial state
 
 
     $('.select-customer-id').select2({
@@ -98,8 +102,7 @@
         var data = e.params.data;
         // Lấy danh sách property tương ứng với sản phẩm
         var customerId = data.id;
-
-        if (customerId && isNaN(customerId) && customerId != data.text) {
+        if (customerId && !isNaN(customerId) && customerId != data.text) {
             // Simulate fetching customer data (replace with actual AJAX call if needed)
             _customerService.get({ id: customerId }).done(function (customerData) {
                 $('input[name="CustomerName"]').val(customerData.name);
@@ -108,9 +111,11 @@
                 $('input[name="CustomerAddress"]').val(customerData.address);
                 $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
                 $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
+                $('input[name="NewCustomer"]').val(false);
             });
         }
         else {
+            $('input[name="CustomerName"]').val(data.text);
             $('input[name="NewCustomer"]').val(true);
         }
     });

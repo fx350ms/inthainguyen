@@ -20,11 +20,9 @@ namespace InTN.FileUploads
         FileUploadDto>,        // DTO cho cập nhật
         IFileUploadAppService  // Interface
     {
-        private readonly IRepository<FileUpload> _fileUploadRepository;
 
         public FileUploadAppService(IRepository<FileUpload> repository) : base(repository)
         {
-            _fileUploadRepository = repository;
         }
 
         public async Task<List<int>> UploadMultiFilesAndGetIdsAsync(List<IFormFile> Files)
@@ -64,6 +62,7 @@ namespace InTN.FileUploads
 
             return listIds;
         }
+
 
         public async Task<int> UploadFileAndGetIdsAsync(List<IFormFile> Files)
         {
@@ -146,7 +145,7 @@ namespace InTN.FileUploads
 
         public async Task<FileUploadDto> GetFileContentAsync(int id)
         {
-            var fileUpload = await _fileUploadRepository.GetAsync(id);
+            var fileUpload = await Repository.GetAsync(id);
             var fileUploadDto = ObjectMapper.Map<FileUploadDto>(fileUpload);
             return fileUploadDto;
         }
@@ -174,7 +173,7 @@ namespace InTN.FileUploads
 
                         try
                         {
-                            var fileUploadId = await _fileUploadRepository.InsertAndGetIdAsync(attachment);
+                            var fileUploadId = await Repository.InsertAndGetIdAsync(attachment);
                             listIds.Add(fileUploadId); // Thêm ID của file đã upload vào danh sách
                         }
                         catch (System.Exception ex)
@@ -183,12 +182,47 @@ namespace InTN.FileUploads
                         }
                     }
                 }
-               
+
             }
 
             return listIds; // Trả về 0 nếu không có file nào được upload
         }
 
+
+        [HttpPost]
+        public async Task<int> UploadFileAndGetIdAsync([FromForm] List<IFormFile> files)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
+
+                    var attachment = new FileUpload
+                    {
+                        FileName = file.FileName,
+                        FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                        FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                        FileSize = file.Length
+                    };
+
+                    try
+                    {
+                        var fileUploadId = await Repository.InsertAndGetIdAsync(attachment);
+                        return fileUploadId; // Trả về ID của file đã upload
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Logger.Error("Error uploading file: " + file.FileName, ex);
+                    }
+                }
+
+
+            }
+            return 0; // Trả về 0 nếu không có file nào được upload
+        }
 
     }
 }

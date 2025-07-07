@@ -134,3 +134,11 @@ public enum FileType
     [Description("Link")]
     Link = 2 // Link
 }
+
+public enum CustomerType
+{
+    [Description("Cá nhân")]
+    Personal = 1, // Cá nhân
+    [Description("Doanh nghiệp")]
+    Company = 2, // Doanh nghiệp
+}

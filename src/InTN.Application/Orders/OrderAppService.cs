@@ -14,6 +14,7 @@ using Abp.Json;
 using InTN.IdentityCodes;
 using InTN.Commons;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace InTN.Orders
 {
@@ -24,6 +25,7 @@ namespace InTN.Orders
         private readonly IRepository<Transaction> _transactionRepository;
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerBalanceHistory> _customerBalanceHistoryRepository;
+        private readonly IRepository<OrderDetail> _orderDetailRepository;
 
         private readonly IIdentityCodeAppService _identityCodeAppService;
 
@@ -33,6 +35,7 @@ namespace InTN.Orders
             IRepository<OrderAttachment> orderAttachmentRepository,
             IRepository<Customer> customerRepository,
             IRepository<CustomerBalanceHistory> customerBalanceHistoryRepository,
+            IRepository<OrderDetail> orderDetailRepository,
             IIdentityCodeAppService identityCodeRepository
             )
             : base(repository)
@@ -43,6 +46,7 @@ namespace InTN.Orders
             _customerRepository = customerRepository;
             _customerBalanceHistoryRepository = customerBalanceHistoryRepository;
             _identityCodeAppService = identityCodeRepository;
+            _orderDetailRepository = orderDetailRepository;
         }
 
 
@@ -68,20 +72,73 @@ namespace InTN.Orders
                 throw new ArgumentException("Order code cannot be null or empty", nameof(input.OrderCode));
             }
 
-            if(input.NewCustomer)
+            if (input.NewCustomer)
             {
+                if (string.IsNullOrEmpty(input.CustomerName))
+                {
+                    throw new ArgumentException("Customer name cannot be null or empty", nameof(input.CustomerName));
+                }
+                if (string.IsNullOrEmpty(input.CustomerPhone))
+                {
+                    throw new ArgumentException("Customer phone cannot be null or empty", nameof(input.CustomerPhone));
+                }
 
 
-            }    
+                // Tạo khách hàng mới
+                var newCustomer = new Customer
+                {
+                    Name = input.CustomerName,
+                    PhoneNumber = input.CustomerPhone,
+                    Email = input.CustomerEmail,
+                    Address = input.CustomerAddress,
+                    TotalDebt = input.CustomerTotalDebt,
+                    CreditLimit = input.CreditLimit,
+                    //   TotalOrderAmount = input.CustomerTotalOrderAmount,
+                };
 
+                // Lưu khách hàng mới vào cơ sở dữ liệu
+                var customerId = await _customerRepository.InsertAndGetIdAsync(newCustomer);
 
+                // Gán ID khách hàng mới vào đơn hàng
+                input.CustomerId = customerId;
+                input.CustomerName = newCustomer.Name;
+            }
 
             input.OrderDate = DateTime.Now; // Set the current date and time as the order date
             input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
             var order = ObjectMapper.Map<Order>(input);
 
-            order = await Repository.InsertAsync(order);
+            var orderId = await Repository.InsertAndGetIdAsync(order);
+
+
+            // Duyệt danh sách orderDetails để tạo mới từng OrderDetail
+            if (input.OrderDetails != null && input.OrderDetails.Count > 0)
+            {
+                foreach (var detailDto in input.OrderDetails)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        OrderId = orderId,
+                        ProductId = detailDto.ProductId,
+                        ProductName = detailDto.ProductName,
+                        UnitPrice = detailDto.UnitPrice,
+                        Quantity = detailDto.Quantity,
+                        TotalProductPrice = detailDto.TotalProductPrice,
+                        FileId = detailDto.FileId,
+                        FileUrl = detailDto.FileUrl,
+                        
+                        Note = detailDto.Note,
+                        Properties = JsonConvert.SerializeObject( detailDto.Properties),
+                        NoteIds = string.Join(",", detailDto.NoteIds)
+                    };
+
+                    // Lưu OrderDetail vào cơ sở dữ liệu
+                    await _orderDetailRepository.InsertAsync(orderDetail);
+                }
+            }
+
+
             await _orderLogRepository.InsertAsync(new OrderLog
             {
                 OrderId = order.Id,
