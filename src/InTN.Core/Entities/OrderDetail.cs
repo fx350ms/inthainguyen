@@ -24,7 +24,9 @@ namespace InTN.Entities
         public string Note { get; set; } = string.Empty;
         public string Properties { get; set; } // Chuỗi JSON chứa danh sách thuộc tính sản phẩm với giá trị đã chọn
         public string NoteIds { get; set; } // // Danh sách ID ghi chú liên quan đến sản phẩm được ngăn cách nhau bởi dấu 
+
         [ForeignKey("OrderId")]
+        [NotMapped]
         public virtual Order Order { get; set; }     // Navigation
     }
 }

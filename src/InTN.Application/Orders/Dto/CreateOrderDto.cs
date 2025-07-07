@@ -6,7 +6,6 @@ namespace InTN.Orders.Dto
 {
     public class CreateOrderDto : EntityDto<int>
     {
-        public bool IsCasualCustomer { get; set; } = false; // true: Khách hàng vãng lai, false: Khách hàng đã có trong hệ thống
         public bool NewCustomer { get; set; } = false;
         public string OrderCode { get; set; } = string.Empty;
         public int? CustomerId { get; set; }

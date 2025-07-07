@@ -107,46 +107,95 @@ namespace InTN.Orders
             input.OrderDate = DateTime.Now; // Set the current date and time as the order date
             input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
-            var order = ObjectMapper.Map<Order>(input);
 
-            var orderId = await Repository.InsertAndGetIdAsync(order);
-
-
-            // Duyệt danh sách orderDetails để tạo mới từng OrderDetail
-            if (input.OrderDetails != null && input.OrderDetails.Count > 0)
+            try
             {
-                foreach (var detailDto in input.OrderDetails)
-                {
-                    var orderDetail = new OrderDetail
-                    {
-                        OrderId = orderId,
-                        ProductId = detailDto.ProductId,
-                        ProductName = detailDto.ProductName,
-                        UnitPrice = detailDto.UnitPrice,
-                        Quantity = detailDto.Quantity,
-                        TotalProductPrice = detailDto.TotalProductPrice,
-                        FileId = detailDto.FileId,
-                        FileUrl = detailDto.FileUrl,
-                        
-                        Note = detailDto.Note,
-                        Properties = JsonConvert.SerializeObject( detailDto.Properties),
-                        NoteIds = string.Join(",", detailDto.NoteIds)
-                    };
+                // var order = ObjectMapper.Map<Order>(input);
 
-                    // Lưu OrderDetail vào cơ sở dữ liệu
-                    await _orderDetailRepository.InsertAsync(orderDetail);
+                var order = new Order
+                {
+                    OrderCode = input.OrderCode,
+                    CustomerId = input.CustomerId,
+                    OrderDate = input.OrderDate,
+                    Status = input.Status,
+                    Note = input.Note,
+                    FileUrl = input.FileUrl,
+                    CustomerName = input.CustomerName,
+                    CustomerAddress = input.CustomerAddress,
+                    CustomerPhone = input.CustomerPhone,
+                    CustomerEmail = input.CustomerEmail,
+                    PaymentStatus = input.PaymentStatus,
+                    CustomerGender = input.CustomerGender,
+                    CustomerType = input.CustomerType,
+                    DeliveryMethod = input.DeliveryMethod,
+                    ExpectedDeliveryDate = input.ExpectedDeliveryDate,
+                    IsRequireTestSample = input.IsRequireTestSample,
+                    IsExportInvoice = input.IsExportInvoice,
+                    IsStoreSample = input.IsStoreSample,
+                    IsReceiveByOthers = input.IsReceiveByOthers,
+                    OtherRequirements = input.OtherRequirements,
+                    // FileIds = input.FileIds,
+                    TotalProductAmount = input.TotalProductAmount,
+                    TotalDeposit = input.TotalDeposit,
+                    DeliveryFee = input.DeliveryFee,
+                    VatRate = input.VatRate,
+                    VatAmount = input.VatAmount,
+                    DiscountAmount = input.DiscountAmount,
+                    TotalAmount = input.TotalAmount,
+                    TotalCustomerPay = input.TotalCustomerPay
+                };
+
+                var orderId = await Repository.InsertAndGetIdAsync(order);
+
+                decimal totalProductPrice = 0;
+                // Duyệt danh sách orderDetails để tạo mới từng OrderDetail
+                if (input.OrderDetails != null && input.OrderDetails.Count > 0)
+                {
+                    foreach (var detailDto in input.OrderDetails)
+                    {
+                        // Tìm kiếm sản phẩm trong kho dựa trên ProductId
+                        var orderDetail = new OrderDetail
+                        {
+                            OrderId = orderId,
+                            ProductId = detailDto.ProductId,
+                            ProductName = detailDto.ProductName,
+                            UnitPrice = detailDto.UnitPrice,
+                            Quantity = detailDto.Quantity,
+                            TotalProductPrice = detailDto.UnitPrice * detailDto.Quantity,
+                            FileId = detailDto.FileId,
+                            FileUrl = detailDto.FileUrl,
+                            Note = detailDto.Note,
+                            Properties = JsonConvert.SerializeObject(detailDto.Properties),
+                            NoteIds = string.Join(",", detailDto.NoteIds)
+                        };
+                        totalProductPrice += orderDetail.TotalProductPrice;
+                        // Lưu OrderDetail vào cơ sở dữ liệu
+                        await _orderDetailRepository.InsertAsync(orderDetail);
+                    }
                 }
+
+                // Cập nhật tổng tiền sản phẩm nếu chưa có
+                if (!order.TotalProductAmount.HasValue || order.TotalProductAmount == 0)
+                {
+                    order.TotalProductAmount = totalProductPrice;
+                    await Repository.UpdateAsync(order);
+                }
+
+                await _orderLogRepository.InsertAsync(new OrderLog
+                {
+                    OrderId = order.Id,
+                    Action = "Create",
+                    NewValue = order.ToJsonString(),
+                });
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
 
-
-            await _orderLogRepository.InsertAsync(new OrderLog
-            {
-                OrderId = order.Id,
-                Action = "Create",
-                NewValue = order.ToJsonString(),
-            });
-
-            return order;
         }
 
 

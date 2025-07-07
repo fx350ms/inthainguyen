@@ -15,9 +15,9 @@
         if (!_$form.valid()) {
             return;
         }
-         
+
         var order = _$form.serializeFormToObject();
-        
+
         order.CreditLimit = order.CreditLimit.replaceAll('.', '');
         order.DeliveryFee = order.DeliveryFee.replaceAll('.', '');
         order.DiscountAmount = order.DiscountAmount.replaceAll('.', '');
@@ -35,45 +35,50 @@
         if (order.NewCustomer) {
             order.CustomerId = 0;
         }
-        //order.OrderDetails = [];
-        ///// Add logic here
-        //// Duyệt qua tất cả các .order-item để chuẩn bị dữ liệu cho OrderDetails
-        //$('#order-detail-list .order-item').each(function () {
-        //    const $item = $(this);
-        //    const orderItem = {
-        //        ProductId: $item.find('select[name="ProductId"]').val(),
-        //        ProductName: $item.find('select[name="ProductId"] option:selected').text(),
-        //        UnitPrice: parseFloat($item.find('input[name="Price"]').val()) || 0,
-        //        Quantity: parseInt($item.find('input[name="Quantity"]').val()) || 0,
-        //        TotalProductPrice: parseFloat($item.find('input[name="TotalProductPrice"]').val()) || 0,
-        //        Note: $item.find('input[name="OtherNote"]').val(),
-        //        Properties: [], // Danh sách thuộc tính sản phẩm
-        //        NoteIds: [] // Danh sách ID ghi chú
-        //    };
+        order.OrderDetails = [];
+        /// Add logic here
+        // Duyệt qua tất cả các .order-item để chuẩn bị dữ liệu cho OrderDetails
+        $('#order-detail-list .order-item').each(function () {
+            const $item = $(this);
+            const orderItem = {
 
-        //    // Duyệt qua tất cả các thuộc tính sản phẩm
-        //    $item.find('.product-property').each(function () {
-        //        const $property = $(this);
-        //        orderItem.Properties.push({
-        //            PropertyId: $property.attr('property_id'),
-        //            PropertyName: $property.attr('property_name'),
-        //            Value: $property.val()
-        //        });
-        //    });
+                ProductId: $item.find('select[name="ProductId"]').val(),
+                ProductName: $item.find('select[name="ProductId"] option:selected').text(),
+                UnitPrice: parseFloat(
+                    ($item.find('input[name="Price"]').val() || '0').replaceAll('.', '')
+                ),
+                Quantity: parseInt(
+                    ($item.find('input[name="Quantity"]').val() || '0').replaceAll('.', '')),
+                TotalProductPrice: 0, // Tính ở server
 
-        //    // Duyệt qua tất cả các ghi chú sản phẩm
-        //    $item.find('.select-note').each(function () {
-        //        const noteId = $(this).val();
-        //        if (noteId) {
-        //            orderItem.NoteIds.push(parseInt(noteId));
-        //        }
-        //    });
+                Note: $item.find('input[name="OtherNote"]').val(),
+                Properties: [], // Danh sách thuộc tính sản phẩm
+                NoteIds: [] // Danh sách ID ghi chú
+            };
+            
+            // Duyệt qua tất cả các thuộc tính sản phẩm
+            $item.find('.product-property').each(function () {
+                const $property = $(this);
+                orderItem.Properties.push({
+                    PropertyId: $property.attr('property_id'),
+                    PropertyName: $property.attr('property_name'),
+                    Value: $property.val()
+                });
+            });
 
-        //    order.OrderDetails.push(orderItem); // Thêm chi tiết đơn hàng vào danh sách
-        //});
+            // Duyệt qua tất cả các ghi chú sản phẩm
+            $item.find('.select-note').each(function () {
+                const noteId = $(this).val();
+                if (noteId) {
+                    orderItem.NoteIds.push(parseInt(noteId));
+                }
+            });
+
+            order.OrderDetails.push(orderItem); // Thêm chi tiết đơn hàng vào danh sách
+        });
 
         // Gửi dữ liệu đến API
-        abp.ui.setBusy(); // Hiển thị trạng thái loading
+       // abp.ui.setBusy(); // Hiển thị trạng thái loading
 
         _orderService.createNew(order).done(function () {
             /*_$form[0].reset();*/
@@ -225,8 +230,8 @@
                 $item.find('.group-upload-file').show();
                 $item.find('.group-file-url').hide();
 
-                  InitDropzone($item);
-              //  InitUploadzone($item);
+                InitDropzone($item);
+                //  InitUploadzone($item);
             } else if (selectedFileType === 'url') {
                 // Hiển thị nhóm nhập URL, ẩn nhóm upload file
                 $item.find('.group-upload-file').hide();
@@ -239,7 +244,7 @@
 
     function InitUploadzone($item) {
         $item.find('.file-upload').on('change', function (event) {
-             
+
             var formData = new FormData();
             var files = this.files;
             if (files.length === 0) {
@@ -258,10 +263,10 @@
                 contentType: false,
                 data: formData,
                 success: function () {
-                   
+
                 },
                 error: function () {
-                     
+
                 },
                 complete: function () {
                     abp.ui.clearBusy(_$form);
@@ -292,12 +297,12 @@
             dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
             dictRemoveFile: l('RemoveFile'),
             headers: {
-                "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val() ,// Token CSRF nếu cần
-                "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val() 
+                "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val(),// Token CSRF nếu cần
+                "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val()
             },
             success: function (file, response) {
                 // Xử lý khi upload thành công
-                var fileIds =  response.result.join(',')
+                var fileIds = response.result.join(',')
                 $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
                 abp.notify.success(l('FileUploadedSuccessfully'));
             },
@@ -311,7 +316,7 @@
                 abp.notify.info(l('FileRemoved'));
                 file.previewElement.remove();
             },
-           
+
         });
 
     }
