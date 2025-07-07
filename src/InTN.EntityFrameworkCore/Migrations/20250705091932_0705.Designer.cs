@@ -4,6 +4,7 @@ using InTN.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InTN.Migrations
 {
     [DbContext(typeof(InTNDbContext))]
-    partial class InTNDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250705091932_0705")]
+    partial class _0705
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1613,43 +1616,19 @@ namespace InTN.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Company")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal?>("CreditLimit")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("CustomerCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CustomerType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DeliveryArea")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TaxCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("TotalDebt")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalOrderAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");

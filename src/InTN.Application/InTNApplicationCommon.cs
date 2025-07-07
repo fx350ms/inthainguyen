@@ -114,3 +114,31 @@ public enum ProductStatus
     [Description("Ngừng hoạt động")]
     Inactive = 2 // Ngừng hoạt động
 }
+
+public enum ShippingMethod
+{
+    [Description("Công ty giao")]
+    CompanyDelivery = 1, // Cty giao
+
+    [Description("Khách lấy")]
+    CustomerPickup = 2, // Khách lấy
+
+    [Description("Giao hàng dịch vụ")]
+    ServiceDelivery = 3 // GH dịch vụ
+}
+
+public enum FileType
+{
+    [Description("Upload")]
+    Upload = 1, // Upload
+    [Description("Link")]
+    Link = 2 // Link
+}
+
+public enum CustomerType
+{
+    [Description("Cá nhân")]
+    Personal = 1, // Cá nhân
+    [Description("Doanh nghiệp")]
+    Company = 2, // Doanh nghiệp
+}

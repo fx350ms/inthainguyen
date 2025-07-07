@@ -3,18 +3,83 @@
         _productService = abp.services.app.product,
         _productPriceCombinations = abp.services.app.productPriceCombination,
         _productNotes = abp.services.app.productNote,
-
+        _customerService = abp.services.app.customer,
+        _fileUploadService = abp.services.app.fileUpload,
         l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
-
+    Dropzone.autoDiscover = false;
     $('.save-button').on('click', (e) => {
         e.preventDefault();
 
         if (!_$form.valid()) {
             return;
         }
+
         var order = _$form.serializeFormToObject();
+
+        order.CreditLimit = order.CreditLimit.replaceAll('.', '');
+        order.DeliveryFee = order.DeliveryFee.replaceAll('.', '');
+        order.DiscountAmount = order.DiscountAmount.replaceAll('.', '');
+        order.Price = order.Price.replaceAll('.', '');
+        order.Quantity = order.Quantity.replaceAll('.', '');
+        order.TotalAmount = order.TotalAmount.replaceAll('.', '');
+        order.TotalCustomerPay = order.TotalCustomerPay.replaceAll('.', '');
+        order.TotalDebt = order.TotalDebt.replaceAll('.', '');
+        order.TotalDeposit = order.TotalDeposit.replaceAll('.', '');
+        order.TotalOrderAmount = order.TotalOrderAmount.replaceAll('.', '');
+        order.TotalProductAmount = order.TotalProductAmount.replaceAll('.', '');
+        order.TotalProductPrice = order.TotalProductPrice.replaceAll('.', '');
+        order.VatAmount = order.VatAmount.replaceAll('.', '');
+        order.VatRate = order.VatRate.replaceAll('.', '');
+        if (order.NewCustomer) {
+            order.CustomerId = 0;
+        }
+        order.OrderDetails = [];
+        /// Add logic here
+        // Duyệt qua tất cả các .order-item để chuẩn bị dữ liệu cho OrderDetails
+        $('#order-detail-list .order-item').each(function () {
+            const $item = $(this);
+            const orderItem = {
+
+                ProductId: $item.find('select[name="ProductId"]').val(),
+                ProductName: $item.find('select[name="ProductId"] option:selected').text(),
+                UnitPrice: parseFloat(
+                    ($item.find('input[name="Price"]').val() || '0').replaceAll('.', '')
+                ),
+                Quantity: parseInt(
+                    ($item.find('input[name="Quantity"]').val() || '0').replaceAll('.', '')),
+                TotalProductPrice: 0, // Tính ở server
+
+                Note: $item.find('input[name="OtherNote"]').val(),
+                Properties: [], // Danh sách thuộc tính sản phẩm
+                NoteIds: [] // Danh sách ID ghi chú
+            };
+            
+            // Duyệt qua tất cả các thuộc tính sản phẩm
+            $item.find('.product-property').each(function () {
+                const $property = $(this);
+                orderItem.Properties.push({
+                    PropertyId: $property.attr('property_id'),
+                    PropertyName: $property.attr('property_name'),
+                    Value: $property.val()
+                });
+            });
+
+            // Duyệt qua tất cả các ghi chú sản phẩm
+            $item.find('.select-note').each(function () {
+                const noteId = $(this).val();
+                if (noteId) {
+                    orderItem.NoteIds.push(parseInt(noteId));
+                }
+            });
+
+            order.OrderDetails.push(orderItem); // Thêm chi tiết đơn hàng vào danh sách
+        });
+
+        // Gửi dữ liệu đến API
+       // abp.ui.setBusy(); // Hiển thị trạng thái loading
+
         _orderService.createNew(order).done(function () {
             /*_$form[0].reset();*/
             abp.notify.info(l('SavedSuccessfully'));
@@ -25,37 +90,7 @@
     });
 
 
-    $('.select-customer').change(function () {
-        const isCasualCustomer = $(this).val() === "1";
-        if (isCasualCustomer) {
-            $('.select-customer-group').hide();
-            $('input[name="CustomerName"], input[name="CustomerPhone"], input[name="CustomerEmail"], textarea[name="CustomerAddress"]').val('');
-            $('input[name="TotalDebt"], input[name="CreditLimit"]').val('0'); // Clear TotalDebt and CreditLimit
-            $('.debt-group').hide();
-        } else {
-            $('.debt-group').show();
-            $('.select-customer-group').show();
-        }
-    }).trigger('change'); // Trigger change on page load to set initial state
-
-    // Handle customer selection
-    $('.select-customer-id').change(function () {
-        var customerId = $(this).val();
-        var _customerService = abp.services.app.customer;
-        if (customerId) {
-            // Simulate fetching customer data (replace with actual AJAX call if needed)
-            _customerService.get({ id: customerId }).done(function (customerData) {
-                $('input[name="CustomerName"]').val(customerData.name);
-                $('input[name="CustomerPhone"]').val(customerData.phoneNumber);
-                $('input[name="CustomerEmail"]').val(customerData.email);
-                $('input[name="CustomerAddress"]').val(customerData.address);
-                $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
-                $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
-            });
-        }
-    });
-
-    $('select[name="CustomerId"').select2({
+    $('.select-customer-id').select2({
         ajax: {
             delay: 500, // wait 1000 milliseconds before triggering the request
             url: abp.appPath + 'api/services/app/Customer/GetCustomerListForSelect',
@@ -65,11 +100,32 @@
                     results: data.result
                 };
             }
+        },
+        tags: true
+    }).on('select2:select', function (e) {
+
+        var data = e.params.data;
+        // Lấy danh sách property tương ứng với sản phẩm
+        var customerId = data.id;
+        if (customerId && !isNaN(customerId) && customerId != data.text) {
+            // Simulate fetching customer data (replace with actual AJAX call if needed)
+            _customerService.get({ id: customerId }).done(function (customerData) {
+                $('input[name="CustomerName"]').val(customerData.name);
+                $('input[name="CustomerPhone"]').val(customerData.phoneNumber);
+                $('input[name="CustomerEmail"]').val(customerData.email);
+                $('input[name="CustomerAddress"]').val(customerData.address);
+                $('input[name="TotalDebt"]').val(customerData.totalDebt.toLocaleString()); // Format TotalDebt
+                $('input[name="CreditLimit"]').val(customerData.creditLimit?.toLocaleString() || ''); // Format CreditLimit
+                $('input[name="NewCustomer"]').val(false);
+            });
         }
+        else {
+            $('input[name="CustomerName"]').val(data.text);
+            $('input[name="NewCustomer"]').val(true);
+        }
+    });
 
-    }).addClass('form-control');
 
-    $('.select2').select2();
 
     /// new update
 
@@ -162,7 +218,109 @@
             $orderItem.remove();
             UpdateDeleteButtonVisibility();
         });
+
+
+        $item.find('input[name="FileType"]').off('change').on('change', function () {
+
+            // Get the value of the currently selected radio button
+            var selectedFileType = $(this).attr('data-value');
+
+            if (selectedFileType === 'upload') {
+                // Hiển thị nhóm upload file, ẩn nhóm nhập URL
+                $item.find('.group-upload-file').show();
+                $item.find('.group-file-url').hide();
+
+                InitDropzone($item);
+                //  InitUploadzone($item);
+            } else if (selectedFileType === 'url') {
+                // Hiển thị nhóm nhập URL, ẩn nhóm upload file
+                $item.find('.group-upload-file').hide();
+                $item.find('.group-file-url').show();
+            }
+        });
+
+
     }
+
+    function InitUploadzone($item) {
+        $item.find('.file-upload').on('change', function (event) {
+
+            var formData = new FormData();
+            var files = this.files;
+            if (files.length === 0) {
+                console.log('Chưa có file nào được chọn.');
+                return; // Dừng lại nếu không có file
+            }
+            // Thêm tệp vào FormData
+            for (var i = 0; i < files.length; i++) {
+                formData.append('Files', files[i]);
+            }
+
+            $.ajax({
+                url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function () {
+
+                },
+                error: function () {
+
+                },
+                complete: function () {
+                    abp.ui.clearBusy(_$form);
+                }
+            });
+        });
+    }
+
+
+    function InitDropzone($item) {
+
+        const dzone = $item.find('.dropzone');
+
+        if (dzone.length === 0) {
+            console.error('Không tìm thấy phần tử Dropzone.');
+            return;
+        }
+
+        const dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
+            url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds', // URL API để xử lý upload file
+            //  url: abp.appPath + 'FileUpload/UploadSingleFile', // URL API để xử lý upload file
+            paramName: "files",
+            method: "post",
+            maxFiles: 1, // Giới hạn số lượng file
+            maxFilesize: 5, // Giới hạn kích thước file (MB)
+            acceptedFiles: ".jpg,.jpeg,.png,.pdf,.doc,.docx", // Các loại file được chấp nhận
+            addRemoveLinks: true, // Hiển thị nút xóa file
+            dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
+            dictRemoveFile: l('RemoveFile'),
+            headers: {
+                "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val(),// Token CSRF nếu cần
+                "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (file, response) {
+                // Xử lý khi upload thành công
+                var fileIds = response.result.join(',')
+                $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
+                abp.notify.success(l('FileUploadedSuccessfully'));
+            },
+            error: function (file, errorMessage) {
+                // Xử lý khi upload thất bại
+                abp.notify.error(l('FailedToUploadFile'));
+            },
+            removedfile: function (file) {
+                // Xử lý khi xóa file
+                $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
+                abp.notify.info(l('FileRemoved'));
+                file.previewElement.remove();
+            },
+
+        });
+
+    }
+
 
     function InitializeProductNotes($row, productId, level) {
         // Gọi API để lấy danh sách ghi chú cha
@@ -200,23 +358,23 @@
         });
     }
 
-    function LoadChildNotes($parentDiv,  $parentNoteSelect, level) {
-       
+    function LoadChildNotes($parentDiv, $parentNoteSelect, level) {
+
         const parentId = $parentNoteSelect.val(); // Lấy ID ghi chú cha được chọn
-        
+
         if (!parentId) {
             return; // Nếu không có parentId, không cần xử lý
         }
 
-       
+
         $parentNoteSelect.closest('.note-item').nextAll('.note-item').remove();
         // Gọi API để lấy danh sách ghi chú con
         _productNotes.getNotesByParent(parentId).done(function (notes) {
-            
+
             if (Array.isArray(notes) && notes.length > 0) {
                 const $row = $parentNoteSelect.closest('.order-item'); // Tìm hàng chứa sản phẩm
 
-               // const $noteList = $row.find('.note-list'); // Tìm danh sách ghi chú
+                // const $noteList = $row.find('.note-list'); // Tìm danh sách ghi chú
 
                 level = level + 1; // Tăng cấp độ ghi chú
 
@@ -241,10 +399,9 @@
                 // Thêm ghi chú con vào danh sách
                 $parentDiv.after($noteDiv);
 
-               
+
                 // Gắn sự kiện thay đổi cho ghi chú con
                 $childNoteSelect.off('change').on('change', function () {
-                    var $div = $(this).closest('.order-item');
                     LoadChildNotes($noteDiv, $(this), level); // Tiếp tục hiển thị ghi chú con tiếp theo
                 });
             }
@@ -252,7 +409,7 @@
             abp.notify.error(l('FailedToLoadNotes')); // Hiển thị lỗi nếu không lấy được dữ liệu
         });
     }
-     
+
 
     function LoadProductNotes($row, productId) {
         _productNotes.getNotesByProductId(productId, true).done(function (notes) {
@@ -268,21 +425,57 @@
         });
     }
 
+    $('.select-date').daterangepicker(
+        {
+            "singleDatePicker": true,
+            locale: { cancelLabel: 'Clear' }
+        }
+    );
+
+    $(document).on('input', 'input[name="TotalDeposit"], input[name="DeliveryFee"], input[name="VatRate"], input[name="DiscountAmount"]', function () {
+        CalculateOrderSummary(); // Gọi hàm tính toán tổng tiền đơn hàng
+    });
+
+
     function CalculateOrderSummary() {
-        let totalAmount = 0;
+
+
+        let TotalProductPrice = 0; // Tổng tiền sản phẩm
+        let totalDeposit = parseFloat(($('input[name="TotalDeposit"]').val() || '0').replaceAll('.', '')); // Tổng tiền đặt cọc
+        let deliveryFee = parseFloat(($('input[name="DeliveryFee"]').val() || '0').replaceAll('.', '')); // Phí vận chuyển
+        let vatRate = parseFloat(($('input[name="VatRate"]').val() || '0').replaceAll('.', '')); // % VAT
+        let discountAmount = parseFloat(($('input[name="DiscountAmount"]').val() || '0').replaceAll('.', '')); // Tiền giảm giá
+
 
         // Duyệt qua tất cả các hàng sản phẩm để tính tổng tiền
         $('#order-detail-list .order-item').each(function () {
-            const totalPrice = parseFloat($(this).find('input[name="TotalPrice"]').val()) || 0;
-            totalAmount += totalPrice;
+            var price = ($(this).find('input[name="TotalProductPrice"]').val() || '0').replaceAll('.', '');
+            const totalPrice = parseFloat(price);
+            TotalProductPrice += totalPrice;
+
         });
 
-        // Cập nhật tổng tiền vào ô "TotalAmount"
-        $('input[name="TotalAmount"]').val(formatThousand(totalAmount));
+        // Cập nhật tổng tiền vào ô "TotalProductAmount" của phần tổng kết đơn hàng
+        //    $('input[name="TotalProductAmount"]').val(formatThousand(TotalProductPrice));
+
+        // Thêm logic để tính tổng tiền đơn hàng   
+
+        // Tính tiền thuế VAT
+        const vatAmount = (TotalProductPrice * vatRate) / 100;
+
+        // Tính tổng tiền đơn hàng
+        const totalAmount = TotalProductPrice + deliveryFee + vatAmount - discountAmount;
+
+        // Cập nhật giá trị vào các ô nhập liệu
+        $('input[name="TotalProductAmount"]').val(formatThousand(TotalProductPrice)); // Tổng tiền sản phẩm
+        $('input[name="VatAmount"]').val(formatThousand(vatAmount)); // Tiền thuế VAT
+        $('input[name="TotalAmount"]').val(formatThousand(totalAmount)); // Tổng tiền đơn hàng
+        $('input[name="TotalCustomerPay"]').val(formatThousand(totalAmount - totalDeposit)); // Tổng tiền khách phải trả
     }
 
     function CalculateTotalPrice($row) {
-        const unitPrice = parseFloat($row.find('.unit-price').val().replace('.', '')) || 0; // Lấy giá sản phẩm
+        const unitPrice = parseFloat(($row.find('.unit-price').val() || '0').replaceAll('.', ''));
+
         const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
 
         const totalProductPrice = unitPrice * quantity; // Tính thành tiền
@@ -325,10 +518,11 @@
         // Gọi API để tính giá sản phẩm dựa trên thuộc tính đã chọn
         _productPriceCombinations.calculatePrice(productId, selectedProperties).done(function (price) {
             // Hiển thị giá sản phẩm trên một đơn vị tính
+
             $row.find('.unit-price').val(formatThousand(price)); // Cập nhật giá vào ô "Unit Price"
             CalculateTotalPrice($row); // Tính thành tiền cho hàng hiện tại
         }).fail(function () {
-            abp.notify.error('@L("FailedToCalculatePrice")'); // Hiển thị lỗi nếu không tính được giá
+            abp.notify.error(l("FailedToCalculatePrice")); // Hiển thị lỗi nếu không tính được giá
         });
     }
 

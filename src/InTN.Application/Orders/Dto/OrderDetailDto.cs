@@ -4,19 +4,16 @@ namespace InTN.Orders.Dto
 {
     public class OrderDetailDto : EntityDto<int>
     {
+
         public int OrderId { get; set; }
-        public string ServiceName { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-
-        public decimal Width { get; set; }           // Chiều ngang (m)
-        public decimal Height { get; set; }          // Chiều cao (m)
+        public int ProductId { get; set; } // ID sản phẩm, dịch vụ
+        public string ProductName { get; set; } = string.Empty; // Tên sản phẩm, dịch vụ
+        public decimal UnitPrice { get; set; } // Giá trên một đơn vị sản phẩm
         public int Quantity { get; set; }
-        public decimal Area { get; set; }            // Tổng diện tích
-        public decimal UnitPrice { get; set; }       // Giá đơn vị (VD: theo m2)
-        public decimal TotalPrice { get; set; }      // Tổng giá trị
-
-        public int? FileId { get; set; }             // ID của tệp đính kèm liên quan đến chi tiết đơn hàng
+        public decimal TotalProductPrice { get; set; } // Tổng tiền sản phẩm (UnitPrice * Quantity)
+        public int? FileId { get; set; } // ID của tệp đính kèm liên quan đến chi tiết đơn hàng
         public string Note { get; set; } = string.Empty;
+        public string Properties { get; set; } // Chuỗi JSON chứa danh sách thuộc tính sản phẩm với giá trị đã chọn
+        public string NoteIds { get; set; } // // Danh sách ID ghi chú liên quan đến sản phẩm được ngăn cách nhau bởi dấu 
     }
 }

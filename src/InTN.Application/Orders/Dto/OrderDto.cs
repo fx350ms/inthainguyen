@@ -19,5 +19,13 @@ namespace InTN.Orders.Dto
         public decimal? TotalDeposit { get; set; } // Tổng số tiền đã đặt cọc
         public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
         public int PaymentStatus { get; set; } // Trạng thái thanh toán
+
+        public int DeliveryMethod { get; set; } // Phương thức giao hàng
+        public DateTime? ExpectedDeliveryDate { get; set; } // Ngày giao hàng dự kiến
+        public string OtherRequirements { get; set; } = string.Empty; // Yêu cầu khác
+        public decimal? VatRate { get; set; } // % VAT áp dụng
+        public decimal? VatAmount { get; set; } // Tiền thuế VAT
+        public decimal? DiscountAmount { get; set; } // Số tiền giảm giá
+        public decimal? TotalCustomerPay { get; set; } // Tổng số tiền khách phải trả
     }
 }

@@ -1,4 +1,6 @@
 using Abp.Application.Services.Dto;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace InTN.FileUploads.Dto
 {
@@ -17,5 +19,11 @@ namespace InTN.FileUploads.Dto
         public long FileSize { get; set; }
         public byte[] FileContent { get; set; }
         public int Type { get; set; }
+    }
+
+    public class UploadFileOnScriptDto
+    {
+        public byte[] FileContent { get; set; }
+        public List<IFormFile> Files { get; set; }
     }
 }

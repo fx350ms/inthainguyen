@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace InTN.Web.Models.Products
 {
-    public class ProductCreateModel
+    public class CreateProductViewModel
     {
         public List<ProductTypeDto> ProductTypes { get; set; }
         public List<ProductCategoryDto> ProductCategories { get; set; }
