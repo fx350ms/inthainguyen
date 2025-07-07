@@ -220,8 +220,8 @@
                 $item.find('.group-upload-file').show();
                 $item.find('.group-file-url').hide();
 
-                //  InitDropzone($item);
-                InitUploadzone($item);
+                  InitDropzone($item);
+              //  InitUploadzone($item);
             } else if (selectedFileType === 'url') {
                 // Hiển thị nhóm nhập URL, ẩn nhóm upload file
                 $item.find('.group-upload-file').hide();
@@ -267,6 +267,7 @@
 
 
     function InitDropzone($item) {
+
         const dzone = $item.find('.dropzone');
 
         if (dzone.length === 0) {
@@ -275,9 +276,9 @@
         }
 
         const dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
-            url: abp.appPath + 'api/services/app/FileUpload/UploadAndGetInfo', // URL API để xử lý upload file
+            url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds', // URL API để xử lý upload file
             //  url: abp.appPath + 'FileUpload/UploadSingleFile', // URL API để xử lý upload file
-            paramName: "file",
+            paramName: "files",
             method: "post",
             maxFiles: 1, // Giới hạn số lượng file
             maxFilesize: 5, // Giới hạn kích thước file (MB)
@@ -285,12 +286,14 @@
             addRemoveLinks: true, // Hiển thị nút xóa file
             dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
             dictRemoveFile: l('RemoveFile'),
-            //headers: {
-            //    "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val() // Token CSRF nếu cần
-            //},
+            headers: {
+                "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val() ,// Token CSRF nếu cần
+                "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val() 
+            },
             success: function (file, response) {
                 // Xử lý khi upload thành công
-                $item.find('input[name="FileId"]').val(response.fileId); // Lưu ID file vào input hidden
+                var fileIds =  response.result.join(',')
+                $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
                 abp.notify.success(l('FileUploadedSuccessfully'));
             },
             error: function (file, errorMessage) {
@@ -302,7 +305,8 @@
                 $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
                 abp.notify.info(l('FileRemoved'));
                 file.previewElement.remove();
-            }
+            },
+           
         });
 
     }

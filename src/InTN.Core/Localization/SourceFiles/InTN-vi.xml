@@ -697,6 +697,13 @@
 		<text name="RequireDesign" value="Yêu cầu thiết kế" />
 		<text name="YES" value="Có" />
 		<text name="NO" value="Không" />
-		
+		<text name="Attachment" value="Tệp đính kèm" />
+		<text name="UploadFile" value="Tải lên tệp" />
+		<text name="EnterFileUrl" value="Nhập đường dẫn tệp" />
+		<text name="DragAndDropFilesHereOrClickToUpload" value="Kéo và thả tệp vào đây hoặc nhấp để tải lên" />
+		<text name="RemoveFile" value="Xóa tệp" />
+		<text name="FileRemoved" value="Đã xóa tệp" />
+		<text name="FailedToUploadFile" value="Tải lên tệp thất bại" />
+		<text name="FileUploadedSuccessfully" value="Tải lên tệp thành công" />
 	</texts>
 </localizationDictionary>

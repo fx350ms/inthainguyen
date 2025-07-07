@@ -153,34 +153,37 @@ namespace InTN.FileUploads
 
 
         [HttpPost]
-        public async Task<List<int>> UploadFilesAndGetIdsAsync([FromForm] UploadFileOnScriptDto input)
+        public async Task<List<int>> UploadFilesAndGetIdsAsync([FromForm] List<IFormFile> files)
         {
             var listIds = new List<int>();
-            if (input.Files != null && input.Files.Count > 0)
+            if (files != null && files.Count > 0)
             {
-                var file = input.Files[0];
-                using (var memoryStream = new MemoryStream())
+                foreach (var file in files)
                 {
-                    await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.CopyToAsync(memoryStream); // Đọc dữ liệu từ file
 
-                    var attachment = new CreateFileUploadDto
-                    {
-                        FileName = file.FileName,
-                        FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                        FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
-                        FileSize = file.Length
-                    };
+                        var attachment = new FileUpload
+                        {
+                            FileName = file.FileName,
+                            FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
+                            FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                            FileSize = file.Length
+                        };
 
-                    try
-                    {
-                        var fileUpload = CreateAsync(attachment);
-                        listIds.Add(fileUpload.Id); // Thêm ID của file đã upload vào danh sách
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Logger.Error("Error uploading file: " + file.FileName, ex);
+                        try
+                        {
+                            var fileUploadId = await _fileUploadRepository.InsertAndGetIdAsync(attachment);
+                            listIds.Add(fileUploadId); // Thêm ID của file đã upload vào danh sách
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Logger.Error("Error uploading file: " + file.FileName, ex);
+                        }
                     }
                 }
+               
             }
 
             return listIds; // Trả về 0 nếu không có file nào được upload

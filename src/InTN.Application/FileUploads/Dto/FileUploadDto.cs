@@ -23,6 +23,7 @@ namespace InTN.FileUploads.Dto
 
     public class UploadFileOnScriptDto
     {
+        public byte[] FileContent { get; set; }
         public List<IFormFile> Files { get; set; }
     }
 }
