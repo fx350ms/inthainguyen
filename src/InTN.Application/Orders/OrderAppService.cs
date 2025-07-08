@@ -15,6 +15,15 @@ using InTN.IdentityCodes;
 using InTN.Commons;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Abp.Notifications;
+using InTN.Authorization.Roles;
+using InTN.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
+using Abp;
+using Abp.Runtime.Session;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Microsoft.AspNetCore.Http;
+
 
 namespace InTN.Orders
 {
@@ -29,6 +38,13 @@ namespace InTN.Orders
 
         private readonly IIdentityCodeAppService _identityCodeAppService;
 
+        private readonly INotificationPublisher _notificationPublisher;
+
+        private readonly RoleManager _roleManager;
+        private readonly UserManager _userManager;
+        private readonly IntnAppSession _intnAppSession;
+
+
         public OrderAppService(IRepository<Order> repository,
             IRepository<OrderLog> orderLogRepository,
             IRepository<Transaction> transactionRepository,
@@ -36,7 +52,12 @@ namespace InTN.Orders
             IRepository<Customer> customerRepository,
             IRepository<CustomerBalanceHistory> customerBalanceHistoryRepository,
             IRepository<OrderDetail> orderDetailRepository,
-            IIdentityCodeAppService identityCodeRepository
+            IIdentityCodeAppService identityCodeRepository,
+             INotificationPublisher notificationPublisher,
+             RoleManager roleManager,
+             UserManager userManager,
+                IntnAppSession intnAppSession
+
             )
             : base(repository)
         {
@@ -47,8 +68,11 @@ namespace InTN.Orders
             _customerBalanceHistoryRepository = customerBalanceHistoryRepository;
             _identityCodeAppService = identityCodeRepository;
             _orderDetailRepository = orderDetailRepository;
+            _notificationPublisher = notificationPublisher;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _intnAppSession = intnAppSession;
         }
-
 
 
         /// <summary>
@@ -82,7 +106,6 @@ namespace InTN.Orders
                 {
                     throw new ArgumentException("Customer phone cannot be null or empty", nameof(input.CustomerPhone));
                 }
-
 
                 // Tạo khách hàng mới
                 var newCustomer = new Customer
@@ -188,6 +211,29 @@ namespace InTN.Orders
                     NewValue = order.ToJsonString(),
                 });
 
+
+                var designUsers = await GetUsersInDesignRoleAsync("Thietke");
+
+                // Gửi notification
+                var data = new NotificationData();
+                data["OrderId"] = order.Id;
+                data["OrderCode"] = order.OrderCode;
+                data["CreatorName"] = _intnAppSession.UserName; // hoặc từ _userManager
+                data["Message"] = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}";
+
+                //{
+                //    OrderId = order.Id,
+                //    OrderCode = order.OrderCode,
+                //    CreatorName = _intnAppSession.UserName, // hoặc từ _userManager
+                //    Message = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}"
+                //};
+
+                await _notificationPublisher.PublishAsync(
+                    "Order.Created",
+                    data,
+                    userIds: designUsers.ToArray()
+                );
+
                 return order;
             }
             catch (Exception ex)
@@ -195,7 +241,7 @@ namespace InTN.Orders
 
                 throw;
             }
-  
+
         }
 
 
@@ -737,6 +783,15 @@ namespace InTN.Orders
                 Items = data,
                 TotalCount = count
             };
+        }
+
+
+
+        private async Task<List<UserIdentifier>> GetUsersInDesignRoleAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+            return usersInRole.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
         }
     }
 }

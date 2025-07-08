@@ -6,6 +6,7 @@
 @inject IGetScriptsResponsePerUserConfiguration GetScriptsResponsePerUserConfiguration
 
 <script src="~/view-resources/Views/_Bundles/shared-layout.min.js" asp-append-version="true"></script>
+<script src="~/js/main.js" asp-append-version="true"></script>
 <script src="~/libs/daterangepicker/daterangepicker.js"></script>
 <script src="~/libs/select2/js/select2.min.js"></script>
 <script src="~/libs/jquery.masknumber/jquery.masknumber.min.js" asp-append-version="true"></script>
@@ -42,8 +43,8 @@
 }
 
 <script type="text/javascript">
-        // Localizing momentjs
-        moment.locale('@CultureInfo.CurrentUICulture.Name');
+    // Localizing momentjs
+    moment.locale('@CultureInfo.CurrentUICulture.Name');
 </script>
 
 <!-- Dynamic scripts of ABP system (They are created on runtime and can not be bundled) -->
@@ -57,3 +58,4 @@ else
 {
     <script src="@(ApplicationPath)AbpScripts/GetScripts?v=@(AppTimes.StartupTime.Ticks)" type="text/javascript"></script>
 }
+ 

@@ -480,7 +480,8 @@
     function CalculateTotalPrice($row) {
         const unitPrice = parseFloat(($row.find('.unit-price').val() || '0').replaceAll('.', ''));
 
-        const quantity = parseInt($row.find('input[name="Quantity"]').val()) || 0; // Lấy số lượng sản phẩm
+        const quantity = parseFloat(
+            ($row.find('input[name="Quantity"]').val() || '0').replaceAll('.', ''));
 
         const totalProductPrice = unitPrice * quantity; // Tính thành tiền
         $row.find('input[name="TotalProductPrice"]').val(formatThousand(totalProductPrice)); // Cập nhật thành tiền vào ô "TotalProductPrice"

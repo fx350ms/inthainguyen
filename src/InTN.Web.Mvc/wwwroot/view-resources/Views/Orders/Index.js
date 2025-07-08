@@ -543,9 +543,7 @@
 
     }).addClass('form-control');
 
-    $('#.select-product-id').on('select2:select', function (e) {
-        var data = e.params.data;
-        
+    $('.select-product-id').on('select2:select', function (e) {
     });
 
 })(jQuery);

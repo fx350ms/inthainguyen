@@ -1,20 +1,37 @@
 ﻿(function ($) {
     //Notification handler
     abp.event.on('abp.notifications.received', function (userNotification) {
-        abp.notifications.showUiNotifyForUserNotification(userNotification);
+        console.log(userNotification);
+        switch (userNotification.notification.notificationName) {
+            case 'Order.Created':
+                {
+                    abp.notify.info(userNotification.notification.data.properties.Message)
+                    PlaySound("success");
+                }
+                break;
+            
+            default: {
+                abp.notifications.showUiNotifyForUserNotification(userNotification)
+
+                break;
+            }
+        }
+
+        //if (userNotification.notification.data.type === 'Abp.Notifications.LocalizableMessageNotificationData') {
+        //}
 
         //Desktop notification
-        Push.create("InTN", {
-            body: userNotification.notification.data.message,
-            icon: abp.appPath + 'img/logo.png',
-            timeout: 6000,
-            onClick: function () {
-                window.focus();
-                this.close();
-            }
-        });
+        //Push.create("InTN", {
+        //    body: userNotification.notification.data.message,
+        //    icon: abp.appPath + 'img/logo.png',
+        //    timeout: 6000,
+        //    onClick: function () {
+        //        window.focus();
+        //        this.close();
+        //    }
+        //});
     });
-
+    //Abp.Notifications.LocalizableMessageNotificationData
     //serializeFormToObject plugin for jQuery
     $.fn.serializeFormToObject = function (camelCased = false) {
         //serialize to array

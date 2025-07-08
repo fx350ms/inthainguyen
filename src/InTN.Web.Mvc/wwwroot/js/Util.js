@@ -54,29 +54,6 @@ function formatDateToDDMMYYYYHHmm(date) {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-function PlayAudio(type, callback) {
-    let audio;
-    let timeout;
-    if (type === 'success') {
-        audio = new Audio('/sounds/success.mp3');
-    } else if (type === 'warning') {
-        audio = new Audio('/sounds/alert.mp3');
-    }
-
-    if (audio) {
-        audio.play();
-        timeout = setTimeout(() => {
-            if (callback) callback('timeout');
-        }, 3000); // Timeout sau 3 giây phòng trường hợp lỗi
-
-        audio.onended = () => {
-            clearTimeout(timeout);
-            if (callback) callback('completed');
-        };
-    } else {
-        if (callback) callback('no_audio');
-    }
-}
 function PlaySound(type, callback) {
     let audio;
     let timeout;
