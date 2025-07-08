@@ -2,6 +2,7 @@
 using InTN.Brands;
 using InTN.Controllers;
 using InTN.Customers;
+using InTN.FileUploads;
 using InTN.IdentityCodes;
 using InTN.OrderAttachments;
 using InTN.OrderLogs;
@@ -28,6 +29,7 @@ namespace InTN.Web.Controllers
         private readonly ISupplierAppService _supplierAppService;
         private readonly IBrandAppService _brandAppService;
         private readonly IOrderDetailAppService _orderDetailAppService;
+        private readonly IFileUploadAppService _fileAppService;
 
 
         public OrdersController(IOrderAppService orderService,
@@ -38,7 +40,8 @@ namespace InTN.Web.Controllers
                     IProductCategoryAppService productCategoryAppService,
                     ISupplierAppService supplierAppService,
                     IBrandAppService brandAppService,
-                    IOrderDetailAppService orderDetailAppService
+                    IOrderDetailAppService orderDetailAppService,
+                    IFileUploadAppService fileUploadAppService
 
          )
         {
@@ -51,7 +54,7 @@ namespace InTN.Web.Controllers
             _supplierAppService = supplierAppService;
             _brandAppService = brandAppService;
             _orderDetailAppService = orderDetailAppService;
-
+            _fileAppService = fileUploadAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -164,9 +167,8 @@ namespace InTN.Web.Controllers
             {
                 OrderDto = order,
                 OrderLogs = await _orderLogAppService.GetOrderLogsByOrderIdAsync(order.Id),
-                OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
-                OrderDetails = await _orderDetailAppService.GetOrderDetailsByOrderIdAsync(order.Id)
-
+              //  OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
+                OrderDetails = await _orderDetailAppService.GetOrderDetailsViewByOrderIdAsync(order.Id)
             };
             return View(model);
         }
@@ -174,7 +176,7 @@ namespace InTN.Web.Controllers
 
         public async Task<IActionResult> DownloadAttachment(int fileId, string fileName)
         {
-            var file = await _orderAttachmentAppService.GetAsync(new EntityDto<int>(fileId));
+            var file = await _fileAppService.GetAsync(new EntityDto<int>(fileId));
             if (file == null || file.FileContent == null)
             {
                 return NotFound();

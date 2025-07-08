@@ -35,13 +35,12 @@
         <div class="control-item col-md-2">
             <label>@L("Attachment")</label>
             <div class="form-group">
-
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="FileType" data-value="url" value="url" checked>
+                    <input class="form-check-input check-file-type" name="SelectFileType" type="radio" data-value="@((int)FileType.Link)" checked>
                     <label class="form-check-label">@L("FileUrl")</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="FileType" data-value="upload" value="upload">
+                    <input class="form-check-input check-file-type" name="SelectFileType" type="radio" data-value="@((int)FileType.Upload)">
                     <label class="form-check-label">@L("UploadFile")</label>
                 </div>
             </div>
@@ -55,11 +54,14 @@
                     <span>@L("DragAndDropFilesHereOrClickToUpload")</span>
                 </div>
             </div>
-            <input type="hidden" name="FileId" />
+
         </div>
         <div class="form-group col-md-10 group-file-url">
-            <input type="text" class="form-control" name="AttachmentUrl1" placeholder="@L("EnterFileUrl")" />
+            <input type="text" class="form-control" name="FileUrl" placeholder="@L("EnterFileUrl")" />
         </div>
+
+        <input type="hidden" name="FileType" value="@((int) FileType.Link)" />
+        <input type="hidden" name="FileId" />
     </div>
 
 
