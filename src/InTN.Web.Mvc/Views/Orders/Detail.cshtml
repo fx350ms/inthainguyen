@@ -61,7 +61,7 @@
                                 <label>@L("Phone")</label>
                                 <p>@Model.OrderDto.CustomerPhone</p>
                             </div>
-                         @*    <div class="control-item col-md-2">
+                            @*    <div class="control-item col-md-2">
                                 <label>@L("TotalDebt")</label>
                                 <p>@Model.OrderDto.CustomerTotalDebt?.ToString("N0") VNĐ</p>
                             </div>
@@ -124,9 +124,15 @@
                                     <div class="col-12 row">
                                         <div class="control-item col-md-2">
                                             <label>@L("Attachment")</label>
-                                            @if (detail.FileType == 1)
+                                            @if (detail.FileType == (int)FileType.Upload)
                                             {
-                                                <p><a href="@Url.Action("DownloadAttachment", "Orders", new { fileId = detail.FileId, fileName = detail.FileUrl })" target="_blank">@L("DownloadFile")</a></p>
+                                                <p><a href="@Url.Action("DownloadAttachment", "Orders", new { fileId = detail.FileId, fileName = detail.File.FileName })" target="_blank">@L("DownloadFile")</a></p>
+                                                @if (!string.IsNullOrEmpty(detail.File.FileName) && (detail.File.FileName.EndsWith(".jpg") || detail.File.FileName.EndsWith(".jpeg") || detail.File.FileName.EndsWith(".png")))
+                                                {
+                                                    <p>
+                                                        <img src="@(detail.File?.FileContent != null ? $"data:image/png;base64,{Convert.ToBase64String(detail.File.FileContent)}" : "")" alt="@L("AttachmentImage")" style="max-width: 100px; max-height: 100px;" />
+                                                    </p>
+                                                }
                                             }
                                             else
                                             {

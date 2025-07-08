@@ -14,6 +14,7 @@ namespace InTN.Orders.Dto
         public int Quantity { get; set; } // Số lượng sản phẩm
         public decimal TotalProductPrice { get; set; } // Tổng tiền sản phẩm (UnitPrice * Quantity)
         public string Note { get; set; } = string.Empty; // Ghi chú liên quan đến sản phẩm
+        public int FileType { get; set; } // ID của tệp đính kèm liên quan đến sản phẩm
         public int? FileId { get; set; } // ID của tệp đính kèm liên quan đến sản phẩm
         public string FileUrl { get; set; } = string.Empty; // Đường dẫn đến tệp đính kèm liên quan đến chi tiết đơn hàng
         

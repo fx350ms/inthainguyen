@@ -14,5 +14,6 @@ namespace InTN.Orders
         OrderDetailDto> // DTO cho cập nhật
     {
         Task<List<OrderDetailDto>> GetOrderDetailsByOrderIdAsync(int orderId);
+        Task<List<OrderDetailViewDto>> GetOrderDetailsViewByOrderIdAsync(int orderId);
     }
 }

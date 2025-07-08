@@ -96,17 +96,19 @@ namespace InTN.Orders
                 throw new ArgumentException("Order code cannot be null or empty", nameof(input.OrderCode));
             }
 
+            if (string.IsNullOrEmpty(input.CustomerName))
+            {
+                throw new ArgumentException("Customer name cannot be null or empty", nameof(input.CustomerName));
+            }
+            if (string.IsNullOrEmpty(input.CustomerPhone))
+            {
+                throw new ArgumentException("Customer phone cannot be null or empty", nameof(input.CustomerPhone));
+            }
+
+
             if (input.NewCustomer)
             {
-                if (string.IsNullOrEmpty(input.CustomerName))
-                {
-                    throw new ArgumentException("Customer name cannot be null or empty", nameof(input.CustomerName));
-                }
-                if (string.IsNullOrEmpty(input.CustomerPhone))
-                {
-                    throw new ArgumentException("Customer phone cannot be null or empty", nameof(input.CustomerPhone));
-                }
-
+              
                 // Tạo khách hàng mới
                 var newCustomer = new Customer
                 {
@@ -189,7 +191,8 @@ namespace InTN.Orders
                             FileUrl = detailDto.FileUrl,
                             Note = detailDto.Note,
                             Properties = JsonConvert.SerializeObject(detailDto.Properties),
-                            NoteIds = string.Join(",", detailDto.NoteIds)
+                            NoteIds = string.Join(",", detailDto.NoteIds),
+                            FileType = detailDto.FileType
                         };
                         totalProductPrice += orderDetail.TotalProductPrice;
                         // Lưu OrderDetail vào cơ sở dữ liệu

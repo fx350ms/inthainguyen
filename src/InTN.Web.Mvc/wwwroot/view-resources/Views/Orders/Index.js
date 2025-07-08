@@ -69,7 +69,7 @@
             },
             {
                 targets: 2,
-                className: 'text-center',
+                className: 'text-left',
                 render: function (data, type, row, meta) {
                     return `   <a type="button" data-order-id="${row.id}" href="/Orders/Detail/${row.id}" title="${l('Detail')}" data-toggle="tooltip">` +
                         row.orderCode +
@@ -80,13 +80,9 @@
                 targets: 3,
 
                 data: 'customerName',
-                className: 'text-center',
+                className: 'text-left',
                 render: function (data, type, row, meta) {
-                    if (row.customerId == null) {
-                        return '<strong>' + row.customerName + '</strong> ';
-                    } else {
-                        return '<strong>' + row.customerName + '</strong>  <i title="Khách quen" class="far fa-check-circle text-success"></i>';
-                    }
+                    return '<strong>' + row.customerName + '</strong> ';
                 }
             },
             {

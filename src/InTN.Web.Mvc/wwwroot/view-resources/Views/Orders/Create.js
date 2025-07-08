@@ -9,6 +9,8 @@
         _$modal = $('#modal-create-order'),
         _$form = _$modal.find('form');
     Dropzone.autoDiscover = false;
+    var dropzone;
+
     $('.save-button').on('click', (e) => {
         e.preventDefault();
 
@@ -16,8 +18,15 @@
             return;
         }
 
-
         var order = _$form.serializeFormToObject();
+        var customerId = $('.select-customer-id').val();
+        var customerName = $('.select-customer-id').text();
+        if (isNaN(customerId) ) {
+            order.NewCustomer = true;
+            order.CustomerId = 0;
+            order.CustomerName = customerName;
+        }
+
 
         order.CreditLimit = order.CreditLimit.replaceAll('.', '');
         order.DeliveryFee = order.DeliveryFee.replaceAll('.', '');
@@ -53,13 +62,13 @@
                 TotalProductPrice: 0, // Tính ở server
                 FileId: $item.find('input[name="FileId"]').val(),
                 FileUrl: $item.find('input[name="FileUrl"]').val(),
-                FileType: ($item.find('input[name="FileType"]').attr('data-value') == 'url' ? 2 : 1),
+                FileType: $item.find('input[name="FileType"]').val(),
                 Note: $item.find('input[name="OtherNote"]').val(),
                 Properties: [], // Danh sách thuộc tính sản phẩm
                 NoteIds: [] // Danh sách ID ghi chú
 
             };
-            
+
             // Duyệt qua tất cả các thuộc tính sản phẩm
             $item.find('.product-property').each(function () {
                 const $property = $(this);
@@ -82,7 +91,7 @@
         });
 
         // Gửi dữ liệu đến API
-       // abp.ui.setBusy(); // Hiển thị trạng thái loading
+        // abp.ui.setBusy(); // Hiển thị trạng thái loading
 
         _orderService.createNew(order).done(function () {
             /*_$form[0].reset();*/
@@ -223,24 +232,26 @@
             UpdateDeleteButtonVisibility();
         });
 
+        $item.find('input[name="FileType"]').val(2);
 
-        $item.find('input[name="FileType"]').off('change').on('change', function () {
+        $item.find('.check-file-type').off('change').on('change', function () {
 
             // Get the value of the currently selected radio button
             var selectedFileType = $(this).attr('data-value');
 
-            if (selectedFileType === 'upload') {
+            if (selectedFileType === '1') {
                 // Hiển thị nhóm upload file, ẩn nhóm nhập URL
                 $item.find('.group-upload-file').show();
                 $item.find('.group-file-url').hide();
 
                 InitDropzone($item);
                 //  InitUploadzone($item);
-            } else if (selectedFileType === 'url') {
+            } else if (selectedFileType === '2') {
                 // Hiển thị nhóm nhập URL, ẩn nhóm upload file
                 $item.find('.group-upload-file').hide();
                 $item.find('.group-file-url').show();
             }
+            $item.find('input[name="FileType"]').val(selectedFileType);
         });
 
 
@@ -288,40 +299,40 @@
             console.error('Không tìm thấy phần tử Dropzone.');
             return;
         }
+        if (!dropzone)
+            dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
+                url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds', // URL API để xử lý upload file
+                //  url: abp.appPath + 'FileUpload/UploadSingleFile', // URL API để xử lý upload file
+                paramName: "files",
+                method: "post",
+                maxFiles: 1, // Giới hạn số lượng file
+                maxFilesize: 5, // Giới hạn kích thước file (MB)
+                acceptedFiles: ".jpg,.jpeg,.png,.pdf,.doc,.docx", // Các loại file được chấp nhận
+                addRemoveLinks: true, // Hiển thị nút xóa file
+                dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
+                dictRemoveFile: l('RemoveFile'),
+                headers: {
+                    "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val(),// Token CSRF nếu cần
+                    "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (file, response) {
+                    // Xử lý khi upload thành công
+                    var fileIds = response.result.join(',')
+                    $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
+                    abp.notify.success(l('FileUploadedSuccessfully'));
+                },
+                error: function (file, errorMessage) {
+                    // Xử lý khi upload thất bại
+                    abp.notify.error(l('FailedToUploadFile'));
+                },
+                removedfile: function (file) {
+                    // Xử lý khi xóa file
+                    $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
+                    abp.notify.info(l('FileRemoved'));
+                    file.previewElement.remove();
+                },
 
-        const dropzone = new Dropzone(dzone[0], { // Sử dụng dzone[0] để đảm bảo phần tử DOM hợp lệ
-            url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds', // URL API để xử lý upload file
-            //  url: abp.appPath + 'FileUpload/UploadSingleFile', // URL API để xử lý upload file
-            paramName: "files",
-            method: "post",
-            maxFiles: 1, // Giới hạn số lượng file
-            maxFilesize: 5, // Giới hạn kích thước file (MB)
-            acceptedFiles: ".jpg,.jpeg,.png,.pdf,.doc,.docx", // Các loại file được chấp nhận
-            addRemoveLinks: true, // Hiển thị nút xóa file
-            dictDefaultMessage: l('DragAndDropFilesHereOrClickToUpload'),
-            dictRemoveFile: l('RemoveFile'),
-            headers: {
-                "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val(),// Token CSRF nếu cần
-                "x-xsrf-token": $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (file, response) {
-                // Xử lý khi upload thành công
-                var fileIds = response.result.join(',')
-                $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
-                abp.notify.success(l('FileUploadedSuccessfully'));
-            },
-            error: function (file, errorMessage) {
-                // Xử lý khi upload thất bại
-                abp.notify.error(l('FailedToUploadFile'));
-            },
-            removedfile: function (file) {
-                // Xử lý khi xóa file
-                $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
-                abp.notify.info(l('FileRemoved'));
-                file.previewElement.remove();
-            },
-
-        });
+            });
 
     }
 

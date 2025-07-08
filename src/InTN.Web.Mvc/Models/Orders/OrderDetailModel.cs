@@ -8,7 +8,7 @@ namespace InTN.Web.Models.Orders
     public class OrderDetailModel
     {
         public OrderDto OrderDto { get; set; }
-        public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>();
+        public List<OrderDetailViewDto> OrderDetails { get; set; } = new List<OrderDetailViewDto>();
         public List<OrderAttachmentDto> OrderAttachments { get; set; }
         public List<OrderLogDto> OrderLogs { get; set; }
     }
