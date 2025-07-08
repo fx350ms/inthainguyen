@@ -1,10 +1,13 @@
-﻿using Abp.Localization;
+﻿using Abp.Dependency;
+using Abp.Localization;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Runtime.Security;
+using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.Zero;
 using Abp.Zero.Configuration;
+using InTN.Authorization;
 using InTN.Authorization.Roles;
 using InTN.Authorization.Users;
 using InTN.Configuration;
@@ -40,6 +43,8 @@ public class InTNCoreModule : AbpModule
 
         Configuration.Settings.SettingEncryptionConfiguration.DefaultPassPhrase = InTNConsts.DefaultPassPhrase;
         SimpleStringCipher.DefaultPassPhrase = InTNConsts.DefaultPassPhrase;
+
+        IocManager.Register<IAbpSession, IntnAppSession>(DependencyLifeStyle.Transient);
     }
 
     public override void Initialize()

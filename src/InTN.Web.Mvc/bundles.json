@@ -19,10 +19,10 @@
         "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.toastr.js",
         "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.blockUI.js",
         "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
-        "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js",
-        "wwwroot/js/main.js"
+        "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js"
       ]
     },
+
     {
       "output": "view-resources/Views/_Bundles/shared-layout.min.js",
       "input": [
@@ -59,12 +59,7 @@
         "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
         "node_modules/push.js/bin/push.js",
 
-        "wwwroot/js/abp.dataTable.js",
-       
-
-
-        "wwwroot/js/main.js"
-
+        "wwwroot/js/abp.dataTable.js"
       ]
     },
     {
