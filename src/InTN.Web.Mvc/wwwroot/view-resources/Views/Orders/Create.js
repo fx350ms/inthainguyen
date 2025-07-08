@@ -16,6 +16,7 @@
             return;
         }
 
+
         var order = _$form.serializeFormToObject();
 
         order.CreditLimit = order.CreditLimit.replaceAll('.', '');
@@ -50,10 +51,13 @@
                 Quantity: parseInt(
                     ($item.find('input[name="Quantity"]').val() || '0').replaceAll('.', '')),
                 TotalProductPrice: 0, // Tính ở server
-
+                FileId: $item.find('input[name="FileId"]').val(),
+                FileUrl: $item.find('input[name="FileUrl"]').val(),
+                FileType: ($item.find('input[name="FileType"]').attr('data-value') == 'url' ? 2 : 1),
                 Note: $item.find('input[name="OtherNote"]').val(),
                 Properties: [], // Danh sách thuộc tính sản phẩm
                 NoteIds: [] // Danh sách ID ghi chú
+
             };
             
             // Duyệt qua tất cả các thuộc tính sản phẩm
