@@ -58,11 +58,11 @@
 
                 <div class="" id="modal-create-order">
                     <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
- 
+
                         @Html.AntiForgeryToken()
 
 
-                        <input  type="hidden" name="OrderCode" value="@Model.CreateOrderDto.OrderCode" />
+                        <input type="hidden" name="OrderCode" value="@Model.CreateOrderDto.OrderCode" />
 
                         <div class="card card-primary">
                             <div class="card-header">
@@ -74,11 +74,26 @@
                                     <div class="control-item col-md-3 select-customer-group">
                                         <label>@L("Customer")</label>
                                         <select class="select2 select-customer-id form-control" name="CustomerId" style="width: 100%;"></select>
-                                        <input type="hidden" name="CustomerName"  />
+                                        <input type="hidden" name="CustomerName" />
                                     </div>
                                     <div class="control-item col-md-2">
                                         <label>@L("Phone")</label>
                                         <input type="text" class="form-control" name="CustomerPhone" placeholder="@L("EnterPhone")" required>
+                                    </div>
+                                    <div class="control-item col-md-1">
+                                        <label>@L("Gender")</label>
+                                        <select name="CustomerGender" class="form-control">
+                                            <option value="0"></option>
+                                            <option value="1">@L("Male") </option>
+                                            <option value="2"> @L("Female") </option>
+                                        </select>
+                                    </div>
+                                    <div class="control-item col-md-2">
+                                        <label>@L("CustomerType")</label>
+                                        <select name="CustomerType" class="form-control">
+                                            <option value="@((int) CustomerType.Company)"> @(CustomerType.Company.GetDescription()) </option>
+                                            <option value="@((int) CustomerType.Personal)"> @(CustomerType.Personal.GetDescription()) </option>
+                                        </select>
                                     </div>
                                     <div class="control-item col-md-2">
                                         <label>@L("TotalDebt")</label>
@@ -99,7 +114,7 @@
                                     </div>
                                     <div class="control-item col-md-6">
                                         <label>@L("CustomerAddress")</label>
-                                        <input type="text" class="form-control" name="CustomerAddress" placeholder="@L("EnterAddress")" >
+                                        <input type="text" class="form-control" name="CustomerAddress" placeholder="@L("EnterAddress")">
                                     </div>
                                 </div>
 
@@ -146,20 +161,20 @@
                                         <div class="control-item col-md-2">
                                             <label>@L("Attachment")</label>
                                             <div class="form-group">
-                                               
+
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="FileType" data-value="url" value="url" checked>
+                                                    <input class="form-check-input" type="radio" name="FileType" data-value="url" checked>
                                                     <label class="form-check-label">@L("FileUrl")</label>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="FileType" data-value="upload" value="upload">
+                                                    <input class="form-check-input" type="radio" name="FileType" data-value="upload">
                                                     <label class="form-check-label">@L("UploadFile")</label>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="form-group col-md-10 group-upload-file" style="display: none;">
-                                           @*  <input type="hidden" name="FileId" /> 
+                                            @*  <input type="hidden" name="FileId" /> 
                                             <input type="file" class="form-control file-upload"  /> *@
                                             <div class="dropzone">
                                                 <div class="dz-message">
@@ -169,7 +184,7 @@
                                             <input type="hidden" name="FileId" />
                                         </div>
                                         <div class="form-group col-md-10 group-file-url">
-                                            <input type="text" class="form-control" name="AttachmentUrl1" placeholder="@L("EnterFileUrl")" />
+                                            <input type="text" class="form-control" name="FileUrl" placeholder="@L("EnterFileUrl")" />
                                         </div>
                                     </div>
 

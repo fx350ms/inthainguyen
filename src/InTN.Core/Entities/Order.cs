@@ -31,6 +31,7 @@ namespace InTN.Entities
       
         public DateTime? ExpectedDeliveryDate { get; set; } // Ngày lấy hàng dự kiến
 
+        public bool IsRequireDesign { get; set; } // Checkbox: Yêu cầu design
         public bool IsRequireTestSample { get; set; }       // Checkbox: test mẫu
         public bool IsExportInvoice { get; set; }           // Checkbox: xuất hoá đơn
         public bool IsStoreSample { get; set; }             // Checkbox: lưu mẫu

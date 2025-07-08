@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using System;
+using System.Collections.Generic;
 
 namespace InTN.Orders.Dto
 {
@@ -27,5 +28,24 @@ namespace InTN.Orders.Dto
         public decimal? VatAmount { get; set; } // Tiền thuế VAT
         public decimal? DiscountAmount { get; set; } // Số tiền giảm giá
         public decimal? TotalCustomerPay { get; set; } // Tổng số tiền khách phải trả
+
+
+
+        // Các trường bổ sung từ Entity
+        public int CustomerGender { get; set; } // "Anh" / "Chị"
+        public string CustomerType { get; set; } = string.Empty; // "Khách hàng", "Nội bộ", v.v.
+
+        public bool IsRequireDesign { get; set; } // Checkbox: Yêu cầu design
+        public bool IsRequireTestSample { get; set; } // Checkbox: test mẫu
+        public bool IsExportInvoice { get; set; } // Checkbox: xuất hoá đơn
+        public bool IsStoreSample { get; set; } // Checkbox: lưu mẫu
+        public bool IsReceiveByOthers { get; set; } // Checkbox: người khác nhận
+
+        public string FileIds { get; set; } = string.Empty; // Danh sách ID file đính kèm
+
+        public List<OrderDetailDto> OrderDetails { get; set; } = new(); // Danh sách chi tiết đơn hàng
+
+        public decimal? TotalProductAmount { get; set; } // Tổng số tiền của các sản phẩm
+        public decimal? DeliveryFee { get; set; } // Phí giao hàng
     }
 }

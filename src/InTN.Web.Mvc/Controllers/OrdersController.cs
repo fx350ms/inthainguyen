@@ -27,6 +27,8 @@ namespace InTN.Web.Controllers
         private readonly IProductCategoryAppService _productCategoryAppService;
         private readonly ISupplierAppService _supplierAppService;
         private readonly IBrandAppService _brandAppService;
+        private readonly IOrderDetailAppService _orderDetailAppService;
+
 
         public OrdersController(IOrderAppService orderService,
                     IIdentityCodeAppService identityCodeAppService,
@@ -35,7 +37,8 @@ namespace InTN.Web.Controllers
                     IProductTypeAppService productTypeAppService,
                     IProductCategoryAppService productCategoryAppService,
                     ISupplierAppService supplierAppService,
-                    IBrandAppService brandAppService
+                    IBrandAppService brandAppService,
+                    IOrderDetailAppService orderDetailAppService
 
          )
         {
@@ -47,6 +50,7 @@ namespace InTN.Web.Controllers
             _productCategoryAppService = productCategoryAppService;
             _supplierAppService = supplierAppService;
             _brandAppService = brandAppService;
+            _orderDetailAppService = orderDetailAppService;
 
         }
 
@@ -160,7 +164,9 @@ namespace InTN.Web.Controllers
             {
                 OrderDto = order,
                 OrderLogs = await _orderLogAppService.GetOrderLogsByOrderIdAsync(order.Id),
-                OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id)
+                OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
+                OrderDetails = await _orderDetailAppService.GetOrderDetailsByOrderIdAsync(order.Id)
+
             };
             return View(model);
         }
