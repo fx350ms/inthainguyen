@@ -32,6 +32,7 @@ namespace InTN.Web.Controllers
         private readonly IOrderDetailAppService _orderDetailAppService;
         private readonly IFileUploadAppService _fileAppService;
         private readonly IProcessAppService _processAppService;
+        private readonly IProcessStepAppService _processStepAppService;
 
         public OrdersController(IOrderAppService orderService,
                     IIdentityCodeAppService identityCodeAppService,
@@ -43,7 +44,8 @@ namespace InTN.Web.Controllers
                     IBrandAppService brandAppService,
                     IOrderDetailAppService orderDetailAppService,
                     IFileUploadAppService fileUploadAppService,
-                    IProcessAppService processAppService
+                    IProcessAppService processAppService,
+                    IProcessStepAppService processStepAppService
 
          )
         {
@@ -58,6 +60,7 @@ namespace InTN.Web.Controllers
             _orderDetailAppService = orderDetailAppService;
             _fileAppService = fileUploadAppService;
             _processAppService = processAppService;
+            _processStepAppService = processStepAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -172,7 +175,8 @@ namespace InTN.Web.Controllers
                 OrderDto = order,
                 OrderLogs = await _orderLogAppService.GetOrderLogsByOrderIdAsync(order.Id),
               //  OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
-                OrderDetails = await _orderDetailAppService.GetOrderDetailsViewByOrderIdAsync(order.Id)
+                OrderDetails = await _orderDetailAppService.GetOrderDetailsViewByOrderIdAsync(order.Id),
+                ProcessSteps = await _processStepAppService.GetNextStepsAsync(order.StepId.Value)
             };
             return View(model);
         }

@@ -50,5 +50,7 @@ namespace InTN.Orders.Dto
 
 
         public int? ProcessId { get; set; } // ID của quy trình liên quan đến đơn hàng
+        public int? StepId { get; set; } // ID của bước trong quy trình liên quan đến đơn hàng
+
     }
 }

@@ -5,6 +5,8 @@ using InTN.Entities;
 using Abp.Domain.Repositories;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
+
 
 namespace InTN.Processes
 {
@@ -19,6 +21,21 @@ namespace InTN.Processes
         {
             var steps = await Repository.GetAllListAsync(step => step.ProcessId == processId);
             return ObjectMapper.Map<List<ProcessStepDto>>(steps);
+        }
+
+        public async Task<List<ProcessStepDto>> GetNextStepsAsync(int currentStepId)
+        {
+            var processStep = await Repository.FirstOrDefaultAsync( x => x.Id == currentStepId);
+
+            if (processStep != null)
+            {
+                var nextStepIds = processStep.NextStepIds.Split(",");
+                var nextSteps = await Repository.GetAllListAsync(x => nextStepIds.Contains(x.Id.ToString()));
+                return ObjectMapper.Map<List<ProcessStepDto>>(nextSteps);
+            }
+
+            return new List<ProcessStepDto>();
+          
         }
     }
 }

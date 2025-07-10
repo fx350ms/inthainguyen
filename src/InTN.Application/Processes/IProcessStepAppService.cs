@@ -8,6 +8,7 @@ namespace InTN.Processes
 {
     public interface IProcessStepAppService : IAsyncCrudAppService<ProcessStepDto, int, PagedResultRequestDto, ProcessStepDto, ProcessStepDto>
     {
+        Task<List<ProcessStepDto>> GetNextStepsAsync(int currentStepId);
         Task<List<ProcessStepDto>> GetStepsByProcessIdAsync(int processId);
     }
 }
