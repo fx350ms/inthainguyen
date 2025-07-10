@@ -8,6 +8,7 @@ using InTN.OrderAttachments;
 using InTN.OrderLogs;
 using InTN.Orders;
 using InTN.Orders.Dto;
+using InTN.Processes;
 using InTN.ProductCategories;
 using InTN.ProductTypes;
 using InTN.Suppliers;
@@ -30,7 +31,7 @@ namespace InTN.Web.Controllers
         private readonly IBrandAppService _brandAppService;
         private readonly IOrderDetailAppService _orderDetailAppService;
         private readonly IFileUploadAppService _fileAppService;
-
+        private readonly IProcessAppService _processAppService;
 
         public OrdersController(IOrderAppService orderService,
                     IIdentityCodeAppService identityCodeAppService,
@@ -41,7 +42,8 @@ namespace InTN.Web.Controllers
                     ISupplierAppService supplierAppService,
                     IBrandAppService brandAppService,
                     IOrderDetailAppService orderDetailAppService,
-                    IFileUploadAppService fileUploadAppService
+                    IFileUploadAppService fileUploadAppService,
+                    IProcessAppService processAppService
 
          )
         {
@@ -55,6 +57,7 @@ namespace InTN.Web.Controllers
             _brandAppService = brandAppService;
             _orderDetailAppService = orderDetailAppService;
             _fileAppService = fileUploadAppService;
+            _processAppService = processAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -72,7 +75,8 @@ namespace InTN.Web.Controllers
                 ProductTypes = await _productTypeAppService.GetAllListAsync(),
                 ProductCategories = await _productCategoryAppService.GetAllListAsync(),
                 Suppliers = await _supplierAppService.GetAllListAsync(),
-                Brands = await _brandAppService.GetAllListAsync()
+                Brands = await _brandAppService.GetAllListAsync(),
+                Processes = await _processAppService.GetAllListAsync()
             };
 
             return View(model);

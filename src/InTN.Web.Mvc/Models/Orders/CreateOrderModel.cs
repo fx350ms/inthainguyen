@@ -1,5 +1,6 @@
 ﻿using InTN.Brands.Dto;
 using InTN.Orders.Dto;
+using InTN.Processes.Dto;
 using InTN.ProductCategories.Dto;
 using InTN.ProductTypes.Dto;
 using InTN.Suppliers.Dto;
@@ -14,5 +15,6 @@ namespace InTN.Web.Models.Orders
         public List<SupplierDto> Suppliers { get; set; }
         public List<BrandDto> Brands { get; set; }
         public CreateOrderDto CreateOrderDto { get; set; }
+        public List<ProcessDto> Processes { get; set; }
     }
 }

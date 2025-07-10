@@ -6,7 +6,8 @@ namespace InTN.Processes.Dto
     {
         public int ProcessId { get; set; } // Khóa ngoại liên kết với Process
         public string Name { get; set; } // Tên bước
-        public int RoleId { get; set; } // ID của vai trò thực hiện bước này
-        public int? PreviousStepId { get; set; } // ID của bước trước đó (nếu có)
+        public string RoleIds { get; set; } // Danh sách các role được làm bước này
+        public int OrderStatus { get; set; } // Trạng thái của bước (ví dụ: 0 - Chưa bắt đầu, 1 - Đang thực hiện, 2 - Hoàn thành, 3 - Bị hủy)
+        public string NextStepIds { get; set; } // Danh sách các ID của bước trước nếu có
     }
 }

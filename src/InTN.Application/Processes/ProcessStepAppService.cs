@@ -3,6 +3,8 @@ using InTN.Processes.Dto;
 using Abp.Application.Services.Dto;
 using InTN.Entities;
 using Abp.Domain.Repositories;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace InTN.Processes
 {
@@ -11,6 +13,12 @@ namespace InTN.Processes
         public ProcessStepAppService(IRepository<ProcessStep> repository)
             : base(repository)
         {
+        }
+
+        public async Task<List<ProcessStepDto>> GetStepsByProcessIdAsync(int processId)
+        {
+            var steps = await Repository.GetAllListAsync(step => step.ProcessId == processId);
+            return ObjectMapper.Map<List<ProcessStepDto>>(steps);
         }
     }
 }

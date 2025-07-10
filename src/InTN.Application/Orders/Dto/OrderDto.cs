@@ -47,5 +47,8 @@ namespace InTN.Orders.Dto
 
         public decimal? TotalProductAmount { get; set; } // Tổng số tiền của các sản phẩm
         public decimal? DeliveryFee { get; set; } // Phí giao hàng
+
+
+        public int? ProcessId { get; set; } // ID của quy trình liên quan đến đơn hàng
     }
 }

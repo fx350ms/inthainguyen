@@ -4,6 +4,7 @@
         _productPriceCombinations = abp.services.app.productPriceCombination,
         _productNotes = abp.services.app.productNote,
         _customerService = abp.services.app.customer,
+        _processStepService = abp.services.app.processStep,
         _fileUploadService = abp.services.app.fileUpload,
         l = abp.localization.getSource('InTN'),
         _$modal = $('#modal-create-order'),
@@ -21,12 +22,12 @@
         var order = _$form.serializeFormToObject();
         var customerId = $('.select-customer-id').val();
         var customerName = $('.select-customer-id').text();
+
         if (isNaN(customerId) ) {
             order.NewCustomer = true;
             order.CustomerId = 0;
             order.CustomerName = customerName;
         }
-
 
         order.CreditLimit = order.CreditLimit.replaceAll('.', '');
         order.DeliveryFee = order.DeliveryFee.replaceAll('.', '');
@@ -42,7 +43,8 @@
         order.TotalProductPrice = order.TotalProductPrice.replaceAll('.', '');
         order.VatAmount = order.VatAmount.replaceAll('.', '');
         order.VatRate = order.VatRate.replaceAll('.', '');
-        if (order.NewCustomer) {
+        order.NewCustomer = Boolean(order.NewCustomer);
+        if (order.NewCustomer ) {
             order.CustomerId = 0;
         }
         order.OrderDetails = [];
@@ -102,6 +104,41 @@
         });
     });
 
+    $('.select-process-id').on('change', function () {
+        var processId = $(this).val();
+        var steps = _processStepService.getStepsByProcessId(processId).done(function (data) {
+            var $select = $('.select-step');
+            $select.empty(); // Xóa các tùy chọn hiện tại
+            $select.append($('<option>').val('0').text(l('SelectStatus'))); // Thêm tùy chọn mặc định
+            if (data && data.length > 0) {
+                data.forEach(function (step) {
+                    $select.append(
+                        $('<option>')
+                            .val(step.id)
+                            .text(step.name)
+                            .attr('data-order-status', step.orderStatus) // Bổ sung attribute trạng thái
+                    );
+                });
+            }
+            $select.trigger('change'); // Cập nhật select2 nếu đang sử dụng
+        });
+    });
+
+    $('.select-step').on('change', function () {
+        var status = $(this).find('option:selected').attr('data-order-status');
+        $('[name="Status"]').val(status);
+    });
+
+    $('#select-shipping-method').on('change', function () {
+        var methodId = $(this).val();
+        if (methodId == 2) {
+            $('input[name="DeliveryFee"]').val(0);
+            $('input[name="DeliveryFee"]').prop('readonly', true);
+        }
+        else {
+            $('input[name="DeliveryFee"]').prop('readonly', false);
+        }
+    });
 
     $('.select-customer-id').select2({
         ajax: {
@@ -116,7 +153,7 @@
         },
         tags: true
     }).on('select2:select', function (e) {
-
+      
         var data = e.params.data;
         // Lấy danh sách property tương ứng với sản phẩm
         var customerId = data.id;

@@ -3,7 +3,7 @@
 
 namespace InTN.Processes.Dto
 {
-    public class ProcessDto : FullAuditedEntityDto<int>
+    public class ProcessDto : EntityDto<int>
     {
         public string Name { get; set; } // Tên quy trình
         public string Description { get; set; } // Mô tả quy trình
