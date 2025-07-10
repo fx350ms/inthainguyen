@@ -279,7 +279,7 @@ public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUser
     }
 
 
-    public async Task<List<UserIdentifier>> GetAllListUserIdentifierByRoleIdsAsync(List<int> roleIds )
+    public async Task<List<UserIdentifier>> GetAllListUserIdentifierByRoleIdsAsync(List<int> roleIds)
     {
         if (roleIds == null || !roleIds.Any())
         {

@@ -294,7 +294,6 @@ namespace InTN.Orders
 
                 throw;
             }
-
         }
 
 
@@ -352,7 +351,6 @@ namespace InTN.Orders
 
             }
         }
-
 
         /// <summary>
         /// Thực hiện duyệt mẫu thiết kế

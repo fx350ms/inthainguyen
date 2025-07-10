@@ -109,6 +109,12 @@
         "wwwroot/css/style.css",
         "wwwroot/view-resources/Views/Shared/_Layout.css"
       ]
+    },
+    {
+      "output": "wwwroot/view-resources/Views/Orders/Index.min.js",
+      "input": [
+        "wwwroot/view-resources/Views/Orders/Index.js"
+      ]
     }
   ],
   "scriptMappings": [

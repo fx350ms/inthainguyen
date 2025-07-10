@@ -13,5 +13,6 @@ namespace InTN.Web.Models.Orders
         public List<OrderAttachmentDto> OrderAttachments { get; set; }
         public List<OrderLogDto> OrderLogs { get; set; }
         public List<ProcessStepDto> ProcessSteps { get; set; } = new List<ProcessStepDto>();
+        public string ProcessName { get; set; } = string.Empty; // Tên quy trình liên quan đến đơn hàng
     }
 }

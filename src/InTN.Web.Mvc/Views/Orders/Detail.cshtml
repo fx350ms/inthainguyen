@@ -37,6 +37,16 @@
     </style>
 }
 
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Detail.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Detail.min.js" asp-append-version="true"></script>
+    </environment>
+}
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
@@ -176,11 +186,11 @@
                                         <div class="row">
                                             <div class="col-6 control-item">
                                                 <label>@L("Process")</label>
-                                            @*     <p>@(((Process)Model.OrderDto.ProcessId)?.GetDescription() ?? @L("NoProcessAvailable"))</p> *@
+                                                <p>@Model.ProcessName</p>
                                             </div>
                                             <div class="col-3 control-item">
                                                 <label>@L("OrderStatus")</label>
-                                               @*  <p>@(((OrderStatus)Model.OrderDto.Status)?.GetDescription() ?? @L("NoStatusAvailable"))</p> *@
+                                                <p>@(((OrderStatus)Model.OrderDto.Status).GetDescription() ?? @L("NoStatusAvailable"))</p>
                                             </div>
                                             <div class="col-3 control-item">
                                                 <label>@L("ExpectedDeliveryDate")</label>
@@ -221,11 +231,6 @@
                                                 <p>@Model.OrderDto.TotalProductAmount?.ToString("N0") VNĐ</p>
                                             </div>
 
-                                            <!-- Tổng tiền đặt cọc -->
-                                            <div class="col-12 control-item ">
-                                                <label>@L("TotalDeposit") (B)</label>
-                                                <p>@Model.OrderDto.TotalDeposit?.ToString("N0") VNĐ</p>
-                                            </div>
 
                                             <!-- Thuế VAT -->
                                             <div class="col-6 control-item ">
@@ -235,7 +240,7 @@
 
                                             <!-- Tiền thuế VAT -->
                                             <div class="col-6 control-item ">
-                                                <label>@L("VATAmount") (C)</label>
+                                                <label>@L("VATAmount") (B)</label>
                                                 <p>@Model.OrderDto.VatAmount?.ToString("N0") VNĐ</p>
                                             </div>
 
@@ -245,25 +250,31 @@
                                                 <p>@(((ShippingMethod)Model.OrderDto.DeliveryMethod).GetDescription() ?? @L("NoShippingMethodAvailable"))</p>
                                             </div>
                                             <div class="col-6 control-item">
-                                                <label>@L("DeliveryFee") (D)</label>
+                                                <label>@L("DeliveryFee") (C)</label>
                                                 <p>@Model.OrderDto.DeliveryFee?.ToString("N0") VNĐ</p>
                                             </div>
 
                                             <!-- Tổng tiền chiết khấu/giảm giá -->
                                             <div class="col-12 control-item">
-                                                <label>@L("DiscountAmount") (E)</label>
+                                                <label>@L("DiscountAmount") (D)</label>
                                                 <p>@Model.OrderDto.DiscountAmount?.ToString("N0") VNĐ</p>
                                             </div>
 
                                             <!-- Tổng tiền đơn hàng -->
                                             <div class="col-12 control-item">
-                                                <label>@L("TotalAmount") (F)</label>
+                                                <label>@L("TotalAmount") (E)=(A+B+C-D)</label>
                                                 <p>@Model.OrderDto.TotalAmount?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Tổng tiền đặt cọc -->
+                                            <div class="col-12 control-item ">
+                                                <label>@L("TotalDeposit") (F)</label>
+                                                <p>@Model.OrderDto.TotalDeposit?.ToString("N0") VNĐ</p>
                                             </div>
 
                                             <!-- Tổng số tiền khách phải trả -->
                                             <div class="col-12 control-item">
-                                                <label>@L("TotalCustomerPay"): (A+C+D+F-E-B)</label>
+                                                <label>@L("TotalCustomerPay") G=(E-F)</label>
                                                 <p class="text-primary" style="font-size:larger;">@Model.OrderDto.TotalCustomerPay?.ToString("N0") VNĐ</p>
                                             </div>
                                         </div>
@@ -277,20 +288,26 @@
                                 <a type="button" href="@Url.Action("Index", "Orders")" class="btn btn-default close-button" data-dismiss="modal">@L("BackToList")</a>
                             </div>
                             <div>
-                                @if (Model.ProcessSteps != null && Model.ProcessSteps.Count > 0)
-                                {
-                                    <div class="btn-group">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
+                                    @if (Model.OrderDto.Status == (int)OrderStatus.New)
+                                    {
+                                        <button type="button" class="btn btn-info edit-button btn-change-status" data-toggle="tooltip">@L("Edit")</button>
+                                        <button type="button" class="btn btn-danger delete-button btn-change-status" data-toggle="tooltip">@L("Delete")</button>
+                                    }
+
+                                    @if (Model.ProcessSteps != null && Model.ProcessSteps.Count > 0)
+                                    {
                                         <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
                                         @foreach (var step in Model.ProcessSteps)
                                         {
-                                            <button type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Name">@step.Name</button>
+                                            <a href="@Url.Action("Process", "Orders", new {id = Model.OrderDto.Id, nextStepId = step.Id})" type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Name">@step.Name</a>
                                         }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span>@L("NoProcessSteps")</span>
-                                }
+                                    }
+                                    else
+                                    {
+                                    }
+                                </div>
                             </div>
                         </div>
 

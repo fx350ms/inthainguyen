@@ -8,6 +8,7 @@
         _$table = $('#OrdersTable');
      
     const orderStatusDescriptions = {
+        0: { text: 'Mới', color: '#0088FF' }, // Blue
         1: { text: 'Tiếp nhận yêu cầu', color: '#0000FF' }, // Blue
         2: { text: 'Đã báo giá', color: '#800080' }, // Purple
         3: { text: 'Đã xác nhận đơn', color: '#008000' }, // Green
@@ -124,6 +125,7 @@
                 }
 
             },
+
             {
                 targets: 9,
                 width: 120,

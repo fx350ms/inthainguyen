@@ -11,9 +11,11 @@ using InTN.Orders.Dto;
 using InTN.Processes;
 using InTN.ProductCategories;
 using InTN.ProductTypes;
+using InTN.Roles;
 using InTN.Suppliers;
 using InTN.Web.Models.Orders;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace InTN.Web.Controllers
@@ -33,6 +35,8 @@ namespace InTN.Web.Controllers
         private readonly IFileUploadAppService _fileAppService;
         private readonly IProcessAppService _processAppService;
         private readonly IProcessStepAppService _processStepAppService;
+        private readonly IRoleAppService _roleAppService;
+
 
         public OrdersController(IOrderAppService orderService,
                     IIdentityCodeAppService identityCodeAppService,
@@ -45,7 +49,8 @@ namespace InTN.Web.Controllers
                     IOrderDetailAppService orderDetailAppService,
                     IFileUploadAppService fileUploadAppService,
                     IProcessAppService processAppService,
-                    IProcessStepAppService processStepAppService
+                    IProcessStepAppService processStepAppService,
+                    IRoleAppService roleAppService
 
          )
         {
@@ -61,6 +66,7 @@ namespace InTN.Web.Controllers
             _fileAppService = fileUploadAppService;
             _processAppService = processAppService;
             _processStepAppService = processStepAppService;
+            _roleAppService = roleAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -85,13 +91,10 @@ namespace InTN.Web.Controllers
             return View(model);
         }
 
-
         public async Task<IActionResult> CreateItemDetail()
         {
             return PartialView("_Create.ProductItem");
         }
-
-
 
         public async Task<IActionResult> CreateQuotation(int id)
         {
@@ -109,8 +112,6 @@ namespace InTN.Web.Controllers
             return View(model);
         }
 
-
-
         public async Task<IActionResult> CreateDesign(int id)
         {
             var order = await _orderAppService.GetAsync(new EntityDto(id));
@@ -125,7 +126,6 @@ namespace InTN.Web.Controllers
             };
             return View(model);
         }
-
 
         public async Task<IActionResult> CreateDeposit(int id)
         {
@@ -142,7 +142,6 @@ namespace InTN.Web.Controllers
             };
             return View(model);
         }
-
 
         public async Task<IActionResult> Payment(int id)
         {
@@ -166,21 +165,23 @@ namespace InTN.Web.Controllers
         public async Task<IActionResult> Detail(int id)
         {
             var order = await _orderAppService.GetAsync(new EntityDto(id));
+
             if (order == null)
             {
                 return NotFound();
             }
+
             var model = new OrderDetailModel()
             {
                 OrderDto = order,
                 OrderLogs = await _orderLogAppService.GetOrderLogsByOrderIdAsync(order.Id),
-              //  OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
+                //  OrderAttachments = await _orderAttachmentAppService.GetAttachmentsByOrderIdAsync(order.Id),
                 OrderDetails = await _orderDetailAppService.GetOrderDetailsViewByOrderIdAsync(order.Id),
-                ProcessSteps = await _processStepAppService.GetNextStepsAsync(order.StepId.Value)
+                ProcessSteps = await _processStepAppService.GetNextStepsAsync(order.StepId.Value),
+                ProcessName = (await _processAppService.GetAsync(new EntityDto<int>(order.ProcessId.Value))).Name
             };
             return View(model);
         }
-
 
         public async Task<IActionResult> DownloadAttachment(int fileId, string fileName)
         {
@@ -193,5 +194,91 @@ namespace InTN.Web.Controllers
             return File(file.FileContent, "application/octet-stream", fileName);
         }
 
+
+        public async Task<IActionResult> Process(int id, int nextStepId)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            // Get current step by order 
+            var currentStep = await _processStepAppService.GetAsync(new EntityDto<int>(order.StepId.Value));
+            if (currentStep == null)
+            {
+                return NotFound();
+            }
+
+            // Check if the next step is valid based on the current step
+            if (!currentStep.NextStepIds.Contains(nextStepId.ToString()))
+            {
+                ModelState.AddModelError("", "Bước tiếp theo không hợp lệ.");
+                return RedirectToAction("Detail", new { id = id });
+            }
+
+
+            // Check if the next step is valid
+            var nextStep = await _processStepAppService.GetAsync(new EntityDto<int>(nextStepId));
+            if (nextStep == null)
+            {
+                return NotFound();
+            }
+            // check current user has role for next step
+            if (nextStep.RoleIds != "*")
+            {
+                var userRoleIds = await _roleAppService.GetRoleIdsByUserIdAsync(AbpSession.UserId.Value);
+                var nextStepRoleIds = nextStep.RoleIds.Split(',').Select(int.Parse).ToList();
+                if (!nextStepRoleIds.Any(roleId => userRoleIds.Contains(roleId)))
+                {
+                    ModelState.AddModelError("", "Bạn không có quyền thực hiện bước này.");
+                    return RedirectToAction("Detail", new { id = id });
+                }
+            }
+            // Update order step
+            // _orderAppService.UpdateStatusToDepositedAsync
+            switch ((OrderStatus)nextStep.OrderStatus)
+            {
+                case OrderStatus.New:
+                case OrderStatus.ReceivedRequest:
+                    // Update trạng thái 
+                    break;
+                case OrderStatus.Quoted:
+                    return RedirectToAction("CreateQuotation", new { id = id });
+                    break;
+                case OrderStatus.OrderConfirmed:
+                   // Update trạng thái xác nhận đơn hàng
+                    break;
+                case OrderStatus.Designing:
+                    return RedirectToAction("CreateDesign", new { id = id });
+                    break;
+                case OrderStatus.AwaitingSampleApproval:
+                    break;
+                case OrderStatus.DesignApproved:
+                    break;
+                case OrderStatus.Deposited:
+                    return RedirectToAction("CreateDeposit", new { id = id });
+                    break;
+                case OrderStatus.PrintingTest:
+                    break;
+                case OrderStatus.PrintingTestConfirmed:
+                    break;
+                case OrderStatus.Printing:
+                    break;
+                case OrderStatus.Processing:
+                    break;
+                case OrderStatus.QcChecked:
+                    break;
+                case OrderStatus.Delivering:
+                    break;
+                case OrderStatus.Completed:
+                    break;
+                default:
+                    break;
+            }
+
+
+            return RedirectToAction("Detail", new { id = id });
+        }
     }
 }
