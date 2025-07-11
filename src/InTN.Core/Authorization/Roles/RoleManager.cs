@@ -39,4 +39,5 @@ public class RoleManager : AbpRoleManager<Role, User>
             organizationUnitRoleRepository)
     {
     }
+
 }

@@ -1,6 +1,8 @@
 ﻿using Abp.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InTN.Entities
 {
@@ -8,11 +10,11 @@ namespace InTN.Entities
     {
         public int ProcessId { get; set; } // Khóa ngoại liên kết với Process
         public string Name { get; set; } // Tên bước
-        public int RoleId { get; set; } // ID của vai trò thực hiện bước này
-        public Process Process { get; set; } // Điều hướng ngược về Process
-        public int? PreviousStepId { get; set; } // ID của bước trước đó (nếu có)
-        public ProcessStep PreviousStep { get; set; } // Điều hướng đến bước trước đó
-
-       
+        public string Action { get; set; } // Hành động thực hiện trong bước này (ví dụ: "Xem", "Duyệt", "Phê duyệt", "Từ chối", v.v.)
+        public string RoleIds { get; set; } // Danh sách các role được làm bước này
+        public int OrderStatus { get; set; } // Trạng thái của bước (ví dụ: 0 - Chưa bắt đầu, 1 - Đang thực hiện, 2 - Hoàn thành, 3 - Bị hủy)
+        public string NextStepIds { get; set; } // Danh sách các ID của bước trước nếu có
+        [ForeignKey("ProcessId")]
+        public virtual Process Process { get; set; } // Liên kết với Process
     }
 }

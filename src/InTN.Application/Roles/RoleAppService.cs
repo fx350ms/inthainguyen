@@ -144,5 +144,19 @@ public class RoleAppService : AsyncCrudAppService<Role, RoleDto, int, PagedRoleR
             GrantedPermissionNames = grantedPermissions.Select(p => p.Name).ToList()
         };
     }
+
+    public async Task<List<int>> GetRoleIdsByUserIdAsync(long userId)
+    {
+        var user = await _userManager.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            return new List<int>();
+        }
+        var roles = await _userManager.GetRolesAsync(user);
+        return await _roleManager.Roles
+            .Where(r => roles.Contains(r.Name))
+            .Select(r => r.Id)
+            .ToListAsync();
+    }
 }
 

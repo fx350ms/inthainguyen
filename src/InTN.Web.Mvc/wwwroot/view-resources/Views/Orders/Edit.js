@@ -50,26 +50,7 @@
         }).always(function () {
         });
     });
-  
-
-    //$('select[name="WaybillNumber"').select2({
-    //    ajax: {
-    //        delay: 500,
-    //        url: abp.appPath + 'api/services/app/Waybill/getUnmatchedWaybillCodes',
-    //        data: function (params) {
-    //            return {
-    //                keyword: params.term, // search term
-    //            };
-    //        },
-    //        processResults: function (data) {
-    //            return {
-    //                results: data.result.map(function (item) {
-    //                    return { id: item, text: item };
-    //                })
-    //            };
-    //        }
-    //    }
-    //}).addClass('form-control');
+   
 
     $('select[name="CustomerId"').select2({
         ajax: {

@@ -4,6 +4,7 @@ using InTN.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InTN.Migrations
 {
     [DbContext(typeof(InTNDbContext))]
-    partial class InTNDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250710054311_order-shipping-method")]
+    partial class ordershippingmethod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1864,9 +1867,6 @@ namespace InTN.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("StepId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
@@ -1898,8 +1898,8 @@ namespace InTN.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("FileId")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("FileContent")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("FileName")
                         .HasColumnType("nvarchar(max)");
@@ -2100,16 +2100,13 @@ namespace InTN.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Action")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NextStepIds")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreviousStepId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProcessId")
@@ -2119,8 +2116,6 @@ namespace InTN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProcessId");
 
                     b.ToTable("ProcessSteps");
                 });
@@ -2678,17 +2673,6 @@ namespace InTN.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("InTN.Entities.ProcessStep", b =>
-                {
-                    b.HasOne("InTN.Entities.Process", "Process")
-                        .WithMany("Steps")
-                        .HasForeignKey("ProcessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Process");
-                });
-
             modelBuilder.Entity("InTN.Entities.Product", b =>
                 {
                     b.HasOne("InTN.Entities.Brand", "Brand")
@@ -2817,11 +2801,6 @@ namespace InTN.Migrations
             modelBuilder.Entity("InTN.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
-                });
-
-            modelBuilder.Entity("InTN.Entities.Process", b =>
-                {
-                    b.Navigation("Steps");
                 });
 #pragma warning restore 612, 618
         }

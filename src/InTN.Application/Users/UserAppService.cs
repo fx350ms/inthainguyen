@@ -1,4 +1,5 @@
-﻿using Abp.Application.Services;
+﻿using Abp;
+using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Entities;
@@ -244,6 +245,59 @@ public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUser
         }
 
         return true;
+    }
+
+    public async Task<List<User>> GetByRoleIds(List<long> roleIds)
+    {
+        if (roleIds == null || !roleIds.Any())
+        {
+            return new List<User>();
+        }
+        var users = await Repository.GetAllIncluding(x => x.Roles)
+            .Where(x => x.Roles.Any(r => roleIds.Contains(r.RoleId)))
+            .Distinct()
+            .ToListAsync();
+        return users;
+    }
+
+
+
+    //public async Task<List<User>> GetAllListAsync()
+    //{
+    //    var data = await Repository.GetAllListAsync();
+    //    var result = ObjectMapper.Map<List<ProductNote>>(data);
+    //    return result;
+    //}
+
+    //public async Task<List<User>> GetList(List<long> roleIds)
+
+
+    public async Task<List<UserIdentifier>> GetAllListUserIdentifierAsync()
+    {
+        var users = await Repository.GetAllListAsync();
+        return users.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
+    }
+
+
+    public async Task<List<UserIdentifier>> GetAllListUserIdentifierByRoleIdsAsync(List<int> roleIds)
+    {
+        if (roleIds == null || !roleIds.Any())
+        {
+            return new List<UserIdentifier>();
+        }
+        var users = await Repository.GetAllIncluding(x => x.Roles)
+            .Where(x => x.Roles.Any(r => roleIds.Contains(r.RoleId)))
+            .Distinct()
+            .ToListAsync();
+        return users.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
+    }
+
+
+    public async Task<List<UserIdentifier>> GetUsersByRoleIdsAsync(string roleIds)
+    {
+        var role = await _roleManager.FindByIdAsync(roleIds);
+        var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+        return usersInRole.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
     }
 }
 

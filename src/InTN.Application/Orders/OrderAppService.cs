@@ -18,10 +18,9 @@ using Newtonsoft.Json;
 using Abp.Notifications;
 using InTN.Authorization.Roles;
 using InTN.Authorization.Users;
-using Microsoft.AspNetCore.Identity;
 using Abp;
-using Abp.Runtime.Session;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using InTN.Processes;
+using InTN.Users;
 using Microsoft.AspNetCore.Http;
 
 
@@ -35,10 +34,14 @@ namespace InTN.Orders
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerBalanceHistory> _customerBalanceHistoryRepository;
         private readonly IRepository<OrderDetail> _orderDetailRepository;
+        private readonly IRepository<Process> _processRepository;
+        private readonly IRepository<ProcessStep> _processStepRepository;
+        private readonly IRepository<FileUpload> _fileUploadRepository;
 
         private readonly IIdentityCodeAppService _identityCodeAppService;
-
         private readonly INotificationPublisher _notificationPublisher;
+        private readonly IUserAppService _userAppService;
+
 
         private readonly RoleManager _roleManager;
         private readonly UserManager _userManager;
@@ -52,11 +55,16 @@ namespace InTN.Orders
             IRepository<Customer> customerRepository,
             IRepository<CustomerBalanceHistory> customerBalanceHistoryRepository,
             IRepository<OrderDetail> orderDetailRepository,
+            IRepository<Process> processRepository,
+            IRepository<ProcessStep> processStepRepository,
+            IRepository<FileUpload> fileUploadRepository,
+
             IIdentityCodeAppService identityCodeRepository,
-             INotificationPublisher notificationPublisher,
-             RoleManager roleManager,
-             UserManager userManager,
-                IntnAppSession intnAppSession
+            INotificationPublisher notificationPublisher,
+            IUserAppService userAppService,
+            RoleManager roleManager,
+            UserManager userManager,
+            IntnAppSession intnAppSession
 
             )
             : base(repository)
@@ -69,6 +77,13 @@ namespace InTN.Orders
             _identityCodeAppService = identityCodeRepository;
             _orderDetailRepository = orderDetailRepository;
             _notificationPublisher = notificationPublisher;
+            _processRepository = processRepository;
+            _processStepRepository = processStepRepository;
+            _fileUploadRepository = fileUploadRepository;
+
+            _userAppService = userAppService;
+            _roleManager = roleManager;
+
             _userManager = userManager;
             _roleManager = roleManager;
             _intnAppSession = intnAppSession;
@@ -105,10 +120,8 @@ namespace InTN.Orders
                 throw new ArgumentException("Customer phone cannot be null or empty", nameof(input.CustomerPhone));
             }
 
-
             if (input.NewCustomer)
             {
-              
                 // Tạo khách hàng mới
                 var newCustomer = new Customer
                 {
@@ -130,7 +143,7 @@ namespace InTN.Orders
             }
 
             input.OrderDate = DateTime.Now; // Set the current date and time as the order date
-            input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
+        //    input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
 
             try
@@ -167,7 +180,12 @@ namespace InTN.Orders
                     VatAmount = input.VatAmount,
                     DiscountAmount = input.DiscountAmount,
                     TotalAmount = input.TotalAmount,
-                    TotalCustomerPay = input.TotalCustomerPay
+                    TotalCustomerPay = input.TotalCustomerPay,
+                    StepId = input.StepId,
+                    ProcessId = input.ProcessId,
+                    ShippingMethod = input.ShippingMethod,
+                    
+
                 };
 
                 var orderId = await Repository.InsertAndGetIdAsync(order);
@@ -214,28 +232,65 @@ namespace InTN.Orders
                     NewValue = order.ToJsonString(),
                 });
 
+                // Lấy quy trình liên quan đến đơn hàng
+                // Lấy ra bước tiếp theo trong quy trình
+                // Lấy ra danh sách người nhận của bước tiếp theo (trong bước có roleIds -> lấy user theo roleIds)
+                var processStep = _processStepRepository.Get(order.StepId.Value);
 
-                var designUsers = await GetUsersInDesignRoleAsync("Thietke");
+                if (processStep != null)
+                {
+                    var nextStepIds = processStep.NextStepIds.Split(",");
+                    var nextSteps = await _processStepRepository.GetAllListAsync(x => nextStepIds.Contains(x.Id.ToString()));
+                    bool noticeToAll = false;
+                    var roleIds = new List<int>();
+                    if (nextSteps.Any())
+                    {
+                        // lấy ra danh sách cách roleIds theo nextStep
 
-                // Gửi notification
-                var data = new NotificationData();
-                data["OrderId"] = order.Id;
-                data["OrderCode"] = order.OrderCode;
-                data["CreatorName"] = _intnAppSession.UserName; // hoặc từ _userManager
-                data["Message"] = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}";
+                        foreach (var step in nextSteps)
+                        {
+                            if (!string.IsNullOrEmpty(step.RoleIds))
+                            {
+                                if (step.RoleIds == "*")
+                                {
+                                    noticeToAll = true; // Thông báo cho tất cả người dùng
+                                    break; // Không cần kiểm tra thêm
+                                }
+                                else
+                                {
+                                    var stepRoleIds = step.RoleIds.Split(',').Select(int.Parse).ToList();
+                                    roleIds.AddRange(stepRoleIds);
+                                }
+                            }
+                        }
+                    }
 
-                //{
-                //    OrderId = order.Id,
-                //    OrderCode = order.OrderCode,
-                //    CreatorName = _intnAppSession.UserName, // hoặc từ _userManager
-                //    Message = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}"
-                //};
+                    List<UserIdentifier> usersReceiptNotify = new List<UserIdentifier>();
 
-                await _notificationPublisher.PublishAsync(
-                    "Order.Created",
-                    data,
-                    userIds: designUsers.ToArray()
-                );
+                    if (noticeToAll)
+                    {
+                        // Lấy toàn bộ danh sách user
+                        usersReceiptNotify = await _userAppService.GetAllListUserIdentifierAsync();
+                    }
+                    else
+                    {
+                        usersReceiptNotify = await _userAppService.GetAllListUserIdentifierByRoleIdsAsync(roleIds);
+                    }
+
+
+                    // Gửi notification
+                    var data = new NotificationData();
+                    data["OrderId"] = order.Id;
+                    data["OrderCode"] = order.OrderCode;
+                    data["CreatorName"] = _intnAppSession.UserName; // hoặc từ _userManager
+                    data["Message"] = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}";
+
+                    await _notificationPublisher.PublishAsync(
+                        "Order.Created",
+                        data,
+                        userIds: usersReceiptNotify.ToArray()
+                    );
+                }
 
                 return order;
             }
@@ -244,10 +299,7 @@ namespace InTN.Orders
 
                 throw;
             }
-
         }
-
-
 
         [HttpPut]
         public async Task CreateQuotationAsync([FromForm] OrderQuotationUploadDto input)
@@ -282,7 +334,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                               // FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.Invoice,    // Loại file (image/jpeg, image/png)
                             };
@@ -302,7 +354,6 @@ namespace InTN.Orders
 
             }
         }
-
 
         /// <summary>
         /// Thực hiện duyệt mẫu thiết kế
@@ -339,7 +390,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                //FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                             };
@@ -400,7 +451,7 @@ namespace InTN.Orders
                             OrderId = input.OrderId,
                             FileName = file.FileName,
                             FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                            FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                          //  FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                             FileSize = file.Length,
                             Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                         };
@@ -658,7 +709,29 @@ namespace InTN.Orders
 
         }
 
+        public async Task UpdateOrderStatusAsync(int id, int nextStepId,  int status)
+        {
+            // Retrieve the order by ID
+            var order = await Repository.GetAsync(id);
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with ID {id} not found", nameof(id));
+            }
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "UpdateStatus",
+                OldValue = order.ToJsonString()
 
+            };
+            // Update the status to the specified status
+            order.Status = status;
+            order.StepId = nextStepId;
+            // Save the changes
+            await Repository.UpdateAsync(order);
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
+        }
 
         /// <summary>
         /// Thực hiện thanh toán đơn hàng
@@ -696,7 +769,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = fileContent, // Dữ liệu nhị phân của hình ảnh
+                                //FileContent = fileContent, // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                             };
@@ -790,11 +863,5 @@ namespace InTN.Orders
 
 
 
-        private async Task<List<UserIdentifier>> GetUsersInDesignRoleAsync(string roleName)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
-            return usersInRole.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
-        }
     }
 }

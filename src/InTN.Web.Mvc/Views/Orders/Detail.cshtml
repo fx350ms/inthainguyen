@@ -30,14 +30,28 @@
         .control-item {
             margin-bottom: 20px;
         }
+
+        .btn-change-status {
+            margin-right: 10px;
+        }
     </style>
 }
 
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Detail.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Detail.min.js" asp-append-version="true"></script>
+    </environment>
+}
 <section class="content-header">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h1>@L("OrderDetails")</h1>
+                <h1>@L("OrderDetails"): <span class="text-primary">@Model.OrderDto.OrderCode </span> - <span class="text-info">@(((OrderStatus)Model.OrderDto.Status).GetDescription() ?? @L("NoStatusAvailable"))</span></h1>
             </div>
         </div>
     </div>
@@ -47,21 +61,24 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">@L("CustomerInformation")</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="control-item col-md-2">
-                                <label>@L("CustomerName")</label>
-                                <p>@Model.OrderDto.CustomerName</p>
+                <div class="" id="modal-order-detail">
+                    <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("CustomerInformation")</h3>
                             </div>
-                            <div class="control-item col-md-2">
-                                <label>@L("Phone")</label>
-                                <p>@Model.OrderDto.CustomerPhone</p>
-                            </div>
-                            @*    <div class="control-item col-md-2">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="control-item col-md-2">
+                                        <label>@L("CustomerName")</label>
+                                        <p>@Model.OrderDto.CustomerName</p>
+                                    </div>
+                                    <div class="control-item col-md-2">
+                                        <label>@L("Phone")</label>
+                                        <p>@Model.OrderDto.CustomerPhone</p>
+                                    </div>
+                                    @*    <div class="control-item col-md-2">
                                 <label>@L("TotalDebt")</label>
                                 <p>@Model.OrderDto.CustomerTotalDebt?.ToString("N0") VNĐ</p>
                             </div>
@@ -69,154 +86,234 @@
                                 <label>@L("CreditLimit")</label>
                                 <p>@Model.OrderDto.CreditLimit?.ToString("N0") VNĐ</p>
                             </div> *@
-                            <div class="control-item col-md-6">
-                                <label>@L("CustomerAddress")</label>
-                                <p>@Model.OrderDto.CustomerAddress</p>
+                                    <div class="control-item col-md-6">
+                                        <label>@L("CustomerAddress")</label>
+                                        <p>@Model.OrderDto.CustomerAddress</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Thông tin chi tiết đơn hàng -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">@L("OrderDetails")</h3>
-                    </div>
-                    <div class="card-body">
-                        @if (Model.OrderDetails != null && Model.OrderDetails.Count > 0)
-                        {
-                            @foreach (var detail in Model.OrderDetails)
-                            {
-                                <div class="row order-item">
-                                    <div class="col-12 row">
-                                        <div class="control-item col-md-4">
-                                            <label>@L("ServiceProductName")</label>
-                                            <p>@detail.ProductName</p>
+                        <!-- Thông tin chi tiết đơn hàng -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("OrderDetails")</h3>
+                            </div>
+                            <div class="card-body">
+                                @if (Model.OrderDetails != null && Model.OrderDetails.Count > 0)
+                                {
+                                    @foreach (var detail in Model.OrderDetails)
+                                    {
+                                        <div class="row order-item">
+                                            <div class="col-12 row">
+                                                <div class="control-item col-md-4">
+                                                    <label>@L("ServiceProductName")</label>
+                                                    <p>@detail.ProductName</p>
+                                                </div>
+                                                <div class="property-list col-8 row">
+                                                    @if (!string.IsNullOrEmpty(detail.Properties))
+                                                    {
+                                                        var properties = JsonConvert.DeserializeObject<List<PropertyWithSelectedValueDto>>(detail.Properties);
+                                                        foreach (var property in properties)
+                                                        {
+                                                            <div class="control-item col-md-4">
+                                                                <label>@property.PropertyName</label>
+                                                                <p>@property.Value</p>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                                <div class="control-item col-md-2">
+                                                    <label>@L("Price")</label>
+                                                    <p>@detail.UnitPrice.ToString("N0") VNĐ</p>
+                                                </div>
+                                                <div class="control-item col-md-2">
+                                                    <label>@L("Quantity")</label>
+                                                    <p>@detail.Quantity</p>
+                                                </div>
+                                                <div class="control-item col-md-2">
+                                                    <label>@L("TotalProductPrice")</label>
+                                                    <p>@detail.TotalProductPrice.ToString("N0") VNĐ</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Đính kèm -->
+                                            <div class="col-12 row">
+                                                <div class="control-item col-md-2">
+                                                    <label>@L("Attachment")</label>
+                                                    @if (detail.FileType == (int)FileType.Upload)
+                                                    {
+                                                        <p><a href="@Url.Action("DownloadAttachment", "Orders", new { fileId = detail.FileId, fileName = detail.File.FileName })" target="_blank">@L("DownloadFile")</a></p>
+                                                        @if (!string.IsNullOrEmpty(detail.File.FileName) && (detail.File.FileName.EndsWith(".jpg") || detail.File.FileName.EndsWith(".jpeg") || detail.File.FileName.EndsWith(".png")))
+                                                        {
+                                                            <p>
+                                                                <img src="@(detail.File?.FileContent != null ? $"data:image/png;base64,{Convert.ToBase64String(detail.File.FileContent)}" : "")" alt="@L("AttachmentImage")" style="max-width: 100px; max-height: 100px;" />
+                                                            </p>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <p><a href="@detail.FileUrl" target="_blank">@detail.FileUrl</a></p>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <!-- Ghi chú -->
+                                            <div class="col-12 row note-list">
+                                                <div class="col-md-4">
+                                                    <label>@L("OtherNote")</label>
+                                                    <p>@detail.Note</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="property-list col-8 row">
-                                            @if (!string.IsNullOrEmpty(detail.Properties))
-                                            {
-                                                var properties = JsonConvert.DeserializeObject<List<PropertyWithSelectedValueDto>>(detail.Properties);
-                                                foreach (var property in properties)
-                                                {
-                                                    <div class="control-item col-md-4">
-                                                        <label>@property.PropertyName</label>
-                                                        <p>@property.Value</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>@L("NoOrderDetails")</p>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Tổng kết thông tin về chi phí đơn hàng -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("OrderSummary")</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="row">
+                                            <div class="col-6 control-item">
+                                                <label>@L("Process")</label>
+                                                <p>@Model.ProcessName</p>
+                                            </div>
+                                            <div class="col-3 control-item">
+                                                <label>@L("OrderStatus")</label>
+                                                <p>@(((OrderStatus)Model.OrderDto.Status).GetDescription() ?? @L("NoStatusAvailable"))</p>
+                                            </div>
+                                            <div class="col-3 control-item">
+                                                <label>@L("ExpectedDeliveryDate")</label>
+                                                <p>@Model.OrderDto.ExpectedDeliveryDate?.ToString("dd/MM/yyyy")</p>
+                                            </div>
+                                            <div class="col-12 control-item">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <label>@L("RequireDesign")</label>
+                                                        <p>@(Model.OrderDto.IsRequireDesign ? @L("YES") : @L("NO"))</p>
                                                     </div>
-                                                }
-                                            }
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("Price")</label>
-                                            <p>@detail.UnitPrice.ToString("N0") VNĐ</p>
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("Quantity")</label>
-                                            <p>@detail.Quantity</p>
-                                        </div>
-                                        <div class="control-item col-md-2">
-                                            <label>@L("TotalProductPrice")</label>
-                                            <p>@detail.TotalProductPrice.ToString("N0") VNĐ</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Đính kèm -->
-                                    <div class="col-12 row">
-                                        <div class="control-item col-md-2">
-                                            <label>@L("Attachment")</label>
-                                            @if (detail.FileType == (int)FileType.Upload)
-                                            {
-                                                <p><a href="@Url.Action("DownloadAttachment", "Orders", new { fileId = detail.FileId, fileName = detail.File.FileName })" target="_blank">@L("DownloadFile")</a></p>
-                                                @if (!string.IsNullOrEmpty(detail.File.FileName) && (detail.File.FileName.EndsWith(".jpg") || detail.File.FileName.EndsWith(".jpeg") || detail.File.FileName.EndsWith(".png")))
-                                                {
-                                                    <p>
-                                                        <img src="@(detail.File?.FileContent != null ? $"data:image/png;base64,{Convert.ToBase64String(detail.File.FileContent)}" : "")" alt="@L("AttachmentImage")" style="max-width: 100px; max-height: 100px;" />
-                                                    </p>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <p><a href="@detail.FileUrl" target="_blank">@detail.FileUrl</a></p>
-                                            }
+                                                    <div class="col-md-3">
+                                                        <label>@L("RequireTestSample")</label>
+                                                        <p>@(Model.OrderDto.IsRequireTestSample ? @L("YES") : @L("NO"))</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>@L("ExportInvoice")</label>
+                                                        <p>@(Model.OrderDto.IsExportInvoice ? @L("YES") : @L("NO"))</p>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>@L("StoreSample")</label>
+                                                        <p>@(Model.OrderDto.IsStoreSample ? @L("YES") : @L("NO"))</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 control-item">
+                                                <label>@L("OtherRequirements")</label>
+                                                <p>@Model.OrderDto.OtherRequirements</p>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <!-- Ghi chú -->
-                                    <div class="col-12 row note-list">
-                                        <div class="col-md-4">
-                                            <label>@L("OtherNote")</label>
-                                            <p>@detail.Note</p>
+                                    <div class="col-4" style="background-color:#ffff8f7a;">
+                                        <div class="row text-right">
+                                            <!-- Tổng tiền sản phẩm (chi tiết đơn hàng) -->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalProductAmount") (A)</label>
+                                                <p>@Model.OrderDto.TotalProductAmount?.ToString("N0") VNĐ</p>
+                                            </div>
+
+
+                                            <!-- Thuế VAT -->
+                                            <div class="col-6 control-item ">
+                                                <label>@L("VatRate")%</label>
+                                                <p>@Model.OrderDto.VatRate?.ToString("N0")%</p>
+                                            </div>
+
+                                            <!-- Tiền thuế VAT -->
+                                            <div class="col-6 control-item ">
+                                                <label>@L("VATAmount") (B)</label>
+                                                <p>@Model.OrderDto.VatAmount?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Phí vận chuyển -->
+                                            <div class="col-6 control-item">
+                                                <label>@L("ShippingMethod")</label>
+                                                <p>@(((ShippingMethod)Model.OrderDto.DeliveryMethod).GetDescription() ?? @L("NoShippingMethodAvailable"))</p>
+                                            </div>
+                                            <div class="col-6 control-item">
+                                                <label>@L("DeliveryFee") (C)</label>
+                                                <p>@Model.OrderDto.DeliveryFee?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Tổng tiền chiết khấu/giảm giá -->
+                                            <div class="col-12 control-item">
+                                                <label>@L("DiscountAmount") (D)</label>
+                                                <p>@Model.OrderDto.DiscountAmount?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Tổng tiền đơn hàng -->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalAmount") (E)=(A+B+C-D)</label>
+                                                <p>@Model.OrderDto.TotalAmount?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Tổng tiền đặt cọc -->
+                                            <div class="col-12 control-item ">
+                                                <label>@L("TotalDeposit") (F)</label>
+                                                <p>@Model.OrderDto.TotalDeposit?.ToString("N0") VNĐ</p>
+                                            </div>
+
+                                            <!-- Tổng số tiền khách phải trả -->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalCustomerPay") G=(E-F)</label>
+                                                <p class="text-primary" style="font-size:larger;">@Model.OrderDto.TotalCustomerPay?.ToString("N0") VNĐ</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        }
-                        else
-                        {
-                            <p>@L("NoOrderDetails")</p>
-                        }
-                    </div>
-                </div>
+                            </div>
+                        </div>
 
-                <!-- Tổng kết thông tin về chi phí đơn hàng -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">@L("OrderSummary")</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>@L("TotalProductAmount")</label>
-                                <p>@Model.OrderDto.TotalProductAmount?.ToString("N0") VNĐ</p>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <div>
+                                <a type="button" href="@Url.Action("Index", "Orders")" class="btn btn-default close-button" data-dismiss="modal">@L("BackToList")</a>
                             </div>
-                            <div class="col-md-2">
-                                <label>@L("TotalDeposit")</label>
-                                <p>@Model.OrderDto.TotalDeposit?.ToString("N0") VNĐ</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("DeliveryFee")</label>
-                                <p>@Model.OrderDto.DeliveryFee?.ToString("N0") VNĐ</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("VatRate")%</label>
-                                <p>@Model.OrderDto.VatRate?.ToString("N0")%</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("VATAmount")</label>
-                                <p>@Model.OrderDto.VatAmount?.ToString("N0") VNĐ</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("DiscountAmount")</label>
-                                <p>@Model.OrderDto.DiscountAmount?.ToString("N0") VNĐ</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("TotalAmount")</label>
-                                <p>@Model.OrderDto.TotalAmount?.ToString("N0") VNĐ</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("TotalCustomerPay")</label>
-                                <p>@Model.OrderDto.TotalCustomerPay?.ToString("N0") VNĐ</p>
+                            <div>
+                                <div class="btn-group">
+
+                                    @if (Model.OrderDto.Status == (int)OrderStatus.New)
+                                    {
+                                        <button type="button" class="btn btn-danger delete-button btn-change-status" data-toggle="tooltip">@L("Delete")</button>
+                                        <button type="button" class="btn btn-info edit-button btn-change-status" data-toggle="tooltip">@L("Edit")</button>
+
+                                    } 
+                                    <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
+
+                                    @if (Model.ProcessSteps != null && Model.ProcessSteps.Count > 0)
+                                    {
+                                        
+                                        foreach (var step in Model.ProcessSteps)
+                                        {
+                                            <a href="@Url.Action("Process", "Orders", new {id = Model.OrderDto.Id, nextStepId = step.Id})" type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Action">@step.Action</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                    }
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label>@L("ShippingMethod")</label>
-                                <p>@(((ShippingMethod)Model.OrderDto.DeliveryMethod).GetDescription())</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("OrderStatus")</label>
-                                <p>@(((OrderStatus)Model.OrderDto.Status).GetDescription())</p>
-                            </div>
-                            <div class="col-md-2">
-                                <label>@L("ExpectedDeliveryDate")</label>
-                                <p>@Model.OrderDto.ExpectedDeliveryDate?.ToString("dd/MM/yyyy")</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label>@L("OtherRequirements")</label>
-                                <p>@Model.OrderDto.OtherRequirements</p>
-                            </div>
-                        </div>
-                    </div>
+
+                    </form>
                 </div>
             </div>
         </div>

@@ -30,7 +30,6 @@ namespace InTN.Orders.Dto
         public decimal? TotalCustomerPay { get; set; } // Tổng số tiền khách phải trả
 
 
-
         // Các trường bổ sung từ Entity
         public int CustomerGender { get; set; } // "Anh" / "Chị"
         public string CustomerType { get; set; } = string.Empty; // "Khách hàng", "Nội bộ", v.v.
@@ -47,5 +46,10 @@ namespace InTN.Orders.Dto
 
         public decimal? TotalProductAmount { get; set; } // Tổng số tiền của các sản phẩm
         public decimal? DeliveryFee { get; set; } // Phí giao hàng
+
+
+        public int? ProcessId { get; set; } // ID của quy trình liên quan đến đơn hàng
+        public int? StepId { get; set; } // ID của bước trong quy trình liên quan đến đơn hàng
+
     }
 }

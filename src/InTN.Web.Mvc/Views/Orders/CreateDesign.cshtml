@@ -48,25 +48,46 @@
                 <div class="card">
                     <div class="card-body" id="modal-create-order">
                         <form name="form-create-order" role="form" class="form-horizontal">
-                            <div class="modal-body">
-                                <div class="tab-content mt-4 ">
-                                    <div role="tabpanel" class="tab-pane container active form-content">
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">@L("UploadFileDesign")</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row ">
                                         <input type="hidden" name="OrderCode" value="@Model.OrderCode" />
                                         <input type="hidden" name="OrderId" value="@Model.OrderId" />
-                                        <!-- Full Name -->
-                                        <div class="form-group row required">
-                                            <label class="col-md-2 col-form-label">@L("SelectFileDesign")</label>
-                                            <div class="col-md-6">
-                                                <input type="file" class="form-control" name="Attachments" required>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <input type="hidden" name="Id" value="@Model.OrderId" />
 
+                                        <input type="hidden" name="AttachmentType" value="@((int)OrderAttachmentType.DesignSample)" />
+                                        <!-- Full Name -->
+
+                                        <div class="control-item col-md-12">
+                                            <label>@L("SelectFileDesign")</label>
+                                            <div class="dropzone">
+                                                <div class="dz-message">
+                                                    <span>@L("DragAndDropFilesHereOrClickToUpload")</span>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" id="hidden-file-ids" name="FileIds" />
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
-                                <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("CompleteDesign")</button>
+
+                                @if (Model.NextSteps != null && Model.NextSteps.Count > 0)
+                                {
+                                    foreach (var step in Model.NextSteps)
+                                    {
+                                        <a href="@Url.Action("Process", "Orders", new {id = Model.OrderId, nextStepId = step.Id})" type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Action">@step.Action</a>
+                                    }
+                                }
                             </div>
                         </form>
                     </div>

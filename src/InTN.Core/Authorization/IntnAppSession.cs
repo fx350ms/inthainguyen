@@ -31,12 +31,19 @@ namespace InTN.Authorization
             get
             {
                 var claim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                return claim == null ? string.Empty : claim.Value;
+            }
+        }
 
+        public string Roles
+        {
+            get
+            {
+                var claim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
                 return claim == null ? string.Empty : claim.Value;
             }
         }
 
 
-         
     }
 }

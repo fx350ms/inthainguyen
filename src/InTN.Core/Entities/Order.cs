@@ -37,12 +37,10 @@ namespace InTN.Entities
         public bool IsStoreSample { get; set; }             // Checkbox: lưu mẫu
         public bool IsReceiveByOthers { get; set; }         // Checkbox: người khác nhận
         public string OtherRequirements { get; set; }       // Yêu cầu khác (textbox)
-       
 
         public string FileIds { get; set; } = string.Empty; // Danh sách ID các tệp đính kèm (dùng để lưu trữ ID của các tệp đính kèm liên quan đến đơn hàng)
 
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>(); // Danh sách chi tiết đơn hàng
-
 
         public decimal? TotalProductAmount { get; set; } // Tổng số tiền của các sản phẩm trong đơn hàng
         public decimal? TotalDeposit { get; set; } // Tổng số tiền đã đặt cọc
@@ -52,6 +50,8 @@ namespace InTN.Entities
         public decimal? DiscountAmount { get; set; }        // Số tiền giảm giá 
         public decimal? TotalAmount { get; set; } // Tổng số tiền của đơn hàng
         public decimal? TotalCustomerPay { get; set; } // Tổng số tiền khách phải trả
+        public int ShippingMethod { get; set; } // Phương thức giao hàng (ví dụ: giao hàng tận nơi, lấy tại cửa hàng, v.v.)
+        public int? ProcessId { get; set; } // ID của quy trình liên quan đến đơn hàng
+        public int? StepId { get; set; } // ID của bước trong quy trình liên quan đến đơn hàng
     }
-
 }

@@ -11,6 +11,7 @@ using InTN.IdentityCodes.Dto;
 using InTN.OrderAttachments.Dto;
 using InTN.OrderLogs.Dto;
 using InTN.Orders.Dto;
+using InTN.Processes.Dto;
 using InTN.ProductCategories.Dto;
 using InTN.ProductNotes.Dto;
 using InTN.ProductPriceCombinations.Dto;
@@ -61,6 +62,11 @@ public class InTNApplicationModule : AbpModule
             cfg.CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
             cfg.CreateMap<OrderDetail, OrderDetailViewDto>().ReverseMap();
             cfg.CreateMap<ProductNote, ProductNoteDto>().ReverseMap();
+
+            cfg.CreateMap<Process, ProcessDto>().ReverseMap();
+            cfg.CreateMap<ProcessStep, ProcessStepDto>().ReverseMap();
+
+
         });
     }
 

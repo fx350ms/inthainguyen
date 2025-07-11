@@ -6,6 +6,8 @@ using InTN.Entities;
 using Abp.Domain.Repositories;
 using InTN.Authorization.Roles;
 using System.Threading.Tasks;
+using InTN.ProductTypes.Dto;
+using System.Collections.Generic;
 
 namespace InTN.Processes
 {
@@ -15,6 +17,13 @@ namespace InTN.Processes
             : base(repository)
         {
            
+        }
+
+        public async Task<List<ProcessDto>> GetAllListAsync()
+        {
+            var data = await Repository.GetAllListAsync();
+            var result = ObjectMapper.Map<List<ProcessDto>>(data);
+            return result;
         }
     }
 }

@@ -162,7 +162,7 @@
                                             <label>@L("Attachment")</label>
                                             <div class="form-group">
                                                 <div class="form-check">
-                                                    <input class="form-check-input check-file-type" name="SelectFileType" type="radio" data-value="@((int) FileType.Link)" checked>
+                                                    <input class="form-check-input check-file-type" name="SelectFileType" type="radio" data-value="@((int)FileType.Link)" checked>
                                                     <label class="form-check-label">@L("FileUrl")</label>
                                                 </div>
                                                 <div class="form-check">
@@ -214,123 +214,158 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-
-                                    <!--Tổng tiền sản phẩm (chi tiết đơn)-->
-                                    <div class="col-md-2">
-                                        <label>@L("TotalProductAmount")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalProductAmount" readonly>
-                                    </div>
-
-                                    <!--Tổng tiền đặt cọc-->
-                                    <div class="col-md-2">
-                                        <label>@L("TotalDeposit")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalDeposit">
-                                    </div>
-                                    <!--Phí vận chuyển-->
-                                    <div class="col-md-2">
-                                        <label>@L("DeliveryFee")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="DeliveryFee">
-                                    </div>
-                                    <!--Thuế VAT-->
-                                    <div class="col-md-2">
-                                        <label>@L("VatRate")%</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="VatRate">
-                                    </div>
-
-                                    <!--Tiền thuế VAT-->
-                                    <div class="col-md-2">
-                                        <label>@L("VATAmount")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="VatAmount">
-                                    </div>
-                                    <!--Tổng tiền chiếu khấu/ giảm giá-->
-                                    <div class="col-md-2">
-                                        <label>@L("DiscountAmount")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="DiscountAmount">
-                                    </div>
-
-                                    <!--Tổng tiền đơn hàng-->
-                                    <div class="col-md-2">
-                                        <label>@L("TotalAmount")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalAmount" readonly>
-                                    </div>
-
-                                    <!--Tổng số tiền khách phải trả-->
-
-                                    <div class="col-md-2">
-                                        <label>@L("TotalCustomerPay")</label>
-                                        <input type="text" class="form-control text-right mask-number" value="0" name="TotalCustomerPay" readonly>
-                                    </div>
-
-
-
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-2">
-                                        <label>@L("ShippingMethod")</label>
-                                        <select class="form-control">
-                                            <option value="@((int)@ShippingMethod.CompanyDelivery)">@ShippingMethod.CompanyDelivery.GetDescription()</option>
-                                            <option value="@((int)@ShippingMethod.CustomerPickup)">@ShippingMethod.CustomerPickup.GetDescription()</option>
-                                            <option value="@((int)@ShippingMethod.ServiceDelivery)" selected>@ShippingMethod.ServiceDelivery.GetDescription()</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label>@L("OrderStatus")</label>
-                                        <select class="form-control">
-                                            <option value="@((int)@OrderStatus.ReceivedRequest)" selected>@OrderStatus.ReceivedRequest.GetDescription()</option>
-                                            <option value="@((int)@OrderStatus.New)">@OrderStatus.New.GetDescription()</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label>@L("ExpectedDeliveryDate")</label>
-                                        <input class="form-control select-date" name="ExpectedDeliveryDate">
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-8">
                                         <div class="row">
-                                            <div class="col-md-3">
 
-                                                <label>@L("RequireDesign")</label>
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="IsRequireDesign">
-                                                    <label class="form-check-label" for="IsRequireDesign">@L("YES")</label>
+                                            <div class="col-6 control-item">
+                                                <label>@L("SelectProcess")</label>
+                                                <select class="form-control select-process-id" name="ProcessId" required>
+                                                    <option>@L("SelectProcess")</option>
+                                                    @if (Model.Processes != null && Model.Processes.Any())
+                                                    {
+                                                        foreach (var process in Model.Processes)
+                                                        {
+                                                            <option value="@process.Id">@process.Name</option>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="0">@L("NoProcessAvailable")</option>
+                                                    }
+
+                                                </select>
+                                            </div>
+                                            <div class="col-3 control-item">
+                                                <label>@L("OrderStatus")</label>
+                                                <select class="form-control select-step" name="StepId" required>
+                                                    <option value="@((int)@OrderStatus.ReceivedRequest)" selected>@OrderStatus.ReceivedRequest.GetDescription()</option>
+                                                    <option value="@((int)@OrderStatus.New)">@OrderStatus.New.GetDescription()</option>
+                                                </select>
+
+                                                <input type="hidden" name="Status" />
+                                            </div>
+                                            <div class="col-3 control-item">
+                                                <label>@L("ExpectedDeliveryDate")</label>
+                                                <input class="form-control select-date" name="ExpectedDeliveryDate">
+                                            </div>
+                                            <div class="col-12 control-item">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+
+                                                        <label>@L("RequireDesign")</label>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="IsRequireDesign">
+                                                            <label class="form-check-label" for="IsRequireDesign">@L("YES")</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>@L("RequireTestSample")</label>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="IsRequireTestSample">
+                                                            <label class="form-check-label" for="IsRequireTestSample">@L("YES")</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label>@L("ExportInvoice")</label>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="IsExportInvoice">
+                                                            <label class="form-check-label" for="IsExportInvoice">@L("YES")</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 ">
+                                                        <label>@L("StoreSample")</label>
+                                                        <div class="form-check">
+                                                            <input type="checkbox" class="form-check-input" name="IsStoreSample">
+                                                            <label class="form-check-label" for="IsStoreSample">@L("YES")</label>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
-                                                <label>@L("RequireTestSample")</label>
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="IsRequireTestSample">
-                                                    <label class="form-check-label" for="IsRequireTestSample">@L("YES")</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label>@L("ExportInvoice")</label>
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="IsExportInvoice">
-                                                    <label class="form-check-label" for="IsExportInvoice">@L("YES")</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label>@L("StoreSample")</label>
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" name="IsStoreSample">
-                                                    <label class="form-check-label" for="IsStoreSample">@L("YES")</label>
-                                                </div>
+
+                                            <div class="col-md-12 control-item">
+                                                <label>@L("OtherRequirements")</label>
+                                                <textarea class="form-control" name="OtherRequirements" rows="2"></textarea>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label>@L("OtherRequirements")</label>
-                                        <textarea class="form-control" name="OtherRequirements" rows="2"></textarea>
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <!--Tổng tiền sản phẩm (chi tiết đơn)-->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalProductAmount")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="TotalProductAmount" readonly>
+                                            </div>
+
+                                            <!--Tổng tiền đặt cọc-->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalDeposit")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="TotalDeposit">
+                                            </div>
+                                            <!--Thuế VAT-->
+                                            <div class="col-4 control-item">
+                                                <label>@L("VatRate")%</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="VatRate">
+                                            </div>
+
+                                            <!--Tiền thuế VAT-->
+                                            <div class="col-8 control-item">
+                                                <label>@L("VATAmount")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="VatAmount">
+                                            </div>
+
+                                            <div class="col-6 control-item">
+                                                <label>@L("ShippingMethod")</label>
+                                                <select class="form-control" name="ShippingMethod" id="select-shipping-method">
+                                                    <option value="@((int)@ShippingMethod.CompanyDelivery)">@ShippingMethod.CompanyDelivery.GetDescription()</option>
+                                                    <option value="@((int)@ShippingMethod.CustomerPickup)">@ShippingMethod.CustomerPickup.GetDescription()</option>
+                                                    <option value="@((int)@ShippingMethod.ServiceDelivery)" selected>@ShippingMethod.ServiceDelivery.GetDescription()</option>
+                                                </select>
+                                            </div>
+
+                                            <!--Phí vận chuyển-->
+                                            <div class="col-6 control-item">
+                                                <label>@L("DeliveryFee")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="DeliveryFee">
+                                            </div>
+
+                                            <!--Tổng tiền chiếu khấu/ giảm giá-->
+                                            <div class="col-12 control-item">
+                                                <label>@L("DiscountAmount")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="DiscountAmount">
+                                            </div>
+
+                                            <!--Tổng tiền đơn hàng-->
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalAmount")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="TotalAmount" readonly>
+                                            </div>
+
+                                            <!--Tổng số tiền khách phải trả-->
+
+                                            <div class="col-12 control-item">
+                                                <label>@L("TotalCustomerPay")</label>
+                                                <input type="text" class="form-control text-right mask-number" value="0" name="TotalCustomerPay" readonly>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default close-button" data-dismiss="modal">@L("Cancel")</button>
-                            <button type="button" class="btn btn-primary save-button"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <div>
+                                <a type="button" href="@Url.Action("Index", "Orders")" class="btn btn-default close-button" data-dismiss="modal">@L("BackToList")</a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary save-button" data-next="list"><i class="nav-icon fas fa-save"></i> @L("SaveAndStayAtList")</button>
+                                <button type="button" class="btn btn-primary save-button" data-next="create"><i class="nav-icon fas fa-save"></i> @L("SaveAndStayAtHere")</button>
+                                <button type="button" class="btn btn-primary save-button" data-next="detail"><i class="nav-icon fas fa-save"></i> @L("SaveAndGoToDetail")</button>
+                            </div>
                         </div>
+
+
                     </form>
                 </div>
 
