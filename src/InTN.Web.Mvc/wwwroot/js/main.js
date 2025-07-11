@@ -5,11 +5,40 @@
         switch (userNotification.notification.notificationName) {
             case 'Order.Created':
                 {
-                    abp.notify.info(userNotification.notification.data.properties.Message)
+                    //abp.notify.info(userNotification.notification.data.properties.Message,)
+                    //abp.notifications.show({
+                    //    title: userNotification.notification.data.properties.Title,
+                    //    message: userNotification.notification.data.properties.Message,
+                    //    type: 'info', // or 'success', 'warning', 'error'
+                    //    // Optionally, add a click handler to navigate to a specific page
+                    //    click: function (e,a,b,c) {
+                    //        // Logic to navigate to a page related to the notification
+                    //        debugger;
+                    //    }
+                    //});
+
+                    abp.notify.info(
+                        userNotification.notification.data.properties.Message,
+                        userNotification.notification.data.properties.Title,
+                        {
+                            // Toastr option for handling click on the toast
+                            onclick: function () {
+                                // Perform your custom action here, e.g.,
+                                var href = '/Orders/Detail/' + userNotification.notification.data.properties.OrderId;
+                                //    window.location.href = '/Orders/Detail/' + userNotification.notification.data.properties.OrderId;
+                                window.open(href, '_blank');
+                                // abp.ui.setBusy($('body'));
+                            },
+                            // Optional: Prevent auto-dismiss if you want the user to click to dismiss
+                            sticky: true,
+                            // Optional: Allows clicking anywhere on the toast to dismiss
+                            // tapToDismiss: true 
+                        }
+                    );
                     PlaySound("success");
                 }
                 break;
-            
+
             default: {
                 abp.notifications.showUiNotifyForUserNotification(userNotification)
 
@@ -21,15 +50,18 @@
         //}
 
         //Desktop notification
-        //Push.create("InTN", {
-        //    body: userNotification.notification.data.message,
-        //    icon: abp.appPath + 'img/logo.png',
-        //    timeout: 6000,
-        //    onClick: function () {
-        //        window.focus();
-        //        this.close();
-        //    }
-        //});
+        Push.create("InTN", {
+            body: userNotification.notification.data.properties.Message,
+            icon: abp.appPath + 'img/logo.png',
+            timeout: 6000,
+            onClick: function () {
+
+                var href = '/Orders/Detail/' + userNotification.notification.data.properties.OrderId;
+                window.open(href, '_blank');
+                window.focus();
+                this.close();
+            }
+        });
     });
     //Abp.Notifications.LocalizableMessageNotificationData
     //serializeFormToObject plugin for jQuery

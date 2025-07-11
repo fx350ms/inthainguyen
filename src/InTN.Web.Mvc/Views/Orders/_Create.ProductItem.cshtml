@@ -16,10 +16,33 @@
         </div>
         <div class="property-list col-8 row">
         </div>
+
+        <div class="control-item col-md-1">
+            <label>@L("Length")</label>
+            <input type="text" class="form-control  text-right   mask-number" name="Length" value="0">
+        </div>
+        <div class="control-item col-md-1">
+            <label>@L("Width")</label>
+            <input type="text" class="form-control   text-right   mask-number" name="Width" value="0">
+        </div>
+        <div class="control-item col-md-1">
+            <label>@L("Height")</label>
+            <input type="text" class="form-control   text-right  mask-number" name="Height" value="0">
+        </div>
+        <div class="control-item col-md-2">
+            <label>@L("Unit")</label>
+            <select class="form-control" name="Unit">
+                <option value="mm"> mm </option>
+                <option value="cm"> cm </option>
+                <option value="inch"> inch </option>
+                <option value="m"> m </option>
+            </select>
+        </div>
         <div class="control-item col-md-2">
             <label>@L("Price")</label>
-            <input type="text" class="form-control unit-price text-right unit-price mask-number" name="Price" value="0">
+            <input type="text" class="form-control   text-right unit-price mask-number" name="Price" value="0">
         </div>
+
         <div class="control-item col-md-2">
             <label>@L("Quantity")</label>
             <input type="text" value="1" class="form-control quantity text-right mask-number" name="Quantity">
@@ -60,7 +83,7 @@
             <input type="text" class="form-control" name="FileUrl" placeholder="@L("EnterFileUrl")" />
         </div>
 
-        <input type="hidden" name="FileType" value="@((int) FileType.Link)" />
+        <input type="hidden" name="FileType" value="2" />
         <input type="hidden" name="FileId" />
     </div>
 

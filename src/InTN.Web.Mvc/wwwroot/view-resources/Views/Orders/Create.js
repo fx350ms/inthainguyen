@@ -56,11 +56,23 @@
 
                 ProductId: $item.find('select[name="ProductId"]').val(),
                 ProductName: $item.find('select[name="ProductId"] option:selected').text(),
+                Width: parseFloat(
+                    ($item.find('input[name="Width"]').val() || '0').replaceAll('.', '')
+                ),
+                  
+                Length: parseFloat(
+                    ($item.find('input[name="Length"]').val() || '0').replaceAll('.', '')
+                ),
+                Height: parseFloat(
+                    ($item.find('input[name="Height"]').val() || '0').replaceAll('.', '')
+                ),
+                Unit: $item.find('select[name="Unit"] option:selected').val(),
                 UnitPrice: parseFloat(
                     ($item.find('input[name="Price"]').val() || '0').replaceAll('.', '')
                 ),
                 Quantity: parseInt(
                     ($item.find('input[name="Quantity"]').val() || '0').replaceAll('.', '')),
+
                 TotalProductPrice: 0, // Tính ở server
                 FileId: $item.find('input[name="FileId"]').val(),
                 FileUrl: $item.find('input[name="FileUrl"]').val(),
@@ -242,6 +254,11 @@
 
         // Reset các giá trị trong item
         $item.find('input').val(''); // Xóa giá trị trong các ô input
+
+        $item.find('[name="Length"]').val('0'); // Reset giá trị unit price
+        $item.find('[name="Width"]').val('0');  // Reset giá trị unit price
+        $item.find('[name="Height"]').val('0');  // Reset giá trị unit price
+
         $item.find('.unit-price').val('0'); // Reset giá trị unit price
         $item.find('.total-product-price').val('0'); // Reset giá trị total product price
         $item.find('.quantity').val('1'); // Reset giá trị quantity
@@ -293,39 +310,7 @@
 
 
     }
-
-    function InitUploadzone($item) {
-        $item.find('.file-upload').on('change', function (event) {
-
-            var formData = new FormData();
-            var files = this.files;
-            if (files.length === 0) {
-                console.log('Chưa có file nào được chọn.');
-                return; // Dừng lại nếu không có file
-            }
-            // Thêm tệp vào FormData
-            for (var i = 0; i < files.length; i++) {
-                formData.append('Files', files[i]);
-            }
-
-            $.ajax({
-                url: abp.appPath + 'api/services/app/FileUpload/UploadFilesAndGetIds',
-                type: 'POST',
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function () {
-
-                },
-                error: function () {
-
-                },
-                complete: function () {
-                    abp.ui.clearBusy(_$form);
-                }
-            });
-        });
-    }
+     
 
 
     function InitDropzone($item) {
@@ -354,9 +339,15 @@
                 },
                 success: function (file, response) {
                     // Xử lý khi upload thành công
-                    var fileIds = response.result.join(',')
-                    $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
-                    abp.notify.success(l('FileUploadedSuccessfully'));
+                    if (response && response.result) {
+
+                        file.id = response.result[0];
+                        var fileIds = response.result.join(',')
+                        $item.find('input[name="FileId"]').val(fileIds); // Lưu ID file vào input hidden
+                        abp.notify.success(l('FileUploadedSuccessfully'));
+                    }
+
+                  
                 },
                 error: function (file, errorMessage) {
                     // Xử lý khi upload thất bại
@@ -364,6 +355,10 @@
                 },
                 removedfile: function (file) {
                     // Xử lý khi xóa file
+                    if (file.id) {
+                        _fileUploadService.delete({ id: file.id });
+                    }
+
                     $item.find('input[name="FileId"]').val(""); // Xóa giá trị ID file
                     abp.notify.info(l('FileRemoved'));
                     file.previewElement.remove();

@@ -21,7 +21,10 @@ namespace InTN.Orders.Dto
         public int? FileId { get; set; } // ID của tệp đính kèm liên quan đến chi tiết đơn hàng
         public string FileUrl { get; set; } = string.Empty; // Đường dẫn đến tệp đính kèm liên quan đến chi tiết đơn hàng
 
-
+        public decimal? Width { get; set; }
+        public decimal? Length { get; set; }
+        public decimal? Height { get; set; }
+        public string Unit { get; set; } = string.Empty; // Đơn vị đo lường của sản phẩm (ví dụ: cm, m, inch, v.v.)
     }
 
     public class OrderDetailViewDto : EntityDto<int>

@@ -252,5 +252,10 @@ namespace InTN.FileUploads
                 await Repository.DeleteAsync(file);
             }
         }
+
+        public override Task DeleteAsync(EntityDto<int> input)
+        {
+            return base.DeleteAsync(input);
+        }
     }
 }

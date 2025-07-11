@@ -210,7 +210,11 @@ namespace InTN.Orders
                             Note = detailDto.Note,
                             Properties = JsonConvert.SerializeObject(detailDto.Properties),
                             NoteIds = string.Join(",", detailDto.NoteIds),
-                            FileType = detailDto.FileType
+                            FileType = detailDto.FileType,
+                            Width = detailDto.Width,
+                            Length = detailDto.Length,
+                            Height = detailDto.Height,
+                            Unit = detailDto.Unit,
                         };
                         totalProductPrice += orderDetail.TotalProductPrice;
                         // Lưu OrderDetail vào cơ sở dữ liệu
@@ -283,7 +287,8 @@ namespace InTN.Orders
                     data["OrderId"] = order.Id;
                     data["OrderCode"] = order.OrderCode;
                     data["CreatorName"] = _intnAppSession.UserName; // hoặc từ _userManager
-                    data["Message"] = $"Đơn hàng mới {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}";
+                    data["Title"] = "Đơn hàng mới";
+                    data["Message"] = $"ĐH: {order.OrderCode} đã được tạo bởi {_intnAppSession.UserName}";
 
                     await _notificationPublisher.PublishAsync(
                         "Order.Created",

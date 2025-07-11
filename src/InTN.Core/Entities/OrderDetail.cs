@@ -25,10 +25,15 @@ namespace InTN.Entities
         public string Properties { get; set; } // Chuỗi JSON chứa danh sách thuộc tính sản phẩm với giá trị đã chọn
         public string NoteIds { get; set; } // // Danh sách ID ghi chú liên quan đến sản phẩm được ngăn cách nhau bởi dấu 
 
-
-
+        public decimal? Width { get; set; }
+        public decimal? Length { get; set; }
+        public decimal? Height { get; set; }
+        public string Unit { get; set; } = string.Empty; // Đơn vị đo lường của sản phẩm (ví dụ: cm, m, inch, v.v.)
         [ForeignKey("OrderId")]
         [NotMapped]
         public virtual Order Order { get; set; }     // Navigation
+
+
+
     }
 }
