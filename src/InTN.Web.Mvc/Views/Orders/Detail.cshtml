@@ -51,7 +51,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h1>@L("OrderDetails")</h1>
+                <h1>@L("OrderDetails"): <span class="text-primary">@Model.OrderDto.OrderCode </span> - <span class="text-info">@(((OrderStatus)Model.OrderDto.Status).GetDescription() ?? @L("NoStatusAvailable"))</span></h1>
             </div>
         </div>
     </div>
@@ -289,19 +289,21 @@
                             </div>
                             <div>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
+
                                     @if (Model.OrderDto.Status == (int)OrderStatus.New)
                                     {
-                                        <button type="button" class="btn btn-info edit-button btn-change-status" data-toggle="tooltip">@L("Edit")</button>
                                         <button type="button" class="btn btn-danger delete-button btn-change-status" data-toggle="tooltip">@L("Delete")</button>
-                                    }
+                                        <button type="button" class="btn btn-info edit-button btn-change-status" data-toggle="tooltip">@L("Edit")</button>
+
+                                    } 
+                                    <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
 
                                     @if (Model.ProcessSteps != null && Model.ProcessSteps.Count > 0)
                                     {
-                                        <button type="button" class="btn btn-info save-button btn-change-status" data-toggle="tooltip">@L("CreateManufacturingOrder")</button>
-                                        @foreach (var step in Model.ProcessSteps)
+                                        
+                                        foreach (var step in Model.ProcessSteps)
                                         {
-                                            <a href="@Url.Action("Process", "Orders", new {id = Model.OrderDto.Id, nextStepId = step.Id})" type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Name">@step.Name</a>
+                                            <a href="@Url.Action("Process", "Orders", new {id = Model.OrderDto.Id, nextStepId = step.Id})" type="button" class="btn btn-primary save-button btn-change-status" data-toggle="tooltip" data-status="@step.OrderStatus" data-process-id="@step.Id" title="@step.Action">@step.Action</a>
                                         }
                                     }
                                     else

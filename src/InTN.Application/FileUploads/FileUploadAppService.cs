@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace InTN.FileUploads
 {
@@ -21,8 +22,14 @@ namespace InTN.FileUploads
         IFileUploadAppService  // Interface
     {
 
-        public FileUploadAppService(IRepository<FileUpload> repository) : base(repository)
+        private readonly IRepository<OrderAttachment, int> _orderAttachmentRepository;
+
+
+        public FileUploadAppService(IRepository<FileUpload> repository,
+            IRepository<OrderAttachment, int> orderAttachmentRepository)
+            : base(repository)
         {
+            _orderAttachmentRepository = orderAttachmentRepository;
         }
 
         public async Task<List<int>> UploadMultiFilesAndGetIdsAsync(List<IFormFile> Files)
@@ -138,7 +145,6 @@ namespace InTN.FileUploads
                 return null; // Trả về null nếu không có file nào được upload
             }
 
-
             return null;
         }
 
@@ -218,11 +224,33 @@ namespace InTN.FileUploads
                         Logger.Error("Error uploading file: " + file.FileName, ex);
                     }
                 }
-
-
             }
             return 0; // Trả về 0 nếu không có file nào được upload
         }
 
+
+        public async Task<List<FileUploadDto>> GeAttachmentstByOrderIdAsync(int orderId, int fileType)
+        {
+            var attachments = (await _orderAttachmentRepository.GetAllAsync())
+                .Where(a => a.OrderId == orderId && (fileType == -1 || a.Type == fileType)).ToList();
+            var fileUploadIds = attachments.Select(a => a.FileId).ToList();
+            var files = await Repository.GetAllListAsync(f => fileUploadIds.Contains(f.Id));
+            return ObjectMapper.Map<List<FileUploadDto>>(files);
+          
+        }
+
+        public async Task DeleteWithAttachmentAsync(int id)
+        {
+            var attachment = await _orderAttachmentRepository.FirstOrDefaultAsync(u => u.FileId == id);
+            if(attachment != null)
+            {
+                await _orderAttachmentRepository.DeleteAsync(attachment);
+            }   
+            var file = await Repository.GetAsync(id);
+            if (file != null)
+            {
+                await Repository.DeleteAsync(file);
+            }
+        }
     }
 }

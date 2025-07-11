@@ -83,5 +83,14 @@ namespace InTN.Orders
         /// <param name="orderId"></param>
         /// <returns></returns>
         Task CompleteOrderAsync(int orderId);
+
+
+        /// <summary>
+        /// Update the status of an order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task UpdateOrderStatusAsync(int id, int nextStepId, int status);
     }
 }

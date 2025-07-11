@@ -119,10 +119,30 @@ namespace InTN.Web.Controllers
             {
                 return NotFound();
             }
+
+            // Kiểm tra trạng thái hiện tại có phải là thiết kế không? nếu không thì không cho phép tạo thiết kế
+
+            // Lấy ra stepInfo
+            var stepInfo = await _processStepAppService.GetAsync(new EntityDto<int>(order.StepId.Value));
+            if (stepInfo == null)
+            {
+                return NotFound();
+            }
+
+
+            // Lấy ra danh sách các bước tiếp theo
+            var nextSteps = await _processStepAppService.GetNextStepsAsync(order.StepId.Value);
+            if (nextSteps == null || !nextSteps.Any())
+            {
+                ModelState.AddModelError("", "Không có bước tiếp theo hợp lệ cho đơn hàng này.");
+                return RedirectToAction("Detail", new { id = id });
+            }
+
             var model = new OrderDesignUploadDto()
             {
                 OrderId = order.Id,
                 OrderCode = order.OrderCode,
+                NextSteps = nextSteps,
             };
             return View(model);
         }
@@ -160,6 +180,17 @@ namespace InTN.Web.Controllers
                 PaymentStatus = order.PaymentStatus
             };
             return View(model);
+        }
+
+        public async Task<IActionResult> Delivery(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
         }
 
         public async Task<IActionResult> Detail(int id)
@@ -217,7 +248,6 @@ namespace InTN.Web.Controllers
                 return RedirectToAction("Detail", new { id = id });
             }
 
-
             // Check if the next step is valid
             var nextStep = await _processStepAppService.GetAsync(new EntityDto<int>(nextStepId));
             if (nextStep == null)
@@ -236,43 +266,39 @@ namespace InTN.Web.Controllers
                 }
             }
             // Update order step
-            // _orderAppService.UpdateStatusToDepositedAsync
+
+            // Kiểm tra xem người dùng muốn làm gì bước tiếp theo để thực hiện điều hướng
+
             switch ((OrderStatus)nextStep.OrderStatus)
             {
+
+                // Update trạng thái 
                 case OrderStatus.New:
-                case OrderStatus.ReceivedRequest:
-                    // Update trạng thái 
+                case OrderStatus.ReceivedRequest: // Tiếp nhận yêu cầu
+                case OrderStatus.OrderConfirmed:  // Xác nhận đơn hàng
+                case OrderStatus.DesignApproved:  // Đã duyệt mẫu, chuyển sang bước tiếp theo
+                case OrderStatus.PrintingTest:   // Chuyển sang bước in test
+                case OrderStatus.PrintingTestConfirmed: // Xác nhận in test (Ok)
+                case OrderStatus.Printing:  // Chuyển sang bước in
+                case OrderStatus.Processing:     // Chuyển sang bước gia công
+                case OrderStatus.QcChecked:         // Đã kiểm tra QC, chuyển sang bước giao hàng
+                case OrderStatus.Completed:  // Hoàn thành nghiệm thu, kết thúc quy trình
+                case OrderStatus.AwaitingSampleApproval:   // Gửi duyệt mẫu
+                    await _orderAppService.UpdateOrderStatusAsync(id, nextStep.Id, nextStep.OrderStatus);
                     break;
-                case OrderStatus.Quoted:
+
+                case OrderStatus.Quoted: // Tạo phiếu báo giá
                     return RedirectToAction("CreateQuotation", new { id = id });
-                    break;
-                case OrderStatus.OrderConfirmed:
-                   // Update trạng thái xác nhận đơn hàng
-                    break;
-                case OrderStatus.Designing:
+
+                case OrderStatus.Designing: // Tạo thiết kế, upload file thiết kế
+                    await _orderAppService.UpdateOrderStatusAsync(id, nextStep.Id, nextStep.OrderStatus);
                     return RedirectToAction("CreateDesign", new { id = id });
-                    break;
-                case OrderStatus.AwaitingSampleApproval:
-                    break;
-                case OrderStatus.DesignApproved:
-                    break;
-                case OrderStatus.Deposited:
+
+                case OrderStatus.Deposited: // Chuyển sang bước đặt cọc
                     return RedirectToAction("CreateDeposit", new { id = id });
-                    break;
-                case OrderStatus.PrintingTest:
-                    break;
-                case OrderStatus.PrintingTestConfirmed:
-                    break;
-                case OrderStatus.Printing:
-                    break;
-                case OrderStatus.Processing:
-                    break;
-                case OrderStatus.QcChecked:
-                    break;
-                case OrderStatus.Delivering:
-                    break;
-                case OrderStatus.Completed:
-                    break;
+
+                case OrderStatus.Delivering:       // Chuyển sang bước giao hàng
+                    return RedirectToAction("Delivery", new { id = id });
                 default:
                     break;
             }

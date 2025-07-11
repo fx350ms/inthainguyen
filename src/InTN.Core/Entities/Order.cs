@@ -37,7 +37,6 @@ namespace InTN.Entities
         public bool IsStoreSample { get; set; }             // Checkbox: lưu mẫu
         public bool IsReceiveByOthers { get; set; }         // Checkbox: người khác nhận
         public string OtherRequirements { get; set; }       // Yêu cầu khác (textbox)
-       
 
         public string FileIds { get; set; } = string.Empty; // Danh sách ID các tệp đính kèm (dùng để lưu trữ ID của các tệp đính kèm liên quan đến đơn hàng)
 
@@ -55,5 +54,4 @@ namespace InTN.Entities
         public int? ProcessId { get; set; } // ID của quy trình liên quan đến đơn hàng
         public int? StepId { get; set; } // ID của bước trong quy trình liên quan đến đơn hàng
     }
-
 }

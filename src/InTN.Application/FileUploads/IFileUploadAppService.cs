@@ -14,6 +14,7 @@ namespace InTN.FileUploads
         CreateFileUploadDto,   // DTO cho tạo mới
         FileUploadDto>         // DTO cho cập nhật
     {
+        Task DeleteWithAttachmentAsync(int id);
         Task<FileUploadDto> GetFileContentAsync(int id); // Lấy nội dung tệp
         Task<int> UploadFileAndGetIdsAsync(List<IFormFile> Attachments);
         Task<List<int>> UploadMultiFilesAndGetIdsAsync(List<IFormFile> Attachments); // Tạo mới tệp đính kèm

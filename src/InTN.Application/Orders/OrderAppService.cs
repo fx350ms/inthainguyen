@@ -21,6 +21,7 @@ using InTN.Authorization.Users;
 using Abp;
 using InTN.Processes;
 using InTN.Users;
+using Microsoft.AspNetCore.Http;
 
 
 namespace InTN.Orders
@@ -35,6 +36,7 @@ namespace InTN.Orders
         private readonly IRepository<OrderDetail> _orderDetailRepository;
         private readonly IRepository<Process> _processRepository;
         private readonly IRepository<ProcessStep> _processStepRepository;
+        private readonly IRepository<FileUpload> _fileUploadRepository;
 
         private readonly IIdentityCodeAppService _identityCodeAppService;
         private readonly INotificationPublisher _notificationPublisher;
@@ -55,6 +57,7 @@ namespace InTN.Orders
             IRepository<OrderDetail> orderDetailRepository,
             IRepository<Process> processRepository,
             IRepository<ProcessStep> processStepRepository,
+            IRepository<FileUpload> fileUploadRepository,
 
             IIdentityCodeAppService identityCodeRepository,
             INotificationPublisher notificationPublisher,
@@ -76,6 +79,8 @@ namespace InTN.Orders
             _notificationPublisher = notificationPublisher;
             _processRepository = processRepository;
             _processStepRepository = processStepRepository;
+            _fileUploadRepository = fileUploadRepository;
+
             _userAppService = userAppService;
             _roleManager = roleManager;
 
@@ -296,8 +301,6 @@ namespace InTN.Orders
             }
         }
 
-
-
         [HttpPut]
         public async Task CreateQuotationAsync([FromForm] OrderQuotationUploadDto input)
         {
@@ -331,7 +334,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                               // FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.Invoice,    // Loại file (image/jpeg, image/png)
                             };
@@ -387,7 +390,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                //FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                             };
@@ -448,7 +451,7 @@ namespace InTN.Orders
                             OrderId = input.OrderId,
                             FileName = file.FileName,
                             FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                            FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                          //  FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                             FileSize = file.Length,
                             Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                         };
@@ -706,7 +709,29 @@ namespace InTN.Orders
 
         }
 
+        public async Task UpdateOrderStatusAsync(int id, int nextStepId,  int status)
+        {
+            // Retrieve the order by ID
+            var order = await Repository.GetAsync(id);
+            if (order == null)
+            {
+                throw new ArgumentException($"Order with ID {id} not found", nameof(id));
+            }
+            var orderLog = new OrderLog()
+            {
+                OrderId = order.Id,
+                Action = "UpdateStatus",
+                OldValue = order.ToJsonString()
 
+            };
+            // Update the status to the specified status
+            order.Status = status;
+            order.StepId = nextStepId;
+            // Save the changes
+            await Repository.UpdateAsync(order);
+            orderLog.NewValue = order.ToJsonString();
+            await _orderLogRepository.InsertAsync(orderLog);
+        }
 
         /// <summary>
         /// Thực hiện thanh toán đơn hàng
@@ -744,7 +769,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                                FileContent = fileContent, // Dữ liệu nhị phân của hình ảnh
+                                //FileContent = fileContent, // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                             };
@@ -836,14 +861,6 @@ namespace InTN.Orders
             };
         }
 
-
-
-        private async Task<List<UserIdentifier>> GetUsersInDesignRoleAsync(string roleName)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
-            return usersInRole.Select(u => new UserIdentifier(u.TenantId, u.Id)).ToList();
-        }
 
 
     }

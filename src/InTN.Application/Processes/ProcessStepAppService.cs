@@ -25,9 +25,9 @@ namespace InTN.Processes
 
         public async Task<List<ProcessStepDto>> GetNextStepsAsync(int currentStepId)
         {
-            var processStep = await Repository.FirstOrDefaultAsync( x => x.Id == currentStepId);
+            var processStep = await Repository.FirstOrDefaultAsync(x => x.Id == currentStepId);
 
-            if (processStep != null)
+            if (processStep != null && !string.IsNullOrEmpty(processStep.NextStepIds))
             {
                 var nextStepIds = processStep.NextStepIds.Split(",");
                 var nextSteps = await Repository.GetAllListAsync(x => nextStepIds.Contains(x.Id.ToString()));
@@ -35,7 +35,7 @@ namespace InTN.Processes
             }
 
             return new List<ProcessStepDto>();
-          
+
         }
     }
 }

@@ -30,7 +30,6 @@ namespace InTN.Orders.Dto
         public decimal? TotalCustomerPay { get; set; } // Tổng số tiền khách phải trả
 
 
-
         // Các trường bổ sung từ Entity
         public int CustomerGender { get; set; } // "Anh" / "Chị"
         public string CustomerType { get; set; } = string.Empty; // "Khách hàng", "Nội bộ", v.v.
