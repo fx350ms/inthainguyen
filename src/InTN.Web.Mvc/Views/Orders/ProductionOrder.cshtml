@@ -1,0 +1,120 @@
+﻿@using InTN
+@using InTN.Web.Models.Common.Modals
+@using InTN.Web.Models.Orders;
+@model ProductionOrderModel
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Orders/Create.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Orders/Create.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+
+        .order-item {
+            border-width: 1px;
+            border-style: dotted;
+            border-radius: 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            border-color: #007bff40;
+            margin-bottom: 10px;
+        }
+
+        .control-item {
+            margin-bottom: 20px;
+        }
+
+    </style>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Pages_CreateProductionOder"): <strong class="text-primary">@Model.Order.OrderCode</strong></h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <div class="" id="modal-create-order">
+                    <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@Model.Order.Id" />
+                        <input type="hidden" name="OrderCode" value="@Model.Order.OrderCode" />
+
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <!--Chọn quy trình-->
+                                <h3 class="card-title">@L("Lệnh sản xuất")</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row ">
+                                    <input type="hidden" name="NewCustomer" value="false" />
+                                    <div class="control-item col-md-3 select-customer-group">
+                                        <label>@L("Chọn quy trình")</label>
+                                        <select class=" select-customer-id form-control" name="ProcessId" style="width: 100%;"></select>
+                                    </div>
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <!-- Tổng kết thông tin về chi phí đơn hàng -->
+                      @*   <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("OrderSummary")</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="row">
+
+                                     
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="row">
+                                         
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> *@
+
+                        <div class="modal-footer d-flex justify-content-between">
+                            <div>
+                                <a type="button" href="@Url.Action("Index", "Orders")" class="btn btn-default close-button" data-dismiss="modal">@L("BackToList")</a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary save-button" data-next="detail"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
