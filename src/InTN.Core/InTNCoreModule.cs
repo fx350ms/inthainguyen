@@ -39,7 +39,7 @@ public class InTNCoreModule : AbpModule
 
         Configuration.Settings.Providers.Add<AppSettingProvider>();
 
-        Configuration.Localization.Languages.Add(new LanguageInfo("fa", "فارسی", "famfamfam-flags ir"));
+     //   Configuration.Localization.Languages.Add(new LanguageInfo("fa", "فارسی", "famfamfam-flags ir"));
 
         Configuration.Settings.SettingEncryptionConfiguration.DefaultPassPhrase = InTNConsts.DefaultPassPhrase;
         SimpleStringCipher.DefaultPassPhrase = InTNConsts.DefaultPassPhrase;

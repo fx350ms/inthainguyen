@@ -1,0 +1,49 @@
+@using InTN.Web.Startup
+
+@{
+    ViewBag.Title = L("ProcessGroups");
+    ViewBag.CurrentPageName = PageNames.ProcessGroups;
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/ProcessGroups/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/ProcessGroups/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("ProcessGroups")</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-primary" id="create-new">@L("CreateNew")</button>
+                <table id="process-group-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@L("Name")</th>
+                            <th>@L("Description")</th>
+                            <th>@L("Actions")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data sẽ được load bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

@@ -91,6 +91,22 @@ namespace InTN.Web.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> ProductionOrder(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto(id));
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var model = new ProductionOrderModel()
+            {
+                Order = order
+            };
+
+            return View(model);
+        }
+
+
         public async Task<IActionResult> CreateItemDetail()
         {
             return PartialView("_Create.ProductItem");

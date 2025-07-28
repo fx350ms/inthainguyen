@@ -74,7 +74,7 @@ public class InTNNavigationProvider : NavigationProvider
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Transactions)
                 )
             )
-             // Các menu mới
+            // Các menu mới
             .AddItem(
                 new MenuItemDefinition(
                     PageNames.ProductCategories,
@@ -119,7 +119,7 @@ public class InTNNavigationProvider : NavigationProvider
                     icon: "fas fa-boxes",
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_ProductTypes)
                 )
-            )  .AddItem(
+            ).AddItem(
                 new MenuItemDefinition(
                     PageNames.Products,
                     L("Products"),
@@ -127,8 +127,27 @@ public class InTNNavigationProvider : NavigationProvider
                     icon: "fas fa-box",
                     permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Products)
                 )
-            );
-            
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Processes,
+                    L("Processes"),
+                    url: "Processes",
+                    icon: "fas fa-cogs",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Processes)
+                ) 
+            )
+            .AddItem(
+                new MenuItemDefinition(
+                    PageNames.Printers,
+                    L("Printers"),
+                    url: "Printers",
+                    icon: "fas fa-print",
+                    permissionDependency: new SimplePermissionDependency(PermissionNames.Pages_Printers)
+                )
+            )
+            ;
+
     }
 
     private static ILocalizableString L(string name)

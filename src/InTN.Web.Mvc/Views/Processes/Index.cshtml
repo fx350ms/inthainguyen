@@ -1,0 +1,51 @@
+@using InTN.Web.Startup
+@using InTN.Processes.Dto
+
+@{
+    ViewBag.Title = L("Processes");
+    ViewBag.CurrentPageName = PageNames.Processes;
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Processes/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Processes/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Processes")</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-primary" id="create-new">@L("CreateNew")</button>
+                <table id="process-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>@L("Name")</th>
+                            <th>@L("Description")</th>
+                            <th>@L("Status")</th>
+                            <th>@L("Actions")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data sẽ được load bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

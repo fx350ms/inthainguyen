@@ -17,4 +17,10 @@ public class PageNames
     public const string Brands = "Brands";
     public const string ProductTypes = "ProductTypes";
     public const string Products = "Products";
+
+    public const string Processes = "Processes";
+    public const string ProcessGroups = "ProcessGroups";
+
+    // Thêm mới Printer
+    public const string Printers = "Printers";
 }

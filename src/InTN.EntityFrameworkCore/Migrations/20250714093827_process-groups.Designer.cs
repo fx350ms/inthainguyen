@@ -4,6 +4,7 @@ using InTN.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InTN.Migrations
 {
     [DbContext(typeof(InTNDbContext))]
-    partial class InTNDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250714093827_process-groups")]
+    partial class processgroups
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2054,25 +2057,6 @@ namespace InTN.Migrations
                     b.ToTable("OrderLogs");
                 });
 
-            modelBuilder.Entity("InTN.Entities.Printer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Printers");
-                });
-
             modelBuilder.Entity("InTN.Entities.Process", b =>
                 {
                     b.Property<int>("Id")
@@ -2118,7 +2102,7 @@ namespace InTN.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProcessId")
+                    b.Property<int>("ProcessId")
                         .HasColumnType("int");
 
                     b.Property<string>("RoleIds")
@@ -2705,9 +2689,13 @@ namespace InTN.Migrations
 
             modelBuilder.Entity("InTN.Entities.ProcessStep", b =>
                 {
-                    b.HasOne("InTN.Entities.Process", null)
+                    b.HasOne("InTN.Entities.Process", "Process")
                         .WithMany("Steps")
-                        .HasForeignKey("ProcessId");
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Process");
                 });
 
             modelBuilder.Entity("InTN.Entities.Product", b =>

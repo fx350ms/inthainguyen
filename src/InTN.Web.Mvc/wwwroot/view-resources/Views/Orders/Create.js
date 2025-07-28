@@ -110,7 +110,7 @@
         _orderService.createNew(order).done(function () {
             /*_$form[0].reset();*/
             abp.notify.info(l('SavedSuccessfully'));
-            delay(1000, () => { window.location.href = '/Orders' });
+            delay(1000, () => { window.location.href = '/Orders/ProductionOrder/' + order.id });
 
         }).always(function () {
         });

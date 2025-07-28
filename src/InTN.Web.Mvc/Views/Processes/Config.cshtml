@@ -1,0 +1,128 @@
+﻿@using InTN
+@using InTN.Web.Models.Common.Modals
+@using InTN.Web.Models.Orders;
+@using InTN.Web.Models.Processes
+ 
+
+@model ProcessConfigViewModel
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Views/Processes/Config.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Processes/Config.min.js" asp-append-version="true"></script>
+    </environment>
+    }
+
+@section styles {
+    <style>
+        .select2-selection--single {
+            height: 38px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 5px !important;
+        }
+
+        .order-item {
+            border-width: 1px;
+            border-style: dotted;
+            border-radius: 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            border-color: #007bff40;
+            margin-bottom: 10px;
+        }
+
+        .control-item {
+            margin-bottom: 20px;
+        }
+
+    </style>
+    }
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1>@L("Pages_ConfigProcess"): <strong class="text-primary">@Model.Process.Name</strong></h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <div class="" id="modal-config-process">
+                    <form name="form-config-process" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                        @Html.AntiForgeryToken()
+                       
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("SelectStage")</h3>
+                                 
+                                <button type="button" class="btn btn-success float-right btn-sm btn-add-order-item">
+                                    <i class="fa fa-plus"></i> @L("AddStage")
+                                </button>
+                            </div>
+                            <div class="card-body" id="steps-list">
+                                <div class="row order-item">
+                                    <div class="col-12 text-right">
+                                        <button type="button" class="btn btn-danger btn-sm delete-item-button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="col-12 row">
+                                        <div class="control-item col-md-4">
+                                            <label>@L("SelectStage")</label>
+                                            <select class="select2 select-process-group-id form-control" name="ProductId" style="width: 100%;">
+                                                @if (Model.ProcessStepGroups != null && Model.ProcessStepGroups.Any())
+                                                {
+                                                    foreach (var item in Model.ProcessStepGroups)
+                                                    {
+                                                        <option value="@item.Id">@item.Name</option>
+                                                    }
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div class="property-list col-8 row">
+                                        </div>
+                                    </div>
+                                     
+                                    <div class="col-12 text-right">
+                                        <button type="button" class="btn btn-success btn-sm clone-item-button">
+                                            <i class="fas fa-clone"></i> @L("Duplicate")
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+ 
+                        <div class="modal-footer d-flex justify-content-between">
+                            <div>
+                                <a type="button" href="@Url.Action("Index", "Orders")" class="btn btn-default close-button" data-dismiss="modal">@L("BackToList")</a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary save-button" data-next="list"><i class="nav-icon fas fa-save"></i> @L("SaveAndStayAtList")</button>
+                                <button type="button" class="btn btn-primary save-button" data-next="create"><i class="nav-icon fas fa-save"></i> @L("SaveAndStayAtHere")</button>
+                                <button type="button" class="btn btn-primary save-button" data-next="detail"><i class="nav-icon fas fa-save"></i> @L("SaveAndGoToDetail")</button>
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>

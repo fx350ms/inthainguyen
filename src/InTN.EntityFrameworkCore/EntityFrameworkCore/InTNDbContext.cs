@@ -13,7 +13,8 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
 
     public DbSet<Process> Processes { get; set; }
     public DbSet<ProcessStep> ProcessSteps { get; set; }
-    public DbSet<ProcessHistory> ProcessHistories { get; set; }
+    public DbSet<ProcessStepGroup> ProcessStepGroups { get; set; }
+
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<IdentityCode> IdentityCodes { get; set; }
@@ -33,6 +34,7 @@ public class InTNDbContext : AbpZeroDbContext<Tenant, Role, User, InTNDbContext>
     public DbSet<ProductPriceCombination> ProductPriceCombinations { get; set; }
 
     public DbSet<ProductNote> ProductNotes { get; set; }
+    public DbSet<Printer> Printers { get; set; }
 
     public InTNDbContext(DbContextOptions<InTNDbContext> options)
         : base(options)

@@ -86,7 +86,6 @@ public enum FileUploadType
     ProductImage = 1, // ảnh sản phẩm
 }
 
-
 public enum TransactionType
 {
     [Description("Đặt cọc")]
@@ -127,6 +126,7 @@ public enum ShippingMethod
     ServiceDelivery = 3 // GH dịch vụ
 }
 
+ 
 public enum FileType
 {
     [Description("Upload")]

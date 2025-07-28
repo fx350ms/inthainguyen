@@ -63,6 +63,23 @@ public static class PermissionNames
     public const string Fn_Products_Create = "Fn.Products.Create";
     public const string Fn_Products_Edit = "Fn.Products.Edit";
     public const string Fn_Products_Delete = "Fn.Products.Delete";
+
+
+    // Nhóm quy trình
+    public const string Pages_Processes = "Pages.Processes";
+    public const string Fn_Processes_Create = "Fn.Processes.Create";
+    public const string Fn_Processes_Edit = "Fn.Processes.Edit";
+    public const string Fn_Processes_Delete = "Fn.Processes.Delete";
+    public const string Fn_Processes_Config = "Fn.Processes.Config";
+
+    // Permissions for Printers
+    public const string Pages_Printers = "Pages.Printers";
+    public const string Fn_Printers_Create = "Fn.Printers.Create";
+    public const string Fn_Printers_Edit = "Fn.Printers.Edit";
+    public const string Fn_Printers_Delete = "Fn.Printers.Delete";
+
+    //public const string Page_ProcessGroups = "Pages.ProcessGroups";
+    //public const string Fn_ProcessGroups_Create = "Fn.ProcessGroups.Create";
+    //public const string Fn_ProcessGroups_Edit = "Fn.ProcessGroups.Edit";
+    //public const string Fn_ProcessGroups_Delete = "Fn.ProcessGroups.Delete";
 }
-
-

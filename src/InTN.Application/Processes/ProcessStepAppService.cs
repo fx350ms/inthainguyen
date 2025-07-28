@@ -6,6 +6,8 @@ using Abp.Domain.Repositories;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using InTN.Brands.Dto;
+using InTN.Commons;
 
 
 namespace InTN.Processes
@@ -19,8 +21,10 @@ namespace InTN.Processes
 
         public async Task<List<ProcessStepDto>> GetStepsByProcessIdAsync(int processId)
         {
-            var steps = await Repository.GetAllListAsync(step => step.ProcessId == processId);
-            return ObjectMapper.Map<List<ProcessStepDto>>(steps);
+            //var steps = await Repository.GetAllListAsync(step => step.ProcessId == processId);
+            //return ObjectMapper.Map<List<ProcessStepDto>>(steps);
+
+            return null;
         }
 
         public async Task<List<ProcessStepDto>> GetNextStepsAsync(int currentStepId)
@@ -36,6 +40,26 @@ namespace InTN.Processes
 
             return new List<ProcessStepDto>();
 
+        }
+
+
+        public async Task<List<ProcessStepDto>> GetAllListAsync()
+        {
+            var data = await Repository.GetAllListAsync();
+            var result = ObjectMapper.Map<List<ProcessStepDto>>(data);
+            return result;
+        }
+
+        public async Task<List<OptionItemDto>> GetAllListForSelectAsync()
+        {
+            var data = (await Repository.GetAllListAsync())
+                .Select(x => new OptionItemDto
+                {
+                    id = x.Id.ToString(),
+                    text = x.Name
+                })
+                .ToList();
+            return data;
         }
     }
 }

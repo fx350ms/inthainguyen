@@ -143,7 +143,7 @@ namespace InTN.Orders
             }
 
             input.OrderDate = DateTime.Now; // Set the current date and time as the order date
-        //    input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
+                                            //    input.Status = (int)OrderStatus.ReceivedRequest; // Set default status to 0 (Pending)
 
 
             try
@@ -184,11 +184,11 @@ namespace InTN.Orders
                     StepId = input.StepId,
                     ProcessId = input.ProcessId,
                     ShippingMethod = input.ShippingMethod,
-                    
+
 
                 };
 
-                var orderId = await Repository.InsertAndGetIdAsync(order);
+                order.Id = await Repository.InsertAndGetIdAsync(order);
 
                 decimal totalProductPrice = 0;
                 // Duyệt danh sách orderDetails để tạo mới từng OrderDetail
@@ -199,7 +199,7 @@ namespace InTN.Orders
                         // Tìm kiếm sản phẩm trong kho dựa trên ProductId
                         var orderDetail = new OrderDetail
                         {
-                            OrderId = orderId,
+                            OrderId = order.Id,
                             ProductId = detailDto.ProductId,
                             ProductName = detailDto.ProductName,
                             UnitPrice = detailDto.UnitPrice,
@@ -339,7 +339,7 @@ namespace InTN.Orders
                                 OrderId = input.OrderId,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                               // FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                                                // FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                                 FileSize = file.Length,
                                 Type = (int)OrderAttachmentType.Invoice,    // Loại file (image/jpeg, image/png)
                             };
@@ -456,7 +456,7 @@ namespace InTN.Orders
                             OrderId = input.OrderId,
                             FileName = file.FileName,
                             FileType = file.ContentType,    // Loại file (image/jpeg, image/png)
-                          //  FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
+                                                            //  FileContent = memoryStream.ToArray(), // Dữ liệu nhị phân của hình ảnh
                             FileSize = file.Length,
                             Type = (int)OrderAttachmentType.DesignSample,    // Loại file (image/jpeg, image/png)
                         };
@@ -714,7 +714,7 @@ namespace InTN.Orders
 
         }
 
-        public async Task UpdateOrderStatusAsync(int id, int nextStepId,  int status)
+        public async Task UpdateOrderStatusAsync(int id, int nextStepId, int status)
         {
             // Retrieve the order by ID
             var order = await Repository.GetAsync(id);

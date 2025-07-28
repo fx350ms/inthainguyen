@@ -61,7 +61,6 @@
 
                         @Html.AntiForgeryToken()
 
-
                         <input type="hidden" name="OrderCode" value="@Model.CreateOrderDto.OrderCode" />
 
                         <div class="card card-primary">
@@ -327,9 +326,13 @@
                                                 <input type="text" class="form-control text-right mask-number" value="0" name="TotalDeposit">
                                             </div>
                                             <!--Thuế VAT-->
-                                            <div class="col-4 control-item">
+                                            <div class="col-4 control-item" name="VatRate">
                                                 <label>@L("VatRate")%</label>
-                                                <input type="text" class="form-control text-right mask-number" value="0" name="VatRate">
+                                                <select class="form-control">
+                                                    <option value="0"></option>
+                                                    <option value="8">8%</option>
+                                                    <option value="10">10%</option>
+                                                </select>
                                             </div>
 
                                             <!--Tiền thuế VAT-->
@@ -387,11 +390,8 @@
                                 <button type="button" class="btn btn-primary save-button" data-next="detail"><i class="nav-icon fas fa-save"></i> @L("SaveAndGoToDetail")</button>
                             </div>
                         </div>
-
-
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
