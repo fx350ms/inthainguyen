@@ -38,6 +38,14 @@
             margin-bottom: 20px;
         }
 
+        .printer-checkbox-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+            .printer-checkbox-list li {
+                margin-bottom: 8px;
+            }
     </style>
 }
 
@@ -57,7 +65,131 @@
             <div class="col-12">
 
                 <div class="" id="modal-create-order">
-                    <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                    <form id="form-create-production-order" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+
+                        @*     <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">@L("CustomerInformation")</h3>
+                            </div>
+                            <div class="card-body">
+                            </div>
+                        </div> *@
+                        <div class="card">
+                            <div class="card-header text-center">
+                                <h5 class="font-weight-bold">LỆNH SẢN XUẤT</h5>
+                                <p class="text-center">Ngày @DateTime.Now.ToString("dd MMMM yyyy")</p>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="row ">
+                                    <div class="control-item col-md-3 ">
+                                        <label>Nơi in</label>
+                                        <input type="text" name="PrintPlace" class="form-control" />
+                                    </div>
+                                    <div class="control-item col-md-3">
+                                        <label>Khổ in</label>
+                                        <input type="text" name="PaperSize" class="form-control" />
+                                    </div>
+
+                                </div>
+
+                                @* <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Khách hàng:</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="CustomerName" class="form-control" />
+                                    </div>
+                                    <label class="col-md-2 col-form-label">SĐT:</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="PhoneNumber" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Địa chỉ:</label>
+                                    <div class="col-md-10">
+                                        <input type="text" name="Address" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Nhân viên:</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="StaffName" class="form-control" />
+                                    </div>
+                                    <label class="col-md-2 col-form-label">Ngày giao hàng:</label>
+                                    <div class="col-md-4">
+                                        <input type="date" name="DeliveryDate" class="form-control" />
+                                    </div>
+                                </div> *@
+
+                                <div class="form-group row">
+                                    <label class="col-md-2 col-form-label">Nơi in:</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="PrintPlace" class="form-control" />
+                                    </div>
+                                    <label class="col-md-2 col-form-label">:</label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="PaperSize" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Nơi in:</strong> <input type="text" name="PrintPlace" class="form-control" /></p>
+                                        <p><strong>NV In:</strong> <input type="text" name="PrinterName" class="form-control" /></p>
+                                        <p><strong>Khổ in:</strong>
+                                        <p><strong>Phương pháp in:</strong> <input type="text" name="PrintMethod" class="form-control" /></p>
+                                        <p><strong>Số tờ in:</strong> <input type="text" name="NumberOfSheets" class="form-control" /></p>
+                                        <p><strong>Số tờ in bù hao:</strong> <input type="text" name="WasteSheets" class="form-control" /></p>
+                                        <p><strong>Số Click in:</strong> <input type="text" name="ClickCount" class="form-control" /></p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label><strong>Chọn máy in:</strong></label>
+                                        <div class="form-check">
+                                            <label><input type="checkbox" name="Printers" value="Ricoh 7500" class="form-check-input" /> Ricoh 7500</label><br />
+                                            <label><input type="checkbox" name="Printers" value="Ricoh 5300" class="form-check-input" /> Ricoh 5300</label><br />
+                                            <label><input type="checkbox" name="Printers" value="Máy siêu tốc" class="form-check-input" /> Máy siêu tốc</label><br />
+                                            <label><input type="checkbox" name="Printers" value="Máy đen trắng" class="form-check-input" /> Máy đen trắng</label><br />
+                                            <label><input type="checkbox" name="Printers" value="Offset 4 màu" class="form-check-input" /> Offset 4 màu</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <h6 class="font-weight-bold">Nhân viên gia công:</h6>
+                                <div class="row">
+                                    @foreach (var step in new[] {
+                                    "Cán nhiệt", "Cán nguội", "Bế KTS", "Bế khuôn", "Cấn gân", "Xén", "Bo Góc",
+                                    "Gấp dán TP", "Răng cưa", "Keo Máy", "Ghim", "Số nhảy", "Ép Kim", "Thúc nổi"
+                                    })
+                                    {
+                                        <div class="col-md-3">
+                                            <label><input type="checkbox" name="FinishingSteps" value="@step" class="form-check-input" /> @step</label>
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="form-group mt-2">
+                                    <label><strong>Gia công khác:</strong></label>
+                                    <textarea name="OtherFinishing" class="form-control"></textarea>
+                                </div>
+
+                                <div class="form-group mt-2">
+                                    <label><strong>Số lượng hàng thành phẩm giao khách:</strong></label>
+                                    <input type="text" name="DeliveredQuantity" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="card-footer text-center">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Lưu lệnh sản xuất</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    @*  <form name="form-create-order" role="form" class="form-horizontal" method="post" enctype="multipart/form-data">
 
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="Id" value="@Model.Order.Id" />
@@ -65,44 +197,26 @@
 
                         <div class="card card-primary">
                             <div class="card-header">
-                                <!--Chọn quy trình-->
                                 <h3 class="card-title">@L("Lệnh sản xuất")</h3>
                             </div>
                             <div class="card-body">
-                                <div class="row ">
+                                <div class="row">
                                     <input type="hidden" name="NewCustomer" value="false" />
-                                    <div class="control-item col-md-3 select-customer-group">
-                                        <label>@L("Chọn quy trình")</label>
-                                        <select class=" select-customer-id form-control" name="ProcessId" style="width: 100%;"></select>
+                                    <div class="control-item col-md-6 select-customer-group">
+                                        <label>@L("Chọn máy in")</label>
+                                        <ul class="printer-checkbox-list">
+                                            @foreach (var printer in Model.Printers)
+                                            {
+                                                <li>
+                                                    <input type="checkbox" name="SelectedPrinterIds" value="@printer.Id" id="printer_@printer.Id" />
+                                                    <label for="printer_@printer.Id">@printer.Name</label>
+                                                </li>
+                                            }
+                                        </ul>
                                     </div>
-                                    
                                 </div>
-
                             </div>
                         </div>
-                        
-                        <!-- Tổng kết thông tin về chi phí đơn hàng -->
-                      @*   <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">@L("OrderSummary")</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-8">
-                                        <div class="row">
-
-                                     
-                                        </div>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <div class="row">
-                                         
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> *@
 
                         <div class="modal-footer d-flex justify-content-between">
                             <div>
@@ -112,7 +226,7 @@
                                 <button type="button" class="btn btn-primary save-button" data-next="detail"><i class="nav-icon fas fa-save"></i> @L("Save")</button>
                             </div>
                         </div>
-                    </form>
+                    </form> *@
                 </div>
             </div>
         </div>

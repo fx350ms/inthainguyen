@@ -8,6 +8,7 @@ using InTN.OrderAttachments;
 using InTN.OrderLogs;
 using InTN.Orders;
 using InTN.Orders.Dto;
+using InTN.Printers;
 using InTN.Processes;
 using InTN.ProductCategories;
 using InTN.ProductTypes;
@@ -36,7 +37,7 @@ namespace InTN.Web.Controllers
         private readonly IProcessAppService _processAppService;
         private readonly IProcessStepAppService _processStepAppService;
         private readonly IRoleAppService _roleAppService;
-
+        private readonly IPrinterAppService _printerAppService;
 
         public OrdersController(IOrderAppService orderService,
                     IIdentityCodeAppService identityCodeAppService,
@@ -50,7 +51,8 @@ namespace InTN.Web.Controllers
                     IFileUploadAppService fileUploadAppService,
                     IProcessAppService processAppService,
                     IProcessStepAppService processStepAppService,
-                    IRoleAppService roleAppService
+                    IRoleAppService roleAppService,
+                    IPrinterAppService printerAppService
 
          )
         {
@@ -67,6 +69,7 @@ namespace InTN.Web.Controllers
             _processAppService = processAppService;
             _processStepAppService = processStepAppService;
             _roleAppService = roleAppService;
+            _printerAppService = printerAppService;
         }
 
         public async Task<IActionResult> Index()
@@ -100,7 +103,8 @@ namespace InTN.Web.Controllers
             }
             var model = new ProductionOrderModel()
             {
-                Order = order
+                Order = order,
+                Printers = await _printerAppService.GetAllListAsync(),
             };
 
             return View(model);

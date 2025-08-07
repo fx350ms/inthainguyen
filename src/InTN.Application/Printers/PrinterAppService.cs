@@ -3,6 +3,9 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using InTN.Entities;
 using InTN.Printers.Dto;
+using InTN.ProductTypes.Dto;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InTN.Printers
 {
@@ -19,5 +22,13 @@ namespace InTN.Printers
             : base(repository)
         {
         }
+
+        public async Task<List<PrinterDto>> GetAllListAsync()
+        {
+            var data = await Repository.GetAllListAsync();
+            var result = ObjectMapper.Map<List<PrinterDto>>(data);
+            return result;
+        }
+
     }
 }

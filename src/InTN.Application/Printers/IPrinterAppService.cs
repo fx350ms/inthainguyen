@@ -1,6 +1,8 @@
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using InTN.Printers.Dto;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InTN.Printers
 {
@@ -11,5 +13,6 @@ namespace InTN.Printers
         PrinterDto,      // DTO cho tạo mới
         PrinterDto>      // DTO cho cập nhật
     {
+        Task<List<PrinterDto>> GetAllListAsync();
     }
 }

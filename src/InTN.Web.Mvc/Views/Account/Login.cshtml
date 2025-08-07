@@ -13,6 +13,15 @@
         <script src="~/view-resources/Views/Account/Login.min.js" asp-append-version="true"></script>
     </environment>
 }
+
+@section styles{
+    <style>
+        .login-box,.register-box {
+            width: 560px;
+        }
+
+    </style>
+}
 <h4 class="text-center">@L("LogIn")</h4>
 <form id="LoginForm" asp-action="Login" method="post">
     <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
